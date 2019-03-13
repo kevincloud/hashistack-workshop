@@ -40,7 +40,7 @@ resource "aws_instance" "working-env" {
         connection {
             type     = "ssh"
             user     = "root"
-            password = "${var.root_password}"
+            password = "${var.root_pass}"
         }
     }
 
@@ -51,7 +51,7 @@ resource "aws_instance" "working-env" {
         connection {
             type     = "ssh"
             user     = "root"
-            password = "${var.root_password}"
+            password = "${var.root_pass}"
         }
     }
 
@@ -62,7 +62,7 @@ resource "aws_instance" "working-env" {
         connection {
             type     = "ssh"
             user     = "root"
-            password = "${var.root_password}"
+            password = "${var.root_pass}"
         }
     }
 
@@ -73,7 +73,7 @@ resource "aws_instance" "working-env" {
         connection {
             type     = "ssh"
             user     = "root"
-            password = "${var.root_password}"
+            password = "${var.root_pass}"
         }
     }
 
@@ -84,7 +84,7 @@ resource "aws_instance" "working-env" {
         connection {
             type     = "ssh"
             user     = "root"
-            password = "${var.root_password}"
+            password = "${var.root_pass}"
         }
     }
 
@@ -95,7 +95,7 @@ resource "aws_instance" "working-env" {
         connection {
             type     = "ssh"
             user     = "root"
-            password = "${var.root_password}"
+            password = "${var.root_pass}"
         }
     }
 
@@ -108,7 +108,7 @@ resource "aws_instance" "working-env" {
         connection {
             type     = "ssh"
             user     = "root"
-            password = "${var.root_password}"
+            password = "${var.root_pass}"
         }
     }
     
