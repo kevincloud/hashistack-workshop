@@ -29,6 +29,15 @@ resource "aws_dynamodb_table" "customer-data-table" {
         non_key_attributes = ["CustomerId"]
     }
 
+    global_secondary_index {
+        name = "EmailIndex"
+        hash_key = "EmailAddress"
+        write_capacity = 10
+        read_capacity = 10
+        projection_type = "INCLUDE"
+        non_key_attributes = ["CustomerId"]
+    }
+
     tags = {
         Name = "cust-mgmt-data"
     }

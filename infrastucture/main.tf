@@ -30,6 +30,12 @@ resource "aws_subnet" "private-subnet" {
     availability_zone = "us-east-1b"
 }
 
+resource "aws_subnet" "private-subnet-2" {
+    vpc_id = "${aws_vpc.primary-vpc.id}"
+    cidr_block = "10.0.3.0/24"
+    availability_zone = "us-east-1c"
+}
+
 resource "aws_route" "public-routes" {
     route_table_id = "${aws_vpc.primary-vpc.default_route_table_id}"
     destination_cidr_block = "0.0.0.0/0"
