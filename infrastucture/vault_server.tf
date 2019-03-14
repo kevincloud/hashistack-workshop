@@ -72,6 +72,7 @@ resource "aws_db_instance" "vault-mysql" {
     vpc_security_group_ids = ["${aws_security_group.vault-mysql-sg.id}"]
     username = "${var.mysql_user}"
     password = "${var.mysql_pass}"
+    skip_final_snapshot = true
 }
 
 resource "aws_security_group" "vault-mysql-sg" {

@@ -3,8 +3,6 @@
 apt update
 apt -y upgrade
 apt -y install jq python3 python3-pip docker.io
-#pip3 install flask
-#pip3 install flask-cors
 pip3 install boto3
 
 # create a sudo user
@@ -27,13 +25,6 @@ sudo bash -c "cat >/root/.aws/credentials" << 'EOF'
 aws_access_key_id=${AWS_ACCESS_KEY}
 aws_secret_access_key=${AWS_SECRET_KEY}
 EOF
-
-python3 /root/appcreds.py > /root/img/creds.json
-
-cd /root/img
-docker build -t customer-app:latest .
-
-python3 /root/customer-load.py
 
 
 ---------------------
