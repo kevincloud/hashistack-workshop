@@ -16,12 +16,12 @@ role_id = data['role_id']
 secret_id = data['secret_id']
 
 resp = requests.post('http://${VAULT_SERVER}:8200/v1/auth/approle/login',
-    data={ "role_id": role_id, "secret_id": secret_id }
+    data='{ "role_id": "' + role_id + '", "secret_id": "' + secret_id + '" }'
 )
 
 token_id = json.loads(json.dumps(resp.json()))["auth"]["client_token"]
 
-resp = requests.post('http://${VAULT_SERVER}:8200/v1/secret/data/aws',
+resp = requests.get('http://${VAULT_SERVER}:8200/v1/secret/data/aws',
     headers={'X-Vault-Token': token_id}
 )
 

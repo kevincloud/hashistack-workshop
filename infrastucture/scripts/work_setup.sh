@@ -1,9 +1,8 @@
 #!/bin/bash
 
-apt update
-apt -y upgrade
-apt -y install jq python3 python3-pip docker.io
-pip3 install boto3
+apt-get update > /dev/null 2>&1
+apt-get -y upgrade > /dev/null 2>&1
+apt-get -y install jq python3 python3-pip docker.io > /dev/null 2>&1
 
 # create a sudo user
 #useradd -m builder
@@ -11,6 +10,7 @@ pip3 install boto3
 #usermod -aG sudo builder
 echo 'root:${ROOT_PASSWORD}' | chpasswd
 sed -i.bak 's/^\(PasswordAuthentication \).*/\1yes/' /etc/ssh/sshd_config
+sed -i.bak 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 service ssh restart
 
 mkdir -p /root/img
@@ -26,6 +26,8 @@ aws_access_key_id=${AWS_ACCESS_KEY}
 aws_secret_access_key=${AWS_SECRET_KEY}
 EOF
 
+pip3 install botocore
+pip3 install boto3
 
 ---------------------
 # export VAULT_ADDR='http://${VAULT_SERVER}:8200'

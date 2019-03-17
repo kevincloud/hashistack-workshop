@@ -33,84 +33,84 @@ resource "aws_instance" "working-env" {
     user_data = "${data.template_file.work_setup.rendered}"
     subnet_id = "${aws_subnet.public-subnet.id}"
 
-    # provisioner "file" {
-    #     source      = "scripts/requirements.txt"
-    #     destination = "/root/img/requirements.txt"
+    provisioner "file" {
+        source      = "scripts/requirements.txt"
+        destination = "/root/img/requirements.txt"
 
-    #     connection {
-    #         type     = "ssh"
-    #         user     = "root"
-    #         password = "${var.root_pass}"
-    #     }
-    # }
+        connection {
+            type     = "ssh"
+            user     = "root"
+            password = "${var.root_pass}"
+        }
+    }
 
-    # provisioner "file" {
-    #     source      = "scripts/Dockerfile-api1"
-    #     destination = "/root/img/Dockerfile"
+    provisioner "file" {
+        source      = "scripts/Dockerfile-api1"
+        destination = "/root/img/Dockerfile"
 
-    #     connection {
-    #         type     = "ssh"
-    #         user     = "root"
-    #         password = "${var.root_pass}"
-    #     }
-    # }
+        connection {
+            type     = "ssh"
+            user     = "root"
+            password = "${var.root_pass}"
+        }
+    }
 
-    # provisioner "file" {
-    #     source      = "scripts/customer-load.py"
-    #     destination = "/root/customer-load.py"
+    provisioner "file" {
+        source      = "scripts/customer-load.py"
+        destination = "/root/customer-load.py"
 
-    #     connection {
-    #         type     = "ssh"
-    #         user     = "root"
-    #         password = "${var.root_pass}"
-    #     }
-    # }
+        connection {
+            type     = "ssh"
+            user     = "root"
+            password = "${var.root_pass}"
+        }
+    }
 
-    # provisioner "file" {
-    #     content      = "${data.template_file.app_creds.rendered}"
-    #     destination = "/root/appcreds.py"
+    provisioner "file" {
+        content      = "${data.template_file.app_creds.rendered}"
+        destination = "/root/appcreds.py"
 
-    #     connection {
-    #         type     = "ssh"
-    #         user     = "root"
-    #         password = "${var.root_pass}"
-    #     }
-    # }
+        connection {
+            type     = "ssh"
+            user     = "root"
+            password = "${var.root_pass}"
+        }
+    }
 
-    # provisioner "file" {
-    #     content      = "${data.template_file.cust_app.rendered}"
-    #     destination = "/root/img/cust-app.py"
+    provisioner "file" {
+        content      = "${data.template_file.cust_app.rendered}"
+        destination = "/root/img/cust-app.py"
 
-    #     connection {
-    #         type     = "ssh"
-    #         user     = "root"
-    #         password = "${var.root_pass}"
-    #     }
-    # }
+        connection {
+            type     = "ssh"
+            user     = "root"
+            password = "${var.root_pass}"
+        }
+    }
 
-    # provisioner "file" {
-    #     source      = "scripts/work_config.sh"
-    #     destination = "/root/work_config.sh"
+    provisioner "file" {
+        source      = "scripts/work_config.sh"
+        destination = "/root/work_config.sh"
 
-    #     connection {
-    #         type     = "ssh"
-    #         user     = "root"
-    #         password = "${var.root_pass}"
-    #     }
-    # }
+        connection {
+            type     = "ssh"
+            user     = "root"
+            password = "${var.root_pass}"
+        }
+    }
 
-    # provisioner "remote-exec" {
-    #     inline = [
-    #         "chmod +x /root/work_config.sh",
-    #         "/root/work_config.sh"
-    #     ]
+    provisioner "remote-exec" {
+        inline = [
+            "chmod +x /root/work_config.sh",
+            "/root/work_config.sh"
+        ]
 
-    #     connection {
-    #         type     = "ssh"
-    #         user     = "root"
-    #         password = "${var.root_pass}"
-    #     }
-    # }
+        connection {
+            type     = "ssh"
+            user     = "root"
+            password = "${var.root_pass}"
+        }
+    }
     
     tags = {
         Name = "cust-mgmt-work"
@@ -136,12 +136,12 @@ resource "aws_security_group" "working-env-sg" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 
-    #ingress {
-    #    from_port = 5801
-    #    to_port = 5801
-    #    protocol = "tcp"
-    #    cidr_blocks = ["0.0.0.0/0"]
-    #}
+    ingress {
+       from_port = 5801
+       to_port = 5801
+       protocol = "tcp"
+       cidr_blocks = ["0.0.0.0/0"]
+    }
 
     egress {
         from_port = 0
