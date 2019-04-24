@@ -15,6 +15,7 @@ resource "aws_instance" "vault-server" {
     vpc_security_group_ids = ["${aws_security_group.vault-server-sg.id}"]
     user_data = "${data.template_file.vault_setup.rendered}"
     subnet_id = "${aws_subnet.public-subnet.id}"
+    iam_instance_profile = "${aws_iam_instance_profile.vault-kms-unseal.id}"
     
     tags = {
         Name = "cust-mgmt-web"
@@ -93,4 +94,46 @@ resource "aws_security_group" "vault-mysql-sg" {
         protocol = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
+}
+
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "vault-kms-unseal" {
+  statement {
+    sid       = "VaultKMSUnseal"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:DescribeKey"
+    ]
+  }
+}
+
+resource "aws_iam_role" "vault-kms-unseal" {
+  name               = "vault-kms-role-unseal"
+  assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
+}
+
+resource "aws_iam_role_policy" "vault-kms-unseal" {
+  name   = "Vault-KMS-Unseal"
+  role   = "${aws_iam_role.vault-kms-unseal.id}"
+  policy = "${data.aws_iam_policy_document.vault-kms-unseal.json}"
+}
+
+resource "aws_iam_instance_profile" "vault-kms-unseal" {
+  name = "vault-kms-unseal"
+  role = "${aws_iam_role.vault-kms-unseal.name}"
 }

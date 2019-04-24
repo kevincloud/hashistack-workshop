@@ -10,7 +10,7 @@ resp = requests.post('http://${VAULT_SERVER}:8200/v1/sys/auth/approle',
 )
 
 resp = requests.put('http://${VAULT_SERVER}:8200/v1/sys/policy/dev-policy',
-    data='{"policy": "path \\"secret/data/aws\\" {\n    capabilities = [\\"read\\", \\"list\\"]\n}"}',
+    data='{"policy": "path \\"secret/data/aws\\" {\\n    capabilities = [\\"read\\", \\"list\\"]\\n}"}',
     headers={'X-Vault-Token':'root'}
 )
 

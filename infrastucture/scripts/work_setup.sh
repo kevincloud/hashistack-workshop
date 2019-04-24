@@ -14,6 +14,7 @@ sed -i.bak 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/
 service ssh restart
 
 mkdir -p /root/img
+mkdir -p /root/img2
 mkdir -p /root/.aws
 sudo bash -c "cat >/root/.aws/config" << 'EOF'
 [default]
@@ -28,6 +29,7 @@ EOF
 
 pip3 install botocore
 pip3 install boto3
+pip3 install mysql-connector-python
 
 ---------------------
 # export VAULT_ADDR='http://${VAULT_SERVER}:8200'

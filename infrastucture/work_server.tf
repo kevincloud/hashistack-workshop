@@ -67,6 +67,17 @@ resource "aws_instance" "working-env" {
     }
 
     provisioner "file" {
+        source      = "scripts/product-load.py"
+        destination = "/root/product-load.py"
+
+        connection {
+            type     = "ssh"
+            user     = "root"
+            password = "${var.root_pass}"
+        }
+    }
+
+    provisioner "file" {
         content      = "${data.template_file.app_creds.rendered}"
         destination = "/root/appcreds.py"
 
@@ -80,6 +91,17 @@ resource "aws_instance" "working-env" {
     provisioner "file" {
         content      = "${data.template_file.cust_app.rendered}"
         destination = "/root/img/cust-app.py"
+
+        connection {
+            type     = "ssh"
+            user     = "root"
+            password = "${var.root_pass}"
+        }
+    }
+
+    provisioner "file" {
+        content      = "${data.template_file.cust_app.rendered}"
+        destination = "/root/img/product-app.py"
 
         connection {
             type     = "ssh"
@@ -119,7 +141,6 @@ resource "aws_instance" "working-env" {
     depends_on = [
         "aws_instance.vault-server",
         "aws_dynamodb_table.customer-data-table",
-        "aws_dynamodb_table.customer-data-table",
         "aws_dynamodb_table.product-data-table"
     ]
 }
@@ -148,5 +169,55 @@ resource "aws_security_group" "working-env-sg" {
         to_port = 0
         protocol = "-1"
         cidr_blocks = ["0.0.0.0/0"]
+    }
+}
+
+data "aws_iam_policy_document" "assume-role-s3" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "work-s3-setup" {
+  statement {
+    sid       = "WorkS3Setup"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "s3:*"
+    ]
+  }
+}
+
+resource "aws_iam_role" "work-s3-setup" {
+  name               = "work-s3-setup"
+  assume_role_policy = "${data.aws_iam_policy_document.assume-role-s3.json}"
+}
+
+resource "aws_iam_role_policy" "work-s3-setup" {
+  name   = "work-s3-setup"
+  role   = "${aws_iam_role.work-s3-setup.id}"
+  policy = "${data.aws_iam_policy_document.work-s3-setup.json}"
+}
+
+resource "aws_iam_instance_profile" "work-s3-setup" {
+  name = "work-s3-setup"
+  role = "${aws_iam_role.work-s3-setup.name}"
+}
+
+resource "aws_s3_bucket" "hashi-stack" {
+    bucket = "hashistack.hashicorp.com"
+    acl    = "public-read"
+    policy = "${file("scripts/s3policy.json")}"
+
+    website {
+        index_document = "index.html"
     }
 }

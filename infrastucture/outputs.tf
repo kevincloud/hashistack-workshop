@@ -9,3 +9,7 @@ output "public-host" {
 output "vault-ip" {
     value = "${aws_instance.vault-server.public_ip}"
 }
+
+output "mysql-host" {
+    value = "${aws_db_instance.vault-mysql.endpoint}"
+}
