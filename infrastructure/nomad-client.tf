@@ -5,6 +5,7 @@ data "template_file" "nomad-client-setup-1" {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         NOMAD_SERVER = "${aws_instance.nomad-server.private_ip}"
+        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
         CLIENT_NAME = "client1"
     }
 }
@@ -16,6 +17,7 @@ data "template_file" "nomad-client-setup-2" {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         NOMAD_SERVER = "${aws_instance.nomad-server.private_ip}"
+        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
         CLIENT_NAME = "client2"
     }
 }
@@ -26,6 +28,7 @@ resource "aws_instance" "nomad-client-1" {
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.nomad-server-sg.id}"]
     user_data = "${data.template_file.nomad-client-setup-1.rendered}"
+    subnet_id = "${aws_subnet.public-subnet.id}"
     iam_instance_profile = "${aws_iam_instance_profile.nomad-profile.id}"
     
     tags = {
@@ -39,6 +42,7 @@ resource "aws_instance" "nomad-client-2" {
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.nomad-server-sg.id}"]
     user_data = "${data.template_file.nomad-client-setup-2.rendered}"
+    subnet_id = "${aws_subnet.public-subnet.id}"
     iam_instance_profile = "${aws_iam_instance_profile.nomad-profile.id}"
     
     tags = {

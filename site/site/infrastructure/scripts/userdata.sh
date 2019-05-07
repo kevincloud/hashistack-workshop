@@ -50,6 +50,6 @@ EOF
 sudo aws s3 cp /var/www/html/online-store/productapi/images/ s3://${S3_BUCKET}/ --acl public-read
 
 sudo bash -c "cat >//var/www/html/online-store/settings.conf" <<EOF
-ProductAPI = "http://${IP_ADDRESS}:5821"
+ProductAPI = "http://IP_ADDRESS:5821"
 ImageLocation = "https://s3-${S3_REGION}.amazonaws.com/${S3_BUCKET}/"
 EOF

@@ -84,16 +84,21 @@ sudo systemctl enable nomad
 sudo systemctl start nomad
 
 echo "Installing Consul..."
+export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
 wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
 sudo unzip consul_1.4.4_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
-sudo bash -c "cat >/etc/consul.d/consul.json" << 'EOF'
+sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
 {
+    "bootstrap": false,
+    "datacenter": "dc1",
+    "bind_addr": "$CLIENT_IP",
     "data_dir": "/opt/consul",
-    "node_name": "consul-server",
+    "node_name": "consul-${CLIENT_NAME}",
+    "retry_join": ["${CONSUL_IP}"],
     "server": false,
-    "ui": false
+    "ui": true
 }
 EOF
 

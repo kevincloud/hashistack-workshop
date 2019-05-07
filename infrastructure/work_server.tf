@@ -1,5 +1,5 @@
-data "template_file" "work_setup" {
-    template = "${file("${path.module}/scripts/work_setup.sh")}"
+data "template_file" "work_install" {
+    template = "${file("${path.module}/scripts/work_install.sh")}"
 
     vars = {
         VAULT_SERVER = "${aws_instance.vault-server.public_ip}"
@@ -9,130 +9,130 @@ data "template_file" "work_setup" {
     }
 }
 
-data "template_file" "app_creds" {
-    template = "${file("${path.module}/scripts/appcreds.py")}"
+# data "template_file" "app_creds" {
+#     template = "${file("${path.module}/scripts/appcreds.py")}"
 
-    vars = {
-        VAULT_SERVER = "${aws_instance.vault-server.public_ip}"
-    }
-}
+#     vars = {
+#         VAULT_SERVER = "${aws_instance.vault-server.public_ip}"
+#     }
+# }
 
-data "template_file" "cust_app" {
-    template = "${file("${path.module}/scripts/cust-app.py")}"
+# data "template_file" "cust_app" {
+#     template = "${file("${path.module}/scripts/cust-app.py")}"
 
-    vars = {
-        VAULT_SERVER = "${aws_instance.vault-server.public_ip}"
-    }
-}
+#     vars = {
+#         VAULT_SERVER = "${aws_instance.vault-server.public_ip}"
+#     }
+# }
 
 resource "aws_instance" "working-env" {
     ami = "${data.aws_ami.ubuntu.id}"
     instance_type = "t2.micro"
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.working-env-sg.id}"]
-    user_data = "${data.template_file.work_setup.rendered}"
+    user_data = "${data.template_file.work_install.rendered}"
     subnet_id = "${aws_subnet.public-subnet.id}"
 
-    provisioner "file" {
-        source      = "scripts/requirements.txt"
-        destination = "/root/img/requirements.txt"
+    # provisioner "file" {
+    #     source      = "scripts/requirements.txt"
+    #     destination = "/root/img/requirements.txt"
 
-        connection {
-            type     = "ssh"
-            user     = "root"
-            password = "${var.root_pass}"
-        }
-    }
+    #     connection {
+    #         type     = "ssh"
+    #         user     = "root"
+    #         password = "${var.root_pass}"
+    #     }
+    # }
 
-    provisioner "file" {
-        source      = "scripts/Dockerfile-api1"
-        destination = "/root/img/Dockerfile"
+    # provisioner "file" {
+    #     source      = "scripts/Dockerfile-api1"
+    #     destination = "/root/img/Dockerfile"
 
-        connection {
-            type     = "ssh"
-            user     = "root"
-            password = "${var.root_pass}"
-        }
-    }
+    #     connection {
+    #         type     = "ssh"
+    #         user     = "root"
+    #         password = "${var.root_pass}"
+    #     }
+    # }
 
-    provisioner "file" {
-        source      = "scripts/customer-load.py"
-        destination = "/root/customer-load.py"
+    # provisioner "file" {
+    #     source      = "scripts/customer-load.py"
+    #     destination = "/root/customer-load.py"
 
-        connection {
-            type     = "ssh"
-            user     = "root"
-            password = "${var.root_pass}"
-        }
-    }
+    #     connection {
+    #         type     = "ssh"
+    #         user     = "root"
+    #         password = "${var.root_pass}"
+    #     }
+    # }
 
-    provisioner "file" {
-        source      = "scripts/product-load.py"
-        destination = "/root/product-load.py"
+    # provisioner "file" {
+    #     source      = "scripts/product-load.py"
+    #     destination = "/root/product-load.py"
 
-        connection {
-            type     = "ssh"
-            user     = "root"
-            password = "${var.root_pass}"
-        }
-    }
+    #     connection {
+    #         type     = "ssh"
+    #         user     = "root"
+    #         password = "${var.root_pass}"
+    #     }
+    # }
 
-    provisioner "file" {
-        content      = "${data.template_file.app_creds.rendered}"
-        destination = "/root/appcreds.py"
+    # provisioner "file" {
+    #     content      = "${data.template_file.app_creds.rendered}"
+    #     destination = "/root/appcreds.py"
 
-        connection {
-            type     = "ssh"
-            user     = "root"
-            password = "${var.root_pass}"
-        }
-    }
+    #     connection {
+    #         type     = "ssh"
+    #         user     = "root"
+    #         password = "${var.root_pass}"
+    #     }
+    # }
 
-    provisioner "file" {
-        content      = "${data.template_file.cust_app.rendered}"
-        destination = "/root/img/cust-app.py"
+    # provisioner "file" {
+    #     content      = "${data.template_file.cust_app.rendered}"
+    #     destination = "/root/img/cust-app.py"
 
-        connection {
-            type     = "ssh"
-            user     = "root"
-            password = "${var.root_pass}"
-        }
-    }
+    #     connection {
+    #         type     = "ssh"
+    #         user     = "root"
+    #         password = "${var.root_pass}"
+    #     }
+    # }
 
-    provisioner "file" {
-        content      = "${data.template_file.cust_app.rendered}"
-        destination = "/root/img/product-app.py"
+    # provisioner "file" {
+    #     content      = "${data.template_file.cust_app.rendered}"
+    #     destination = "/root/img/product-app.py"
 
-        connection {
-            type     = "ssh"
-            user     = "root"
-            password = "${var.root_pass}"
-        }
-    }
+    #     connection {
+    #         type     = "ssh"
+    #         user     = "root"
+    #         password = "${var.root_pass}"
+    #     }
+    # }
 
-    provisioner "file" {
-        source      = "scripts/work_config.sh"
-        destination = "/root/work_config.sh"
+    # provisioner "file" {
+    #     source      = "scripts/work_config.sh"
+    #     destination = "/root/work_config.sh"
 
-        connection {
-            type     = "ssh"
-            user     = "root"
-            password = "${var.root_pass}"
-        }
-    }
+    #     connection {
+    #         type     = "ssh"
+    #         user     = "root"
+    #         password = "${var.root_pass}"
+    #     }
+    # }
 
-    provisioner "remote-exec" {
-        inline = [
-            "chmod +x /root/work_config.sh",
-            "/root/work_config.sh"
-        ]
+    # provisioner "remote-exec" {
+    #     inline = [
+    #         "chmod +x /root/work_config.sh",
+    #         "/root/work_config.sh"
+    #     ]
 
-        connection {
-            type     = "ssh"
-            user     = "root"
-            password = "${var.root_pass}"
-        }
-    }
+    #     connection {
+    #         type     = "ssh"
+    #         user     = "root"
+    #         password = "${var.root_pass}"
+    #     }
+    # }
     
     tags = {
         Name = "cust-mgmt-work"
@@ -210,14 +210,4 @@ resource "aws_iam_role_policy" "work-s3-setup" {
 resource "aws_iam_instance_profile" "work-s3-setup" {
   name = "work-s3-setup"
   role = "${aws_iam_role.work-s3-setup.name}"
-}
-
-resource "aws_s3_bucket" "hashi-stack" {
-    bucket = "hashistack.hashicorp.com"
-    acl    = "public-read"
-    policy = "${file("scripts/s3policy.json")}"
-
-    website {
-        index_document = "index.html"
-    }
 }

@@ -1,11 +1,21 @@
+import sys
 import boto3
 import json
 import uuid
 from decimal import Decimal
 
+tablename = 'product-main'
 ddb = boto3.resource('dynamodb', region_name='us-east-1')
 
-table = ddb.Table('product-main')
+table = ddb.Table(tablename)
+response = table.scan(
+	Select='ALL_ATTRIBUTES',
+	Limit=1
+)
+
+if len(response['Items']):
+	print('Already loaded!')
+	sys.exit()
 
 response = table.put_item(
 	Item={
@@ -636,3 +646,5 @@ response = table.put_item(
 		'Categories': '["Brewing Equipment","Coffee Brewers"]'
 	}
 )
+
+print("Records successfully loaded!")

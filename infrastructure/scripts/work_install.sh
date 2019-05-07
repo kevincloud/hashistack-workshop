@@ -13,8 +13,6 @@ sed -i.bak 's/^\(PasswordAuthentication \).*/\1yes/' /etc/ssh/sshd_config
 sed -i.bak 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 service ssh restart
 
-mkdir -p /root/img
-mkdir -p /root/img2
 mkdir -p /root/.aws
 sudo bash -c "cat >/root/.aws/config" << 'EOF'
 [default]

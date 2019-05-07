@@ -13,7 +13,7 @@ data "template_file" "auth_setup" {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         S3_BUCKET = "${aws_s3_bucket.staticimg.id}"
-        IP_ADDRESS = "${aws_instance.kevin-php-server.public_ip}"
+        // IP_ADDRESS = "${aws_instance.kevin-php-server.public_ip}"
         S3_REGION = "${var.region}"
     }
 }

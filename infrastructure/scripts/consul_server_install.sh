@@ -28,15 +28,28 @@ wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
 sudo unzip consul_1.4.4_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
-sudo bash -c "cat >/etc/consul.d/consul.json" << 'EOF'
+sudo bash -c "cat >/etc/consul.d/consul-server.json" <<EOF
 {
     "data_dir": "/opt/consul",
+    "datacenter": "dc1",
     "node_name": "consul-server",
     "client_addr": "0.0.0.0",
     "domain": "consul",
     "server": true,
     "bootstrap_expect": 1,
     "ui": true
+}
+EOF
+
+sudo bash -c "cat >/etc/consul.d/vault-server.json" <<EOF
+{
+    "service": {
+        "id": "vault",
+        "name": "vault",
+        "tags": ["primary"],
+        "address": "vault.service.dc1.consul",
+        "port": 8200
+    }
 }
 EOF
 
@@ -51,7 +64,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/root
-ExecStart=/usr/local/bin/consul agent -config-file=/etc/consul.d/consul.json
+ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d
 Restart=on-failure # or always, on-abort, etc
 
 [Install]
