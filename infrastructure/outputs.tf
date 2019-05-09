@@ -41,3 +41,7 @@ output "nomad-client-2" {
 output "nomad-client-2-ssh" {
     value = "ssh -i ~/keys/${var.key_pair}.pem ubuntu@${aws_instance.nomad-client-2.public_ip}"
 }
+
+output "work-server" {
+    value = "ssh -i ~/keys/${var.key_pair}.pem ubuntu@${aws_instance.working-env.public_ip}"
+}

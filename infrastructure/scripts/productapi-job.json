@@ -1,0 +1,38 @@
+{
+    "Job": {
+        "Type": "service",
+        "Datacenters": ["dc1"],
+        "TaskGroups": [{
+            "Tasks": [{
+                "Name": "productapi",
+                "Driver": "docker",
+                "Vault": {
+                    "Policies": ["access-creds"]
+                },
+                "Config": {
+                    "image": "",
+                    "port_map": [{
+                        "http": 5821
+                    }]
+                },
+                "Template": {
+                    "data": "",
+                    "destination": "secrets/aws.env",
+                    "env": true
+                },
+                "Resources": [{
+                    "Networks": [{
+                        "DynamicPorts": [{
+                            "Label": "http",
+                            "Value": 0
+                        }]
+                    }]
+                }],
+                "Services": [{
+                    "Name": "productapi",
+                    "PortLabel": "http"
+                }]
+            }]
+        }]
+    }
+}

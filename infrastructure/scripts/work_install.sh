@@ -2,7 +2,7 @@
 
 apt-get update > /dev/null 2>&1
 apt-get -y upgrade > /dev/null 2>&1
-apt-get -y install jq python3 python3-pip docker.io > /dev/null 2>&1
+apt-get -y install git jq python3 python3-pip docker.io > /dev/null 2>&1
 
 # create a sudo user
 #useradd -m builder
@@ -14,64 +14,37 @@ sed -i.bak 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/
 service ssh restart
 
 mkdir -p /root/.aws
-sudo bash -c "cat >/root/.aws/config" << 'EOF'
+sudo bash -c "cat >/root/.aws/config" <<EOF
 [default]
 aws_access_key_id=${AWS_ACCESS_KEY}
 aws_secret_access_key=${AWS_SECRET_KEY}
 EOF
-sudo bash -c "cat >/root/.aws/credentials" << 'EOF'
+sudo bash -c "cat >/root/.aws/credentials" <<EOF
 [default]
 aws_access_key_id=${AWS_ACCESS_KEY}
 aws_secret_access_key=${AWS_SECRET_KEY}
+region=${AWS_REGION}
 EOF
 
 pip3 install botocore
 pip3 install boto3
 pip3 install mysql-connector-python
+pip3 install awscli
 
----------------------
-# export VAULT_ADDR='http://${VAULT_SERVER}:8200'
-# export VAULT_TOKEN='root'
+cd /root
+git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/kevincloud/hashistack-workshop.git
+cd /root/hashistack-workshop/apis
 
-# #
-# # configure vault
-# #
+#sudo aws s3 cp /var/www/html/online-store/productapi/images/ s3://${S3_BUCKET}/ --acl public-read
 
-# # enable approle authentication
-# curl \
-#     --header "X-Vault-Token: $VAULT_TOKEN" \
-#     --request POST \
-#     --data '{"type": "approle"}' \
-#     $VAULT_SERVER/v1/sys/auth/approle
+# load product data
+python3 ./scripts/product-load.py
 
-# # create a policy 
-# curl \
-#     --header "X-Vault-Token: $VAULT_TOKEN" \
-#     --request POST \
-#     --data '{"policy": "path \"secret/data/aws\" { capabilities = [\"read\", \"list\"] } path \"secret/cust-mgmt/*\" { capabilities = [\"create\",\"update\",\"read\",\"delete\"] }"}' \
-#     $VAULT_SERVER/v1/sys/policy/dev-policy
-
-# # create a role
-# curl \
-#     --header "X-Vault-Token: $VAULT_TOKEN" \
-#     --request POST \
-#     --data '{"policies": ["dev-policy"]}' \
-#     $VAULT_SERVER/v1/auth/approle/role/dev-role
-
-# # get the role id
-# curl \
-#     -s -q \
-#     --header "X-Vault-Token: $VAULT_TOKEN" \
-#     $VAULT_SERVER/v1/auth/approle/role/dev-role/role-id | jq .data.role_id
-
-# # get the secret id
-# curl \
-#     -s -q \
-#     --header "X-Vault-Token: $VAULT_TOKEN" \
-#     --request POST \
-#     $VAULT_SERVER/v1/auth/approle/role/dev-role/secret-id | jq .data.secret_id
-
-# curl --request POST --data '{ "role_id": "...", "secret_id": "..." }' $VAULT_SERVER/v1/auth/approle/login | jq
-
-# curl --header "X-Vault-Token: ..." --request GET http://54.196.140.114:8200/v1/secret/data/aws | jq
-
+# create customer-app image
+cd ./productapi
+docker build -t product-app:product-app .
+aws ecr get-login --region ${AWS_REGION} --no-include-email > login.sh
+chmod a+x login.sh
+./login.sh
+docker tag product-app:product-app ${REPO_URL}:product-app
+docker push ${REPO_URL}:product-app

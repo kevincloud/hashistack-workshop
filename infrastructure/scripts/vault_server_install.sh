@@ -52,13 +52,13 @@ EOF
 
 sudo bash -c "cat >/etc/vault.d/access-creds.json" <<EOF
 {
-    "policy": "path \"secret/creds\" {\n  capabilities = [\"read\"]\n}\n"
+    "policy": "path \"secret/aws\" {\n  capabilities = [\"read\"]\n}\n"
 }
 EOF
 
 sudo bash -c "cat >/etc/vault.d/nomad-cluster-role.json" <<EOF
 {
-  "allowed_policies": "access-tables",
+  "allowed_policies": "access-creds",
   "explicit_max_ttl": 0,
   "name": "nomad-cluster",
   "orphan": true,
@@ -88,8 +88,8 @@ curl \
 
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
-    --request POST
-    --data @/etc/vault.d/nomad-cluster-role.json
+    --request POST \
+    --data @/etc/vault.d/nomad-cluster-role.json \
     http://127.0.0.1:8200/v1/auth/token/roles/nomad-cluster
 
 sudo vault 

@@ -90,7 +90,13 @@ data "aws_iam_policy_document" "full-s3-access" {
     resources = ["*"]
 
     actions = [
-      "s3:*"
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetRepositoryPolicy",
+        "ecr:DescribeRepositories",
+        "ecr:ListImages",
+        "ecr:BatchGetImage"
     ]
   }
 }

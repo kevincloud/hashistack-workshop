@@ -6,24 +6,13 @@ data "template_file" "work_install" {
         ROOT_PASSWORD = "${var.root_pass}"
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
+        AWS_REGION = "${var.aws_region}"
+        REPO_URL = "${aws_ecr_repository.ecr-product-app.repository_url}"
+        S3_BUCKET = "${aws_s3_bucket.staticimg.id}"
+        GIT_USER = "${var.git_user}"
+        GIT_TOKEN = "${var.git_token}"
     }
 }
-
-# data "template_file" "app_creds" {
-#     template = "${file("${path.module}/scripts/appcreds.py")}"
-
-#     vars = {
-#         VAULT_SERVER = "${aws_instance.vault-server.public_ip}"
-#     }
-# }
-
-# data "template_file" "cust_app" {
-#     template = "${file("${path.module}/scripts/cust-app.py")}"
-
-#     vars = {
-#         VAULT_SERVER = "${aws_instance.vault-server.public_ip}"
-#     }
-# }
 
 resource "aws_instance" "working-env" {
     ami = "${data.aws_ami.ubuntu.id}"
