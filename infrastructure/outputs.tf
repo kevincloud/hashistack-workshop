@@ -1,11 +1,3 @@
-# output "public-ip" {
-#     value = "http://${aws_instance.working-env.public_ip}:5801/"
-# }
-
-# output "public-host" {
-#     value = "http://${aws_instance.working-env.public_dns}:5801/"
-# }
-
 output "vault-ip" {
     value = "${aws_instance.vault-server.public_ip}"
 }
@@ -16,6 +8,10 @@ output "mysql-host" {
 
 output "nomad-server" {
     value = "http://${aws_instance.nomad-server.public_ip}:4646/"
+}
+
+output "nomad-server-ssh" {
+    value = "ssh -i ~/keys/${var.key_pair}.pem ubuntu@${aws_instance.nomad-server.public_ip}"
 }
 
 output "consul-server" {
