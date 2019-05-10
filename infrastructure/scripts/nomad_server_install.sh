@@ -10,6 +10,8 @@ pip3 install awscli
 mkdir /etc/nomad.d
 mkdir -p /opt/nomad
 mkdir -p /opt/nomad/plugins
+mkdir -p /etc/consul.d
+mkdir -p /opt/consul
 mkdir -p /root/.aws
 
 sudo bash -c "cat >/root/.aws/config" << 'EOF'
@@ -28,7 +30,35 @@ wget https://releases.hashicorp.com/nomad/0.9.1/nomad_0.9.1_linux_amd64.zip
 sudo unzip nomad_0.9.1_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
-sudo bash -c "cat >/etc/nomad.d/nomad.hcl" << 'EOF'
+export VAULT_ADDR=http://${VAULT_IP}:8200
+export VAULT_TOKEN=root
+
+echo "Setting up environment variables..."
+echo "export VAULT_ADDR=http://${VAULT_IP}:8200" >> /home/ubuntu/.profile
+echo "export VAULT_TOKEN=root" >> /home/ubuntu/.profile
+echo "export VAULT_ADDR=http://${VAULT_IP}:8200" >> /root/.profile
+echo "export VAULT_TOKEN=root" >> /root/.profile
+
+sudo bash -c "cat >/etc/nomad.d/vault-token.json" <<EOF
+{
+  "policies": [
+    "nomad-server"
+  ],
+  "ttl": "72h",
+  "renewable": true,
+  "no_parent": true
+}
+EOF
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data @/etc/nomad.d/vault-token.json \
+    $VAULT_ADDR/v1/auth/token/create | jq . > /etc/nomad.d/token.json
+
+export CLIENT_TOKEN="$(cat /etc/nomad.d/token.json | jq -r .auth.client_token | tr -d '\n')"
+
+sudo bash -c "cat >/etc/nomad.d/nomad.hcl" <<EOF
 data_dir  = "/opt/nomad"
 plugin_dir = "/opt/nomad/plugins"
 bind_addr = "0.0.0.0"
@@ -46,6 +76,14 @@ consul {
     auto_advertise      = true
     server_auto_join    = true
     client_auto_join    = true
+}
+
+vault {
+  enabled          = true
+  address          = "http://${VAULT_IP}:8200"
+  task_token_ttl   = "1h"
+  create_from_role = "nomad-cluster"
+  token            = "$CLIENT_TOKEN"
 }
 
 server {
@@ -76,16 +114,21 @@ sudo systemctl start nomad
 sudo systemctl enable nomad
 
 echo "Installing Consul..."
+export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
 wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
 sudo unzip consul_1.4.4_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
-sudo bash -c "cat >/etc/consul.d/consul.json" << 'EOF'
+sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
 {
+    "bootstrap": false,
+    "datacenter": "dc1",
+    "bind_addr": "$CLIENT_IP",
     "data_dir": "/opt/consul",
-    "node_name": "consul-server",
+    "node_name": "consul-nomad-server",
+    "retry_join": ["${CONSUL_IP}"],
     "server": false,
-    "ui": false
+    "ui": true
 }
 EOF
 
@@ -114,5 +157,4 @@ EOF
 
 sudo systemctl enable consul
 sudo systemctl start consul
-
 echo "Nomad installation complete."

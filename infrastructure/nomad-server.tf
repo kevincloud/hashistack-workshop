@@ -4,6 +4,8 @@ data "template_file" "nomad-server-setup" {
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
+        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
+        VAULT_IP = "${aws_instance.vault-server.private_ip}"
     }
 }
 
@@ -13,6 +15,7 @@ resource "aws_instance" "nomad-server" {
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.nomad-server-sg.id}"]
     user_data = "${data.template_file.nomad-server-setup.rendered}"
+    subnet_id = "${aws_subnet.public-subnet.id}"
     iam_instance_profile = "${aws_iam_instance_profile.nomad-profile.id}"
     
     tags = {
@@ -23,7 +26,7 @@ resource "aws_instance" "nomad-server" {
 resource "aws_security_group" "nomad-server-sg" {
     name = "nomad-server-sg"
     description = "webserver security group"
-    vpc_id = "${data.aws_vpc.primary-vpc.id}"
+    vpc_id = "${aws_vpc.primary-vpc.id}"
 
     ingress {
         from_port = 22
@@ -68,7 +71,7 @@ resource "aws_security_group" "nomad-server-sg" {
     }
 }
 
-data "aws_iam_policy_document" "assume_role" {
+data "aws_iam_policy_document" "nomad-assume-role" {
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -87,14 +90,20 @@ data "aws_iam_policy_document" "full-s3-access" {
     resources = ["*"]
 
     actions = [
-      "s3:*"
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetRepositoryPolicy",
+        "ecr:DescribeRepositories",
+        "ecr:ListImages",
+        "ecr:BatchGetImage"
     ]
   }
 }
 
 resource "aws_iam_role" "full-s3-access" {
   name               = "full-s3-role-access"
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
+  assume_role_policy = "${data.aws_iam_policy_document.nomad-assume-role.json}"
 }
 
 resource "aws_iam_role_policy" "full-s3-access" {

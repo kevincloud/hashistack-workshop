@@ -4,6 +4,7 @@ data "template_file" "consul-server-setup" {
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
+        VAULT_IP = "${aws_instance.vault-server.private_ip}"
     }
 }
 
@@ -13,6 +14,7 @@ resource "aws_instance" "consul-server" {
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.consul-server-sg.id}"]
     user_data = "${data.template_file.consul-server-setup.rendered}"
+    subnet_id = "${aws_subnet.public-subnet.id}"
     iam_instance_profile = "${aws_iam_instance_profile.consul-profile.id}"
     
     tags = {
@@ -23,7 +25,7 @@ resource "aws_instance" "consul-server" {
 resource "aws_security_group" "consul-server-sg" {
     name = "consul-server-sg"
     description = "webserver security group"
-    vpc_id = "${data.aws_vpc.primary-vpc.id}"
+    vpc_id = "${aws_vpc.primary-vpc.id}"
 
     ingress {
         from_port = 22
@@ -41,7 +43,7 @@ resource "aws_security_group" "consul-server-sg" {
 
     ingress {
         from_port = 8300
-        to_port = 8300
+        to_port = 8303
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
