@@ -105,7 +105,7 @@ curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
     --data @/etc/nomad.d/vault-token.json \
-    $VAULT_ADDR/v1/auth/token/create | jq . > /etc/nomad.d/token.json
+    http://vault-main.service.dc1.consul:8200/v1/auth/token/create | jq . > /etc/nomad.d/token.json
 
 export CLIENT_TOKEN="$(cat /etc/nomad.d/token.json | jq -r .auth.client_token | tr -d '\n')"
 
@@ -122,7 +122,7 @@ ports {
 
 consul {
     address             = "127.0.0.1:8500"
-    server_service_name = "nomad"
+    server_service_name = "nomad-client"
     client_service_name = "nomad-client"
     auto_advertise      = true
     server_auto_join    = true

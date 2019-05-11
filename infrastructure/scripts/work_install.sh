@@ -49,3 +49,50 @@ chmod a+x login.sh
 docker tag product-app:product-app ${REPO_URL}:product-app
 docker push ${REPO_URL}:product-app
 
+curl \
+    http://nomad-server.service.dc1.consul:4646/v1/jobs \
+    --request POST \
+    --data @- <<PAYLOAD
+{
+    "Job": {
+        "ID": "product-api",
+        "Name": "product-api",
+        "Type": "service",
+        "Datacenters": ["dc1"],
+        "TaskGroups": [{
+            "Name": "product-api-group",
+            "Tasks": [{
+                "Name": "product-api",
+                "Driver": "docker",
+                "Vault": {
+                    "Policies": ["access-creds"]
+                },
+                "Config": {
+                    "image": "https://753646501470.dkr.ecr.us-east-1.amazonaws.com/product-app:product-app",
+                    "port_map": [{
+                        "dns": 53,
+                        "http": 5821
+                    }]
+                },
+                "Templates": [{
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"us-east-1\"\n                ",
+                    "DestPath": "secrets/file.env",
+                    "Envvars": true
+                }],
+                "Resources": {
+                    "Networks": [{
+                        "DynamicPorts": [{
+                            "Label": "http",
+                            "Value": 0
+                        }]
+                    }]
+                },
+                "Services": [{
+                    "Name": "productapi",
+                    "PortLabel": "http"
+                }]
+            }]
+        }]
+    }
+}
+PAYLOAD

@@ -14,6 +14,7 @@ job "product-api-job" {
 
                 port_map {
                     http = 5821
+                    dns = 53
                 }
             }
 
@@ -33,6 +34,9 @@ AWS_REGION = "us-east-1"
             resources {
                 network {
                     port "http" {}
+                    port "dns" {
+                        static = "8600"
+                    }
                 }
             }
 

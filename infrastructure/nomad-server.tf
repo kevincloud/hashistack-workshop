@@ -20,6 +20,8 @@ resource "aws_instance" "nomad-server" {
     tags = {
         Name = "nomad-server"
     }
+
+    depends_on = ["aws_instance.vault-server", "aws_instance.consul-server"]
 }
 
 resource "aws_security_group" "nomad-server-sg" {

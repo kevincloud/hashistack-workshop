@@ -34,6 +34,8 @@ resource "aws_instance" "nomad-client-1" {
     tags = {
         Name = "nomad-client-1"
     }
+
+    depends_on = ["aws_instance.nomad-server"]
 }
 
 resource "aws_instance" "nomad-client-2" {
@@ -48,4 +50,6 @@ resource "aws_instance" "nomad-client-2" {
     tags = {
         Name = "nomad-client-2"
     }
+
+    depends_on = ["aws_instance.nomad-server"]
 }

@@ -1,7 +1,7 @@
-provider "consul" {
-  address    = "${aws_instance.consul-server.private_ip}:80"
-  datacenter = "dc1"
-}
+# provider "consul" {
+#   address    = "${aws_instance.consul-server.private_ip}:80"
+#   datacenter = "dc1"
+# }
 
 data "template_file" "vault_setup" {
     template = "${file("${path.module}/scripts/vault_server_install.sh")}"

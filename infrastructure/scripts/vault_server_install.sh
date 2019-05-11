@@ -7,7 +7,8 @@ sudo apt-get -y update > /dev/null 2>&1
 sudo apt-get -y upgrade > /dev/null 2>&1
 sudo apt install -y unzip jq cowsay mysql-client > /dev/null 2>&1
 
-mkdir -p etc/vault.d
+mkdir -p /etc/vault.d
+mkdir -p /etc/consul.d
 
 echo "Installing Vault..."
 wget https://releases.hashicorp.com/vault/1.0.3/vault_1.0.3_linux_amd64.zip
@@ -32,7 +33,7 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl start vault
-sudo systemctl enable myservice
+sudo systemctl enable vault
 
 echo "Installing Consul..."
 export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
@@ -155,3 +156,4 @@ curl \
 PAYLOAD
 
 echo "Vault installation complete."
+
