@@ -4,7 +4,6 @@ data "template_file" "consul-server-setup" {
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
-        VAULT_IP = "${aws_instance.vault-server.private_ip}"
     }
 }
 

@@ -33,10 +33,59 @@ EOF
 
 sudo systemctl start vault
 sudo systemctl enable myservice
-export VAULT_ADDR=http://localhost:8200
-export VAULT_TOKEN=root
+
+echo "Installing Consul..."
+export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
+wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
+sudo unzip consul_1.4.4_linux_amd64.zip -d /usr/local/bin/
+
+# Server configuration
+sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
+{
+    "datacenter": "dc1",
+    "bind_addr": "$CLIENT_IP",
+    "data_dir": "/opt/consul",
+    "node_name": "consul-vault",
+    "retry_join": ["${CONSUL_IP}"],
+    "server": false
+}
+EOF
+
+# Set Consul up as a systemd service
+echo "Installing systemd service for Consul..."
+sudo bash -c "cat >/etc/systemd/system/consul.service" << 'EOF'
+[Unit]
+Description=Hashicorp Consul
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/usr/local/bin/consul agent -config-file=/etc/consul.d/consul.json
+Restart=on-failure # or always, on-abort, etc
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl enable consul
+sudo systemctl start consul
+
+echo "Configure Consul..."
+sudo printf "DNS=127.0.0.1\nDomains=~consul" >> /etc/systemd/resolved.conf
+sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT --to-ports 8600
+sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
+sudo service systemd-resolved restart
 
 echo "Setting up environment variables..."
+export VAULT_ADDR=http://localhost:8200
+export VAULT_TOKEN=root
 echo "export VAULT_ADDR=http://localhost:8200" >> /home/ubuntu/.profile
 echo "export VAULT_TOKEN=root" >> /home/ubuntu/.profile
 echo "export MYSQL_HOST=${MYSQL_HOST}" >> /home/ubuntu/.profile
@@ -52,13 +101,13 @@ EOF
 
 sudo bash -c "cat >/etc/vault.d/access-creds.json" <<EOF
 {
-    "policy": "path \"secret/aws\" {\n  capabilities = [\"read\"]\n}\n"
+    "policy": "path \"secret/data/aws\" {\n  capabilities = [\"read\", \"list\"]\n}\n"
 }
 EOF
 
 sudo bash -c "cat >/etc/vault.d/nomad-cluster-role.json" <<EOF
 {
-  "allowed_policies": "access-creds",
+  "disallowed_policies": "nomad-server",
   "explicit_max_ttl": 0,
   "name": "nomad-cluster",
   "orphan": true,
@@ -67,12 +116,13 @@ sudo bash -c "cat >/etc/vault.d/nomad-cluster-role.json" <<EOF
 }
 EOF
 
-# Add our AWS secrets
+echo "Configuring Vault..."
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
     --data '{"data": { "aws_access_key": "${AWS_ACCESS_KEY}", "aws_secret_key": "${AWS_SECRET_KEY}" } }' \
     http://127.0.0.1:8200/v1/secret/data/aws
+
 
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
@@ -92,5 +142,16 @@ curl \
     --data @/etc/vault.d/nomad-cluster-role.json \
     http://127.0.0.1:8200/v1/auth/token/roles/nomad-cluster
 
-sudo vault 
+echo "Register with Consul"
+curl \
+    http://127.0.0.1:8500/v1/agent/service/register \
+    --request PUT \
+    --data @- <<PAYLOAD
+{
+    "ID": "vault-main",
+    "Name": "vault-main",
+    "Port": 8200
+}
+PAYLOAD
+
 echo "Vault installation complete."

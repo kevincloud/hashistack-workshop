@@ -38,7 +38,7 @@ cd /root/hashistack-workshop/apis
 #sudo aws s3 cp /var/www/html/online-store/productapi/images/ s3://${S3_BUCKET}/ --acl public-read
 
 # load product data
-python3 ./scripts/product-load.py
+python3 ./scripts/product_load.py
 
 # create customer-app image
 cd ./productapi
@@ -48,3 +48,4 @@ chmod a+x login.sh
 ./login.sh
 docker tag product-app:product-app ${REPO_URL}:product-app
 docker push ${REPO_URL}:product-app
+

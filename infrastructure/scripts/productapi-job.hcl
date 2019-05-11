@@ -19,14 +19,14 @@ job "product-api-job" {
 
             template {
                 data = <<EOF
-{{with secret "secret/aws"}}
-AWS_ACCESS_KEY="{{.Data.aws_access_key}}"
-AWS_SECRET_KEY="{{.Data.aws_secret_key}}"
+{{with secret "secret/data/aws"}}
+AWS_ACCESS_KEY = "{{.Data.data.aws_access_key}}"
+AWS_SECRET_KEY = "{{.Data.data.aws_secret_key}}"
 {{end}}
-AWS_REGION=us-east-1
+AWS_REGION = "us-east-1"
                 EOF
 
-                destination = "secrets/aws.env"
+                destination = "secrets/file.env"
                 env = true
             }
 

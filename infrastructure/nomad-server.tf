@@ -5,7 +5,6 @@ data "template_file" "nomad-server-setup" {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         CONSUL_IP = "${aws_instance.consul-server.private_ip}"
-        VAULT_IP = "${aws_instance.vault-server.private_ip}"
     }
 }
 
@@ -61,6 +60,13 @@ resource "aws_security_group" "nomad-server-sg" {
         to_port = 4648
         protocol = "udp"
         cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    ingress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["10.0.0.0/16"]
     }
 
     egress {
