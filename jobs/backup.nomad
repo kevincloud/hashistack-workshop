@@ -1,4 +1,4 @@
-job "buyer" {
+job "backup" {
   datacenters = ["dc1"]
 
   type = "batch"
@@ -9,12 +9,7 @@ job "buyer" {
     time_zone = "America/New_York"
   }
 
-  group "analysis" {
-    # TODO: add docker volume dumps for mongo and other dbs
-    #task "docker-volumes" {
-    #}
-
-    # TODO: add more robustness (i.e. a gutil task to backup to bucket)
+  group "data" {
     task "consul" {
       driver = "exec"
 

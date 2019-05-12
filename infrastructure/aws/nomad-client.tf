@@ -5,9 +5,7 @@ data "template_file" "nomad-client-setup-1" {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         AWS_REGION = "${var.aws_region}"
-        NOMAD_SERVER = "${aws_instance.nomad-server.private_ip}"
         CONSUL_IP = "${aws_instance.consul-server.private_ip}"
-        VAULT_IP = "${aws_instance.vault-server.private_ip}"
         CLIENT_NAME = "client1"
     }
 }
@@ -19,9 +17,7 @@ data "template_file" "nomad-client-setup-2" {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         AWS_REGION = "${var.aws_region}"
-        NOMAD_SERVER = "${aws_instance.nomad-server.private_ip}"
         CONSUL_IP = "${aws_instance.consul-server.private_ip}"
-        VAULT_IP = "${aws_instance.vault-server.private_ip}"
         CLIENT_NAME = "client2"
     }
 }
@@ -38,6 +34,8 @@ resource "aws_instance" "nomad-client-1" {
     tags = {
         Name = "nomad-client-1"
     }
+
+    depends_on = ["aws_instance.nomad-server"]
 }
 
 resource "aws_instance" "nomad-client-2" {
@@ -52,4 +50,6 @@ resource "aws_instance" "nomad-client-2" {
     tags = {
         Name = "nomad-client-2"
     }
+
+    depends_on = ["aws_instance.nomad-server"]
 }

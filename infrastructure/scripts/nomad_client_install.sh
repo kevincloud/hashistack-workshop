@@ -34,18 +34,67 @@ sudo bash -c "cat >/etc/docker/config.json" <<EOF
 }
 EOF
 
+echo "Installing Consul..."
+export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
+wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
+sudo unzip consul_1.4.4_linux_amd64.zip -d /usr/local/bin/
+
+# Server configuration
+sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
+{
+    "datacenter": "dc1",
+    "bind_addr": "$CLIENT_IP",
+    "data_dir": "/opt/consul",
+    "node_name": "consul-${CLIENT_NAME}",
+    "retry_join": ["${CONSUL_IP}"],
+    "server": false
+}
+EOF
+
+# Set Consul up as a systemd service
+echo "Installing systemd service for Consul..."
+sudo bash -c "cat >/etc/systemd/system/consul.service" << 'EOF'
+[Unit]
+Description=Hashicorp Consul
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/usr/local/bin/consul agent -config-file=/etc/consul.d/consul.json
+Restart=on-failure # or always, on-abort, etc
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl enable consul
+sudo systemctl start consul
+
+echo "Configure Consul..."
+sudo printf "DNS=127.0.0.1\nDomains=~consul" >> /etc/systemd/resolved.conf
+sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT --to-ports 8600
+sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
+sudo service systemd-resolved restart
+
 echo "Installing Nomad..."
 wget https://releases.hashicorp.com/nomad/0.9.1/nomad_0.9.1_linux_amd64.zip
 sudo unzip nomad_0.9.1_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
-export VAULT_ADDR=http://${VAULT_IP}:8200
+export VAULT_ADDR=http://vault-main.service.dc1.consul:8200
 export VAULT_TOKEN=root
 
 echo "Setting up environment variables..."
-echo "export VAULT_ADDR=http://${VAULT_IP}:8200" >> /home/ubuntu/.profile
+echo "export VAULT_ADDR=http://vault-main.service.dc1.consul:8200" >> /home/ubuntu/.profile
 echo "export VAULT_TOKEN=root" >> /home/ubuntu/.profile
-echo "export VAULT_ADDR=http://${VAULT_IP}:8200" >> /root/.profile
+echo "export VAULT_ADDR=http://vault-main.service.dc1.consul:8200" >> /root/.profile
 echo "export VAULT_TOKEN=root" >> /root/.profile
 echo "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY}" >> /root/.profile
 echo "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_KEY}" >> /root/.profile
@@ -103,10 +152,7 @@ consul {
 
 vault {
   enabled          = true
-  address          = "http://${VAULT_IP}:8200"
-  task_token_ttl   = "1h"
-  create_from_role = "nomad-cluster"
-  token            = "$CLIENT_TOKEN"
+  address          = "http://vault-main.service.dc1.consul:8200"
 }
 
 client {
@@ -115,7 +161,7 @@ client {
     options {
         "driver.raw_exec.enable" = "1"
     }
-    servers = ["${NOMAD_SERVER}:4647"]
+    servers = ["nomad-server.service.dc1.consul:4647"]
     options   = {
         "docker.auth.config"     = "/etc/docker/config.json"
         "docker.auth.helper"     = "ecr-login"
@@ -143,51 +189,6 @@ EOF
 
 sudo systemctl enable nomad
 sudo systemctl start nomad
-
-echo "Installing Consul..."
-export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
-wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
-sudo unzip consul_1.4.4_linux_amd64.zip -d /usr/local/bin/
-
-# Server configuration
-sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
-{
-    "bootstrap": false,
-    "datacenter": "dc1",
-    "bind_addr": "$CLIENT_IP",
-    "data_dir": "/opt/consul",
-    "node_name": "consul-${CLIENT_NAME}",
-    "retry_join": ["${CONSUL_IP}"],
-    "server": false,
-    "ui": true
-}
-EOF
-
-# Set Consul up as a systemd service
-echo "Installing systemd service for Consul..."
-sudo bash -c "cat >/etc/systemd/system/consul.service" << 'EOF'
-[Unit]
-Description=Hashicorp Consul
-Documentation=https://www.consul.io/
-Requires=network-online.target
-After=network-online.target
-
-[Service]
-Type=simple
-User=root
-WorkingDirectory=/root
-ExecStart=/usr/local/bin/consul agent -config-file=/etc/consul.d/consul.json
-Restart=on-failure # or always, on-abort, etc
-ExecReload=/bin/kill -HUP $MAINPID
-KillSignal=SIGTERM
-LimitNOFILE=65536
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-sudo systemctl enable consul
-sudo systemctl start consul
 
 cd /root
 go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login

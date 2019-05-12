@@ -1,3 +1,8 @@
+# provider "consul" {
+#   address    = "${aws_instance.consul-server.private_ip}:80"
+#   datacenter = "dc1"
+# }
+
 data "template_file" "vault_setup" {
     template = "${file("${path.module}/scripts/vault_server_install.sh")}"
 
@@ -5,6 +10,7 @@ data "template_file" "vault_setup" {
         MYSQL_HOST = "${aws_db_instance.vault-mysql.address}:${aws_db_instance.vault-mysql.port}"
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
+        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
     }
 }
 

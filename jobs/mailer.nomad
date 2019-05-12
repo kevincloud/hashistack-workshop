@@ -9,15 +9,16 @@ job "mailer" {
       task "listen" {
         driver = "docker"
 
+        # need to add all of these with envconsul
         env {
-          API_TOKEN = "961e7613c117fe759727f8efd888f8c6-us17"
-          LIST_ID = "4eb83a1bfc"
-          AUTH_NAME = "candystripedgrenade"
+          API_TOKEN = ""
+          LIST_ID = ""
+          AUTH_NAME = ""
         }
 
         artifact {
           # could also elect to use the sshkey option too if you wanted
-          source      = "git::https://f2193f41ee06f37c24d8c71a7676fb991a342b41@github.com/joshuaNjordan85/mailer"
+          source      = "git::https:$TOKEN//@github.com/joshuaNjordan85/mailer"
           destination = "local/mailer"
         }
 
@@ -25,9 +26,9 @@ job "mailer" {
           image = "joshuanjordan/mailer-node:latest"
 
           auth {
-            username = "joshuanjordan"
-            password  = "Dub792Pat254$"
-            email = "joshuanjordan@gmail.com"
+            username = ""
+            password  = ""
+            email = ""
           }
 
           volumes = [

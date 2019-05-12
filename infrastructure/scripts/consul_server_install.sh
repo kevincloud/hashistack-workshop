@@ -41,18 +41,6 @@ sudo bash -c "cat >/etc/consul.d/consul-server.json" <<EOF
 }
 EOF
 
-sudo bash -c "cat >/etc/consul.d/vault-server.json" <<EOF
-{
-    "service": {
-        "id": "vault",
-        "name": "vault",
-        "tags": ["primary"],
-        "address": "vault.service.dc1.consul",
-        "port": 8200
-    }
-}
-EOF
-
 # Set Consul up as a systemd service
 echo "Installing systemd service for Consul..."
 sudo bash -c "cat >/etc/systemd/system/consul.service" << 'EOF'
