@@ -1,9 +1,8 @@
-// 5 Consul Nodes
 resource "google_compute_instance" "consul-server" {
   count        = "${var.counts["consul-server"]}"
   name         = "consul-server-${count.index}"
   machine_type = "${var.machineTypes["consul-server"]}"
-  zone         = "${var.region}-a"
+  zone         = "${var.region}-${var.zone}"
   tags         = ["${var.consulNetworkTag["dc1"]}", "consul-server", "http-server"]
 
   metadata {
@@ -22,7 +21,7 @@ resource "google_compute_instance" "consul-server" {
   }
 
   network_interface {
-    network = "${module.vpc.network_self_link}"
+    network    = "${module.vpc.network_self_link}"
     subnetwork = "${element(module.vpc.subnets_self_links, 0)}"
 
     access_config {
@@ -39,9 +38,10 @@ resource "google_compute_instance" "consul-server" {
 
     inline = [
       "sudo apt-get -y update",
-      "sudo apt-get -y install unzip",
+      "sudo apt-get -y install unzip curl",
       "mkdir /home/${var.userName}/consul.d",
       "mkdir /home/${var.userName}/consul.d/data",
+      "curl -fs https://releases.hashicorp.com/consul/${var.consul["version"]}/consul_${var.consul["version"]}_${var.consul["downloadPath"]}.zip -o /home/${var.userName}/consul.zip",
     ]
   }
 
@@ -79,17 +79,6 @@ resource "google_compute_instance" "consul-server" {
       private_key = "${file("/Users/${var.userName}/.ssh/id_rsa")}"
     }
 
-    source      = "${var.localPath}/binaries/consul_${var.consulVersion}_linux_amd64.zip"
-    destination = "/home/${var.userName}/consul_${var.consulVersion}_linux_amd64.zip"
-  }
-
-  provisioner "file" {
-    connection {
-      type        = "ssh"
-      user        = "${var.userName}"
-      private_key = "${file("/Users/${var.userName}/.ssh/id_rsa")}"
-    }
-
     content     = "${data.template_file.consul-systemd-server.rendered}"
     destination = "/home/${var.userName}/consul-server.service"
   }
@@ -102,9 +91,9 @@ resource "google_compute_instance" "consul-server" {
     }
 
     inline = [
-      "unzip /home/${var.userName}/*.zip",
+      "unzip /home/${var.userName}/consul.zip",
       "sudo mv /home/${var.userName}/consul /bin/",
-      "sudo rm /home/${var.userName}/*.zip",
+      "sudo rm /home/${var.userName}/consul.zip",
       "sudo mv /home/${var.userName}/*.service /etc/systemd/system/",
       "sudo systemctl start consul-server",
     ]

@@ -23,6 +23,32 @@ data "template_file" "consul-systemd-client" {
   }
 }
 
+data "template_file" "consul-systemd-template" {
+  template = "${file("${var.localPath}/templates/systemd/consul-template.tpl")}"
+
+  vars {
+    userName = "${var.userName}"
+  }
+}
+
+data "template_file" "nomad-systemd-client" {
+  template = "${file("${var.localPath}/templates/systemd/nomad.tpl")}"
+
+  vars {
+    userName = "${var.userName}"
+    hclPath  = "client"
+  }
+}
+
+data "template_file" "nomad-systemd-server" {
+  template = "${file("${var.localPath}/templates/systemd/nomad.tpl")}"
+
+  vars {
+    userName = "${var.userName}"
+    hclPath  = "server"
+  }
+}
+
 #You will need to set your GOOGLE_CREDENTIALS env variable
 provider "google" {
   project = "${var.projectName}"
@@ -35,20 +61,13 @@ module "vpc" {
   version = "0.6.0"
 
   project_id   = "${var.projectName}"
-  network_name = "vault-poc"
+  network_name = "${var.networkName}"
 
   subnets = [
     {
       subnet_name           = "primary"
-      subnet_ip             = "10.10.10.0/24"
+      subnet_ip             = "10.10.10.0/28"
       subnet_region         = "${var.region}"
-      subnet_private_access = "true"
-      subnet_flow_logs      = "true"
-    },
-    {
-      subnet_name           = "secondary"
-      subnet_ip             = "10.10.20.0/24"
-      subnet_region         = "${var.regionSecondary}"
       subnet_private_access = "true"
       subnet_flow_logs      = "true"
     },
@@ -56,50 +75,37 @@ module "vpc" {
 
   secondary_ranges = {
     primary = []
-    secondary = []
   }
 }
 
-#FIREWALLS: VAULT & CONSUL (TCP)
+#FIREWALLS: VAULT, NOMAD, & CONSUL (TCP)
 resource "google_compute_firewall" "allow-tcp" {
   provider = "google"
-  name     = "allow-tcp-east"
+  name     = "allow-tcp-${var.networkName}"
   network  = "${module.vpc.network_self_link}"
 
   allow {
     protocol = "tcp"
-    ports    = ["8300", "8301", "8302", "8500", "8200", "8201"]
+    ports    = ["8200", "8201", "8300", "8301", "8302", "8500", "4646", "4647", "4648"]
   }
 }
 
-#FIREWALLS: VAULT & CONSUL (UDP)
+#FIREWALLS: VAULT, NOMAD, & CONSUL (UDP)
 resource "google_compute_firewall" "allow-udp" {
   provider = "google"
-  name     = "allow-udp-east"
+  name     = "allow-udp-${var.networkName}"
   network  = "${module.vpc.network_self_link}"
 
   allow {
     protocol = "udp"
-    ports    = ["8301", "8302"]
-  }
-}
-
-# FIREWALL FOR CASSANDRA DB
-resource "google_compute_firewall" "allow-cassandra-access" {
-  provider = "google"
-  name = "db-east"
-  network  = "${module.vpc.network_self_link}"
-
-  allow {
-    protocol = "tcp"
-    ports = ["7000", "7001", "7199", "9042", "9160", "9142"]
+    ports    = ["8301", "8302", "4648"]
   }
 }
 
 #FIREWALLS: HTTP/S ++ :8080
 resource "google_compute_firewall" "allow-service-access" {
   provider = "google"
-  name     = "http-fun"
+  name     = "http-${var.networkName}"
   network  = "${module.vpc.network_self_link}"
 
   allow {
@@ -111,7 +117,7 @@ resource "google_compute_firewall" "allow-service-access" {
 #FIREWALLS: SSH
 resource "google_compute_firewall" "allow-ssh" {
   provider = "google"
-  name     = "ssh-east"
+  name     = "ssh-${var.networkName}"
   network  = "${module.vpc.network_self_link}"
 
   allow {

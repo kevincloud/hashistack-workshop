@@ -4,13 +4,16 @@ variable "region" {
   type = "string"
 }
 
-// The GCP region you want to deploy your secondary Vault cluster in (i.e. us-east1)
-variable "regionSecondary" {
+variable "zone" {
   type = "string"
 }
 
 // The name of your project in GCP
 variable "projectName" {
+  type = "string"
+}
+
+variable "networkName" {
   type = "string"
 }
 
@@ -50,10 +53,40 @@ variable "consulNetworkTag" {
 }
 
 // CONFIGURABLE: which means you can change them and they will automatically be used
-// ******DON'T CHANGE THIS ONE******; I've only provided the consul 1.4 OSS binary so changing this will break your world and make you cry
-variable "consulVersion" {
-  type    = "string"
-  default = "1.4.0"
+variable "consul" {
+  type = "map"
+
+  default = {
+    "version"      = "1.5.0"
+    "downloadPath" = "linux_amd64"
+  }
+}
+
+variable "vault" {
+  type = "map"
+
+  default = {
+    "version"      = "1.1.2"
+    "downloadPath" = "linux_amd64"
+  }
+}
+
+variable "nomad" {
+  type = "map"
+
+  default = {
+    "version"      = "0.9.1"
+    "downloadPath" = "linux_amd64"
+  }
+}
+
+variable "consul_template" {
+  type = "map"
+
+  default = {
+    "version"      = "0.20.0"
+    "downloadPath" = "linux_amd64"
+  }
 }
 
 // You shouldn't need to change this unless you want to use larger versions, this information comes directly from our deployment guide and for the POC I see little reason to use larger instance types.
@@ -61,8 +94,10 @@ variable "machineTypes" {
   type = "map"
 
   default = {
-    "consul-server" = "n1-standard-2"
+    "consul-server" = "n1-standard-8"
     "vault-client"  = "n1-standard-2"
+    "nomad-server"  = "n1-standard-8"
+    "nomad-client"  = "n1-standard-2"
   }
 }
 
@@ -71,8 +106,10 @@ variable "counts" {
   type = "map"
 
   default = {
-    "consul-server" = 5
-    "vault-client"  = 3
+    "consul-server" = 3
+    "vault-client"  = 2
+    "nomad-server"  = 3
+    "nomad-client"  = 3
   }
 }
 

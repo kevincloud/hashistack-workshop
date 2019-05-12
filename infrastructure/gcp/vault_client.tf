@@ -4,7 +4,7 @@ resource "google_compute_instance" "vault-client" {
   count        = "${var.counts["vault-client"]}"
   name         = "vault-client-${count.index}"
   machine_type = "${var.machineTypes["vault-client"]}"
-  zone         = "${var.region}-a"
+  zone         = "${var.region}-${var.zone}"
   tags         = ["${var.consulNetworkTag["dc1"]}", "consul-client", "http-server"]
 
   metadata {
@@ -23,7 +23,7 @@ resource "google_compute_instance" "vault-client" {
   }
 
   network_interface {
-    network = "${module.vpc.network_self_link}"
+    network    = "${module.vpc.network_self_link}"
     subnetwork = "${element(module.vpc.subnets_self_links, 0)}"
 
     access_config {
@@ -42,6 +42,8 @@ resource "google_compute_instance" "vault-client" {
       "sudo apt-get -y update",
       "sudo apt-get -y install unzip apt-transport-https ca-certificates curl gnupg2 software-properties-common",
       "sudo apt-get -y update",
+      "curl -fs https://releases.hashicorp.com/consul/${var.consul["version"]}/consul_${var.consul["version"]}_${var.consul["downloadPath"]}.zip -o /home/${var.userName}/consul.zip",
+      "curl -fs https://releases.hashicorp.com/vault/${var.vault["version"]}/vault_${var.vault["version"]}_${var.vault["downloadPath"]}.zip -o /home/${var.userName}/vault.zip",
       "mkdir /home/${var.userName}/vault.d",
       "mkdir /home/${var.userName}/consul.d",
       "mkdir /home/${var.userName}/consul.d/data",
@@ -91,28 +93,6 @@ resource "google_compute_instance" "vault-client" {
       private_key = "${file("/Users/${var.userName}/.ssh/id_rsa")}"
     }
 
-    source      = "${var.localPath}/binaries/consul_${var.consulVersion}_linux_amd64.zip"
-    destination = "/home/${var.userName}/consul_${var.consulVersion}_linux_amd64.zip"
-  }
-
-  provisioner "file" {
-    connection {
-      type        = "ssh"
-      user        = "${var.userName}"
-      private_key = "${file("/Users/${var.userName}/.ssh/id_rsa")}"
-    }
-
-    source      = "${var.localPath}/binaries/vault-enterprise_1.0.3+prem_linux_amd64.zip"
-    destination = "/home/${var.userName}/vault-enterprise_1.0.3+prem_linux_amd64.zip"
-  }
-
-  provisioner "file" {
-    connection {
-      type        = "ssh"
-      user        = "${var.userName}"
-      private_key = "${file("/Users/${var.userName}/.ssh/id_rsa")}"
-    }
-
     content = <<JSON
     {
       ${jsonencode("service")}: {
@@ -141,7 +121,7 @@ resource "google_compute_instance" "vault-client" {
       ${jsonencode("data_dir")}: ${jsonencode("/home/${var.userName}/consul.d/data")},
       ${jsonencode("bind_addr")}: ${jsonencode("0.0.0.0")},
       ${jsonencode("client_addr")}: ${jsonencode("0.0.0.0")},
-      ${jsonencode("retry_join")}: ${jsonencode("${list("provider=gce project_name=${var.userName}-test tag_value=${var.consulNetworkTag["dc1"]}")}")},
+      ${jsonencode("retry_join")}: ${jsonencode("${list("provider=gce project_name=${var.projectName} tag_value=${var.consulNetworkTag["dc1"]}")}")},
       ${jsonencode("log_level")}: ${jsonencode("DEBUG")},
       ${jsonencode("enable_syslog")}: true,
       ${jsonencode("acl_enforce_version_8")}: false
@@ -181,13 +161,13 @@ resource "google_compute_instance" "vault-client" {
     }
 
     inline = [
-      "unzip /home/${var.userName}/vault-enterprise_1.0.3+prem_linux_amd64.zip",
-      "unzip /home/${var.userName}/consul_${var.consulVersion}_linux_amd64.zip",
+      "unzip /home/${var.userName}/vault.zip",
+      "unzip /home/${var.userName}/consul.zip",
       "sudo mv /home/${var.userName}/consul /bin/",
       "sudo mv /home/${var.userName}/vault /bin/",
       "sudo setcap cap_ipc_lock=+ep /bin/vault",
-      "rm /home/${var.userName}/vault-enterprise_1.0.3+prem_linux_amd64.zip",
-      "rm /home/${var.userName}/consul_${var.consulVersion}_linux_amd64.zip",
+      "rm /home/${var.userName}/vault.zip",
+      "rm /home/${var.userName}/consul.zip",
       "sudo mv /home/${var.userName}/*.service /etc/systemd/system/",
       "sudo systemctl start consul-client",
       "sudo systemctl start vault",
