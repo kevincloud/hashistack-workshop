@@ -63,7 +63,7 @@ class Product {
 	{
 		if (!isBlank($pid))
 		{
-			$request = $this->api."/detail/".$pid;
+			$request = $this->ProductAPI."/detail/".$pid;
 			$row = "";
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $request);
