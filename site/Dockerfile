@@ -11,13 +11,15 @@ RUN apt-get -y remove apache2
 RUN rm -rf /var/www/html/*
 RUN mkdir -p /var/run/php
 
-COPY ./site/* /var/www/html/
+ADD site /var/www/html/
 
 RUN chown -R www-data:www-data /var/www/html
 
 COPY nginx-default.conf /etc/nginx/sites-enabled/default
 
 RUN sed -i -e 's/^;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/7.2/fpm/php.ini
+
+RUN sed -i 's/^\(display_errors\s*=\s*\).*$/\1On/' /etc/php/7.2/fpm/php.ini
 
 COPY supervisord.conf /etc/supervisord.conf
 

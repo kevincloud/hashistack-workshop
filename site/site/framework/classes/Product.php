@@ -145,9 +145,7 @@ class Product {
 		$first = true;
 		$isthis = "";
 		$excerptid = "";
-		
-		$this->CalculateValues();
-		
+				
 		$out .= "<div id=\"fb-root\"></div>\n";
 		$out .= "<script>(function(d, s, id) {\n";
 		$out .= "  var js, fjs = d.getElementsByTagName(s)[0];\n";
