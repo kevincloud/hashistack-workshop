@@ -11,3 +11,5 @@
 #MacOS files
 .DS_Store
 
+# Local hardcoded
+**/*.vars
