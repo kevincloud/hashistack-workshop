@@ -107,7 +107,7 @@ cd /root/hashistack-workshop/site
 sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
 <?php
 \$consulurl = "http://${CONSUL_IP}:8500/v1/catalog/service/product-api";
-\$assetbucket = "https://s3-${AWS_REGION}.amazonaws.com/${S3_BUCKET}/"
+\$assetbucket = "https://s3.amazonaws.com/${S3_BUCKET}/"
 ?>
 EOF
 

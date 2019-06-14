@@ -8,6 +8,7 @@ resource "aws_ecr_repository" "ecr-online-store" {
 
 resource "aws_s3_bucket" "staticimg" {
     bucket = "hc-workshop-2.0-assets"
+    acl = "public-read"
     force_destroy = true
 }
 
@@ -20,14 +21,11 @@ resource "aws_s3_bucket_policy" "staticimgpol" {
   "Id": "ImageBucketPolicy",
   "Statement": [
     {
-      "Sid": "IPAllow",
-      "Effect": "Deny",
+      "Sid": "PublicReadForGetBucketObjects",
+      "Effect": "Allow",
       "Principal": "*",
       "Action": ["s3:GetObject"],
       "Resource": "arn:aws:s3:::${aws_s3_bucket.staticimg.id}/*",
-      "Condition": {
-         "IpAddress": {"aws:SourceIp": "0.0.0.0/0"}
-      }
     }
   ]
 }
