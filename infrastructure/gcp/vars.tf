@@ -57,7 +57,7 @@ variable "consul" {
   type = "map"
 
   default = {
-    "version"      = "1.5.0"
+    "version"      = "1.5.1"
     "downloadPath" = "linux_amd64"
   }
 }
@@ -75,7 +75,7 @@ variable "nomad" {
   type = "map"
 
   default = {
-    "version"      = "0.9.1"
+    "version"      = "0.9.3"
     "downloadPath" = "linux_amd64"
   }
 }

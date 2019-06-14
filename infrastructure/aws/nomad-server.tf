@@ -1,5 +1,5 @@
 data "template_file" "nomad-server-setup" {
-    template = "${file("${path.module}/scripts/nomad_server_install.sh")}"
+    template = "${file("${path.module}/../scripts/nomad_server_install.sh")}"
 
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
@@ -46,6 +46,13 @@ resource "aws_security_group" "nomad-server-sg" {
     ingress {
         from_port = 5000
         to_port = 5000
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    ingress {
+        from_port = 5821
+        to_port = 5821
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }

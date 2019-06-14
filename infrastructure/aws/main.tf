@@ -59,7 +59,7 @@ resource "aws_route_table" "natgw-route" {
         nat_gateway_id = "${aws_nat_gateway.natgw.id}"
     }
 
-    tags {
+    tags = {
         Name = "cust-mgmt-natgw"
     }
 }

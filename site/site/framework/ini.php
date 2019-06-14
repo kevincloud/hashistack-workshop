@@ -60,7 +60,13 @@ ob_implicit_flush(false);
 // API INITIALIZATION
 //////////////////////////////////////////////////////////////////////////////////
 
-$productapi = "http://product-api.service.dc1.consul:5821";
+$ch = curl_init();
+curl_setopt ($ch, CURLOPT_URL, $url);
+curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+$consuloutput = json_decode(curl_exec($ch));
+curl_close($ch);
+
+$productapi = $consuloutput[0]->Address; # http://product-api.service.dc1.consul:5821";
 
 //////////////////////////////////////////////////////////////////////////////////
 // UNIVERSAL FUNCTIONS INITIALIZATION

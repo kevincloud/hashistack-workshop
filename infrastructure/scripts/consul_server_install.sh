@@ -24,8 +24,8 @@ aws_secret_access_key=${AWS_SECRET_KEY}
 EOF
 
 echo "Installing Consul..."
-wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
-sudo unzip consul_1.4.4_linux_amd64.zip -d /usr/local/bin/
+wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
+sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
 sudo bash -c "cat >/etc/consul.d/consul-server.json" <<EOF

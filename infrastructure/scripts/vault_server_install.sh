@@ -11,8 +11,8 @@ mkdir -p /etc/vault.d
 mkdir -p /etc/consul.d
 
 echo "Installing Vault..."
-wget https://releases.hashicorp.com/vault/1.0.3/vault_1.0.3_linux_amd64.zip
-sudo unzip vault_1.0.3_linux_amd64.zip -d /usr/local/bin/
+wget https://releases.hashicorp.com/vault/1.1.3/vault_1.1.3_linux_amd64.zip
+sudo unzip vault_1.1.3_linux_amd64.zip -d /usr/local/bin/
 
 # Set Vault up as a systemd service
 echo "Installing systemd service for Vault..."
@@ -37,8 +37,8 @@ sudo systemctl enable vault
 
 echo "Installing Consul..."
 export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
-wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
-sudo unzip consul_1.4.4_linux_amd64.zip -d /usr/local/bin/
+wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
+sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
 sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF

@@ -1,5 +1,5 @@
 data "template_file" "consul-server-setup" {
-    template = "${file("${path.module}/scripts/consul_server_install.sh")}"
+    template = "${file("${path.module}/../scripts/consul_server_install.sh")}"
 
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"

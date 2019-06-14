@@ -36,8 +36,8 @@ EOF
 
 echo "Installing Consul..."
 export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
-wget https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip
-sudo unzip consul_1.4.4_linux_amd64.zip -d /usr/local/bin/
+wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
+sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
 sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
@@ -84,8 +84,8 @@ sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT
 sudo service systemd-resolved restart
 
 echo "Installing Nomad..."
-wget https://releases.hashicorp.com/nomad/0.9.1/nomad_0.9.1_linux_amd64.zip
-sudo unzip nomad_0.9.1_linux_amd64.zip -d /usr/local/bin/
+wget https://releases.hashicorp.com/nomad/0.9.3/nomad_0.9.3_linux_amd64.zip
+sudo unzip nomad_0.9.3_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
 export VAULT_ADDR=http://vault-main.service.dc1.consul:8200
@@ -160,12 +160,10 @@ client {
     network_speed = 10
     options {
         "driver.raw_exec.enable" = "1"
-    }
-    servers = ["nomad-server.service.dc1.consul:4647"]
-    options   = {
         "docker.auth.config"     = "/etc/docker/config.json"
         "docker.auth.helper"     = "ecr-login"
     }
+    servers = ["nomad-server.service.dc1.consul:4647"]
 }
 EOF
 

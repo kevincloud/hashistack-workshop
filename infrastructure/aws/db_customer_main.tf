@@ -5,19 +5,25 @@ resource "aws_dynamodb_table" "customer-data-table" {
     write_capacity = 20
     hash_key = "CustomerId"
     
-    attribute = [{
+    attribute {
         name = "CustomerId"
         type = "S"
-    }, {
+    }
+    
+    attribute {
         name = "FirstName"
         type = "S"
-    }, {
+    }
+    
+    attribute {
         name = "LastName"
         type = "S"
-    }, {
+    }
+    
+    attribute {
         name = "EmailAddress"
         type = "S"
-    }]
+    }
 
     global_secondary_index {
         name = "NameIndex"

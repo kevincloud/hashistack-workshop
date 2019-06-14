@@ -1,5 +1,5 @@
 data "template_file" "nomad-client-setup-1" {
-    template = "${file("${path.module}/scripts/nomad_client_install.sh")}"
+    template = "${file("${path.module}/../scripts/nomad_client_install.sh")}"
 
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
@@ -11,7 +11,7 @@ data "template_file" "nomad-client-setup-1" {
 }
 
 data "template_file" "nomad-client-setup-2" {
-    template = "${file("${path.module}/scripts/nomad_client_install.sh")}"
+    template = "${file("${path.module}/../scripts/nomad_client_install.sh")}"
 
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"

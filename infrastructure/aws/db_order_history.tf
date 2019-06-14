@@ -6,16 +6,20 @@ resource "aws_dynamodb_table" "order-history-table" {
     hash_key = "OrderId"
     range_key = "CustomerId"
     
-    attribute = [{
+    attribute {
         name = "OrderId"
         type = "S"
-    }, {
+    }
+    
+    attribute {
         name = "CustomerId"
         type = "S"
-    }, {
+    }
+    
+    attribute {
         name = "Status"
         type = "S"
-    }]
+    }
 
     global_secondary_index {
         name = "StatusIndex"

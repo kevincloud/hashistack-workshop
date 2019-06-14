@@ -1,5 +1,5 @@
 data "template_file" "work_install" {
-    template = "${file("${path.module}/scripts/work_install.sh")}"
+    template = "${file("${path.module}/../scripts/work_install.sh")}"
 
     vars = {
         VAULT_SERVER = "${aws_instance.vault-server.public_ip}"
@@ -7,10 +7,13 @@ data "template_file" "work_install" {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         AWS_REGION = "${var.aws_region}"
-        REPO_URL = "${aws_ecr_repository.ecr-product-app.repository_url}"
+        REPO_URL_PROD = "${aws_ecr_repository.ecr-product-app.repository_url}"
+        REPO_URL_SITE = "${aws_ecr_repository.ecr-online-store.repository_url}"
         S3_BUCKET = "${aws_s3_bucket.staticimg.id}"
         GIT_USER = "${var.git_user}"
         GIT_TOKEN = "${var.git_token}"
+        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
+        CLIENT_NAME = "work-client"
     }
 }
 
@@ -29,7 +32,9 @@ resource "aws_instance" "working-env" {
     depends_on = [
         "aws_instance.vault-server",
         "aws_dynamodb_table.customer-data-table",
-        "aws_dynamodb_table.product-data-table"
+        "aws_dynamodb_table.product-data-table",
+        "aws_instance.nomad-client-1",
+        "aws_instance.nomad-client-2"
     ]
 }
 
