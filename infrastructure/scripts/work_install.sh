@@ -81,7 +81,6 @@ sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT
 sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
 sudo service systemd-resolved restart
 
-
 cd /root
 git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/kevincloud/hashistack-workshop.git
 cd /root/hashistack-workshop/apis
@@ -102,6 +101,12 @@ docker push ${REPO_URL_PROD}:product-app
 
 # create online-site image
 cd /root/hashistack-workshop/site
+sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
+<?php
+\$consulurl = "http://${CONSUL_IP}:8500/v1/catalog/service/product-api";
+?>
+EOF
+
 docker build -t online-store:online-store .
 aws ecr get-login --region ${AWS_REGION} --no-include-email > login.sh
 chmod a+x login.sh
@@ -130,7 +135,6 @@ curl \
                 "Config": {
                     "image": "https://${REPO_URL_PROD}:product-app",
                     "port_map": [{
-                        "dns": 53,
                         "http": 5821
                     }]
                 },
@@ -142,10 +146,6 @@ curl \
                 "Resources": {
                     "Networks": [{
                         "ReservedPorts": [
-                            {
-                                "Label": "dns",
-                                "Value": 8600
-                            },
                             {
                                 "Label": "http",
                                 "Value": 5821
@@ -184,7 +184,6 @@ curl \
                 "Config": {
                     "image": "https://${REPO_URL_SITE}:online-store",
                     "port_map": [{
-                        "dns": 53,
                         "http": 80
                     }]
                 },
@@ -196,11 +195,7 @@ curl \
                 "Resources": {
                     "Networks": [{
                         "ReservedPorts": [
-                            {
-                                "Label": "dns",
-                                "Value": 8600
-                            },
-                            {
+                           {
                                 "Label": "http",
                                 "Value": 80
                             }

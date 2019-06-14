@@ -45,3 +45,7 @@ output "nomad-client-2-ssh" {
 output "work-server" {
     value = "ssh -i ~/keys/${var.key_pair}.pem ubuntu@${aws_instance.working-env.public_ip}"
 }
+
+output "Site-URL" {
+    value = "http://${aws_instance.nomad-client-1.public_ip}/"
+}

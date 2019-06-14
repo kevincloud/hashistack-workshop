@@ -34,6 +34,7 @@ include_once("classes/Account.php");
 include_once("classes/Order.php");
 include_once("classes/Invoice.php");
 include_once("classes/ShoppingCart.php");
+include_once("config.php");
 
 // Set the default time zone
 date_default_timezone_set('America/New_York');
@@ -61,12 +62,12 @@ ob_implicit_flush(false);
 //////////////////////////////////////////////////////////////////////////////////
 
 $ch = curl_init();
-curl_setopt ($ch, CURLOPT_URL, $url);
+curl_setopt ($ch, CURLOPT_URL, $consulurl);
 curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
 $consuloutput = json_decode(curl_exec($ch));
 curl_close($ch);
 
-$productapi = $consuloutput[0]->Address; # http://product-api.service.dc1.consul:5821";
+$productapi = "http://" . $consuloutput[0]->Address . ":5821"; # http://product-api.service.dc1.consul:5821";
 
 //////////////////////////////////////////////////////////////////////////////////
 // UNIVERSAL FUNCTIONS INITIALIZATION

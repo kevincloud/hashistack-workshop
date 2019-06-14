@@ -1,21 +1,20 @@
 {
-    "ID": "product-api-job",
-    "Name": "product-api",
+    "ID": "online-store-job",
+    "Name": "online-store",
     "Type": "service",
     "Datacenters": ["dc1"],
     "TaskGroups": [{
-        "Name": "product-api-group",
+        "Name": "online-store-group",
         "Tasks": [{
-            "Name": "product-api",
+            "Name": "online-store",
             "Driver": "docker",
             "Vault": {
                 "Policies": ["access-creds"]
             },
             "Config": {
-                "image": "https://753646501470.dkr.ecr.us-east-1.amazonaws.com/product-app:product-app",
+                "image": "https://753646501470.dkr.ecr.us-east-1.amazonaws.com/online-store:online-store",
                 "port_map": [{
-                    "dns": 53,
-                    "http": 5821
+                    "http": 80
                 }]
             },
             "Templates": [{
@@ -25,24 +24,16 @@
             }],
             "Resources": {
                 "Networks": [{
-                    "DynamicPorts": [{
-                        "Label": "http",
-                        "Value": 0
-                    }],
                     "ReservedPorts": [
                         {
-                            "Label": "dns",
-                            "Value": 8600
-                        },
-                        {
                             "Label": "http",
-                            "Value": 5821
+                            "Value": 80
                         }
                     ]
                 }]
             },
             "Services": [{
-                "Name": "productapi",
+                "Name": "online-store",
                 "PortLabel": "http"
             }]
         }]
