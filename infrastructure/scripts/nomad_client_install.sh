@@ -2,6 +2,8 @@
 # Configures the Nomad server
 
 echo "Preparing to install Nomad..."
+echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-selections
+export DEBIAN_FRONTEND=noninteractive
 sudo apt-get -y update > /dev/null 2>&1
 sudo apt-get -y upgrade > /dev/null 2>&1
 sudo apt-get install -y unzip jq python3 python3-pip docker.io golang > /dev/null 2>&1

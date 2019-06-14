@@ -2,6 +2,9 @@ FROM ubuntu:18.04
   
 LABEL Kevin Cochran "kcochran@hashicorp.com"
 
+RUN echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-selections
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3 python3-pip
 RUN mkdir /app

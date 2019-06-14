@@ -1,12 +1,18 @@
 #!/bin/sh
 # Configures the Nomad server
 
-echo "Preparing to install Nomad..."
+echo "Updating distro repos..."
+echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-selections
+export DEBIAN_FRONTEND=noninteractive
 sudo apt-get -y update > /dev/null 2>&1
+echo "Installing system updates..."
 sudo apt-get -y upgrade > /dev/null 2>&1
+echo "Installing additional packages..."
 sudo apt-get install -y unzip jq python3 python3-pip > /dev/null 2>&1
+echo "Installing Python packages..."
 pip3 install awscli
 
+echo "Creating directories..."
 mkdir /etc/nomad.d
 mkdir -p /opt/nomad
 mkdir -p /opt/nomad/plugins
@@ -14,6 +20,7 @@ mkdir -p /etc/consul.d
 mkdir -p /opt/consul
 mkdir -p /root/.aws
 
+echo "Adding AWS credentials..."
 sudo bash -c "cat >/root/.aws/config" << 'EOF'
 [default]
 aws_access_key_id=${AWS_ACCESS_KEY}

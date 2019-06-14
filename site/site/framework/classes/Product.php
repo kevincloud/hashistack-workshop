@@ -25,6 +25,7 @@ class Product {
 	private $Option_SeeAlso = 5;
 	private $ProductAPI = "";
 	private $ImageLocation = "";
+	private $S3Bucket = "";
 	
 	
 	/*
@@ -39,11 +40,13 @@ class Product {
 	 */
 	public function __construct()
 	{
-		global $ProductAPI;
+		global $productapi;
 		global $ImageLocation;
+		global $assetbucket;
 
-		$this->ProductAPI = $ProductAPI;
+		$this->ProductAPI = $productapi;
 		$this->ImageLocation = $ImageLocation;
+		$this->S3Bucket = $assetbucket;
 	}
 	
 	/*
@@ -122,7 +125,7 @@ class Product {
 	 */
 	public function ImageURL()
 	{
-		return "https://s3-us-west-2.amazonaws.com/hc-workshop-2.0-static-images/".$this->Image;
+		return $this->S3Bucket.$this->Image;
 	}
 		
 	/*

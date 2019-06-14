@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-selections
+export DEBIAN_FRONTEND=noninteractive
 apt-get update > /dev/null 2>&1
 apt-get -y upgrade > /dev/null 2>&1
 apt-get -y install unzip git jq python3 python3-pip docker.io > /dev/null 2>&1
@@ -85,10 +87,11 @@ cd /root
 git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/kevincloud/hashistack-workshop.git
 cd /root/hashistack-workshop/apis
 
-#sudo aws s3 cp /var/www/html/online-store/productapi/images/ s3://${S3_BUCKET}/ --acl public-read
-
 # load product data
 python3 ./scripts/product_load.py
+
+# Upload images to S3
+aws s3 cp /root/hashistack-workshop/apis/productapi/images/ s3://${S3_BUCKET}/ --recursive --acl public-read
 
 # create product-app image
 cd ./productapi
@@ -104,6 +107,7 @@ cd /root/hashistack-workshop/site
 sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
 <?php
 \$consulurl = "http://${CONSUL_IP}:8500/v1/catalog/service/product-api";
+\$assetbucket = "https://s3-${AWS_REGION}.amazonaws.com/${S3_BUCKET}/"
 ?>
 EOF
 
