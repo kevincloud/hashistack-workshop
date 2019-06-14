@@ -25,7 +25,7 @@ resource "aws_s3_bucket_policy" "staticimgpol" {
       "Effect": "Allow",
       "Principal": "*",
       "Action": ["s3:GetObject"],
-      "Resource": "arn:aws:s3:::${aws_s3_bucket.staticimg.id}/*",
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.staticimg.id}/*"
     }
   ]
 }

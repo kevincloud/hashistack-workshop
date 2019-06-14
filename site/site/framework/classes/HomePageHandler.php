@@ -111,26 +111,55 @@ class HomePageHandler extends BasePage
 		$out .= "			<h2>Featured Products</h2>\n";
 //		$out .= "			<p>Highlighted products from a variety of categories.</p>\n";
 		$out .= "			<ul class=\"product-grid\">\n";
-		for ($i = 1; $i <=6; $i++)
-		{
-			$out .= $this->GetNextAd("small");
-		}
+
+			$p = new Product();
+			$p->GetProduct("BE0001");
+			$out .= "				<li class=\"product\">\n";
+			$out .= "					<a href=\"/".$p->BeautifiedURL."/products/".$p->PID."/".$p->Identifier."\">\n";
+			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
+			$out .= "						<span class=\"product-details\">\n";
+			$out .= "							<strong>".$p->Name."</strong>\n";
+			$out .= "							by ".$p->Manufacturer."\n";
+			$out .= "						</span>\n";
+			$out .= "					</a>\n";
+			$out .= "				</li>\n";
+
+			$p = new Product();
+			$p->GetProduct("EM0016");
+			$out .= "				<li class=\"product\">\n";
+			$out .= "					<a href=\"/".$p->BeautifiedURL."/products/".$p->PID."/".$p->Identifier."\">\n";
+			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
+			$out .= "						<span class=\"product-details\">\n";
+			$out .= "							<strong>".$p->Name."</strong>\n";
+			$out .= "							by ".$p->Manufacturer."\n";
+			$out .= "						</span>\n";
+			$out .= "					</a>\n";
+			$out .= "				</li>\n";
+
+			$p = new Product();
+			$p->GetProduct("KA0023");
+			$out .= "				<li class=\"product\">\n";
+			$out .= "					<a href=\"/".$p->BeautifiedURL."/products/".$p->PID."/".$p->Identifier."\">\n";
+			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
+			$out .= "						<span class=\"product-details\">\n";
+			$out .= "							<strong>".$p->Name."</strong>\n";
+			$out .= "							by ".$p->Manufacturer."\n";
+			$out .= "						</span>\n";
+			$out .= "					</a>\n";
+			$out .= "				</li>\n";
+
 		$out .= "			</ul>\n";
 		$out .= "		</section>\n";
-		// ***INLINESQL***
-		// $sql = "select top 1 NEWID(), p.pid, p.video_data from cc_product as p where active = 1 and isnull(video_data, '') != '' order by NEWID()";
-		// $row = $this->_db->get_row($sql);
-		// if (count($row) > 0)
-		// {
-		// 	$p = new Product($this->_db);
-		// 	$p->GetProduct($row->pid);
-		// 	$out .= "		<section class=\"wptv\">\n";
-		// 	$out .= "			<h2>WPTV</h2>\n";
-		// 	$out .= "			<p>See the latest book trailers and videos from the coffee industry:</p>\n";
-		// 	$out .= "			".$row->video_data."\n";
-		// 	$out .= "			<p><a class=\"green button\" href=\"".$p->Permalink()."\">More Information</a></p>\n";
-		// 	$out .= "		</section>\n";
-		// }
+
+		// $p = new Product($this->_db);
+		// $p->GetProduct($row->pid);
+		// $out .= "		<section class=\"wptv\">\n";
+		// $out .= "			<h2>WPTV</h2>\n";
+		// $out .= "			<p>See the latest book trailers and videos from the coffee industry:</p>\n";
+		// $out .= "			".$row->video_data."\n";
+		// $out .= "			<p><a class=\"green button\" href=\"".$p->Permalink()."\">More Information</a></p>\n";
+		// $out .= "		</section>\n";
+
 		$out .= "	</div>\n";
 		$out .= "</div>\n";
 		
