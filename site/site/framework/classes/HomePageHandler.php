@@ -115,7 +115,7 @@ class HomePageHandler extends BasePage
 			$p = new Product();
 			$p->GetProduct("BE0001");
 			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/".$p->BeautifiedURL."/products/".$p->PID."/".$p->Identifier."\">\n";
+			$out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
 			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
 			$out .= "						<span class=\"product-details\">\n";
 			$out .= "							<strong>".$p->Name."</strong>\n";
@@ -127,7 +127,7 @@ class HomePageHandler extends BasePage
 			$p = new Product();
 			$p->GetProduct("EM0016");
 			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/".$p->BeautifiedURL."/products/".$p->PID."/".$p->Identifier."\">\n";
+			$out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
 			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
 			$out .= "						<span class=\"product-details\">\n";
 			$out .= "							<strong>".$p->Name."</strong>\n";
@@ -139,7 +139,7 @@ class HomePageHandler extends BasePage
 			$p = new Product();
 			$p->GetProduct("KA0023");
 			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/".$p->BeautifiedURL."/products/".$p->PID."/".$p->Identifier."\">\n";
+			$out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
 			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
 			$out .= "						<span class=\"product-details\">\n";
 			$out .= "							<strong>".$p->Name."</strong>\n";
@@ -148,6 +148,18 @@ class HomePageHandler extends BasePage
 			$out .= "					</a>\n";
 			$out .= "				</li>\n";
 
+			$p = new Product();
+			$p->GetProduct("BE0027");
+			$out .= "				<li class=\"product\">\n";
+			$out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
+			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
+			$out .= "						<span class=\"product-details\">\n";
+			$out .= "							<strong>".$p->Name."</strong>\n";
+			$out .= "							by ".$p->Manufacturer."\n";
+			$out .= "						</span>\n";
+			$out .= "					</a>\n";
+			$out .= "				</li>\n";
+			
 		$out .= "			</ul>\n";
 		$out .= "		</section>\n";
 
