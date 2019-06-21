@@ -102,11 +102,21 @@ chmod a+x login.sh
 docker tag product-app:product-app ${REPO_URL_PROD}:product-app
 docker push ${REPO_URL_PROD}:product-app
 
+# create cart-app image
+cd /root/hashistack-workshop/apis/cartapi
+docker build -t cart-app:cart-app .
+aws ecr get-login --region ${AWS_REGION} --no-include-email > login.sh
+chmod a+x login.sh
+./login.sh
+docker tag cart-app:cart-app ${REPO_URL_CART}:cart-app
+docker push ${REPO_URL_CART}:cart-app
+
 # create online-site image
 cd /root/hashistack-workshop/site
 sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
 <?php
-\$consulurl = "http://${CONSUL_IP}:8500/v1/catalog/service/product-api";
+\$productapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/product-api";
+\$cartapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/cart-api";
 \$assetbucket = "https://s3.amazonaws.com/${S3_BUCKET}/"
 ?>
 EOF
@@ -143,7 +153,7 @@ curl \
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"us-east-1\"\n                ",
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"${AWS_REGION}\"\n                ",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],
@@ -159,6 +169,55 @@ curl \
                 },
                 "Services": [{
                     "Name": "product-api",
+                    "PortLabel": "http"
+                }]
+            }]
+        }]
+    }
+}
+PAYLOAD
+
+curl \
+    http://nomad-server.service.dc1.consul:4646/v1/jobs \
+    --request POST \
+    --data @- <<PAYLOAD
+{
+    "Job": {
+        "ID": "cart-api-job",
+        "Name": "cart-api",
+        "Type": "service",
+        "Datacenters": ["dc1"],
+        "TaskGroups": [{
+            "Name": "cart-api-group",
+            "Tasks": [{
+                "Name": "cart-api",
+                "Driver": "docker",
+                "Vault": {
+                    "Policies": ["access-creds"]
+                },
+                "Config": {
+                    "image": "https://${REPO_URL_CART}:cart-app",
+                    "port_map": [{
+                        "http": 5823
+                    }]
+                },
+                "Templates": [{
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY_ID = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_ACCESS_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"${AWS_REGION}\"\n                ",
+                    "DestPath": "secrets/file.env",
+                    "Envvars": true
+                }],
+                "Resources": {
+                    "Networks": [{
+                        "ReservedPorts": [
+                            {
+                                "Label": "http",
+                                "Value": 5823
+                            }
+                        ]
+                    }]
+                },
+                "Services": [{
+                    "Name": "cart-api",
                     "PortLabel": "http"
                 }]
             }]
@@ -192,7 +251,7 @@ curl \
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"us-east-1\"\n                ",
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"${AWS_REGION}\"\n                ",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],

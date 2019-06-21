@@ -5,11 +5,11 @@ module.exports = function(app) {
     // todoList Routes
     app.route('/cart')
         .post(cartfunc.add_to_cart)
-        .get(cartfunc.list_cart_items);
+        .get(cartfunc.list_cart_items)
+        .delete(cartfunc.empty_cart);
     
     app.route('/cart/:productId')
         .put(cartfunc.update_cart_item)
         .delete(cartfunc.delete_cart_item);
-    
     
 };

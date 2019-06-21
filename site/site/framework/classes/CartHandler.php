@@ -2,24 +2,19 @@
 
 class CartHandler extends BasePage
 {
-	private $_landing = false;
 	private $_urltag = "shop";
+	private $CartApi = "";
+
+	public function __construct()
+	{
+		global $cartapi;
+
+		$this->CartApi = $cartapi;
+	}
 	
 	public function Run()
 	{
-		if (isset($this->PageVariables["land"]))
-		{
-			if ($this->PageVariables["land"] == "true")
-			{
-				$this->_landing = true;
-				$this->_urltag = "special";
-			}
-		}
-		
-		if ($this->_landing)
-			$this->BeginLanding();
-		else
-			$this->BeginPage();
+		$this->BeginPage();
 		
 		switch ($this->Action)
 		{
@@ -61,10 +56,7 @@ class CartHandler extends BasePage
 				break;
 		}
 		
-		if ($this->_landing)
-			$this->EndLanding();
-		else
-			$this->EndPage();
+		$this->EndPage();
 	}
 
 	private function DisplayOrder()

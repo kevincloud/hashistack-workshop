@@ -2,7 +2,8 @@
 
 var AWS = require('aws-sdk');
 
-AWS.config.update({region: "us-east-1"});
+region = process.env.AWS_REGION;
+AWS.config.update({region: region});
 
 var ddb = new AWS.DynamoDB.DocumentClient();
 var table = 'customer-cart';
@@ -86,6 +87,23 @@ exports.delete_cart_item = function(req, res) {
         ConditionExpression: "ProductId = :p",
         ExpressionAttributeValues: {
             ":p": productid
+        }
+    }, function(err, data) {
+        if (err) {
+            console.log("Error", err);
+        } else {
+            console.log("Success", data);
+        }
+    });
+};
+
+exports.empty_cart = function(req, res) {
+    var sessionid = 'MySessionID';
+
+    ddb.delete({
+        TableName: table,
+        Key: {
+            'SessionId': sessionid
         }
     }, function(err, data) {
         if (err) {

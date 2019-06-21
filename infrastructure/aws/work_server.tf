@@ -8,6 +8,7 @@ data "template_file" "work_install" {
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         AWS_REGION = "${var.aws_region}"
         REPO_URL_PROD = "${aws_ecr_repository.ecr-product-app.repository_url}"
+        REPO_URL_CART = "${aws_ecr_repository.ecr-cart-app.repository_url}"
         REPO_URL_SITE = "${aws_ecr_repository.ecr-online-store.repository_url}"
         S3_BUCKET = "${aws_s3_bucket.staticimg.id}"
         GIT_USER = "${var.git_user}"

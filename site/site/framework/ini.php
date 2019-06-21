@@ -62,12 +62,20 @@ ob_implicit_flush(false);
 //////////////////////////////////////////////////////////////////////////////////
 
 $ch = curl_init();
-curl_setopt ($ch, CURLOPT_URL, $consulurl);
+curl_setopt ($ch, CURLOPT_URL, $productapiurl);
 curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
 $consuloutput = json_decode(curl_exec($ch));
 curl_close($ch);
 
-$productapi = "http://" . $consuloutput[0]->Address . ":5821"; # http://product-api.service.dc1.consul:5821";
+$productapi = "http://" . $consuloutput[0]->Address . ":5821";
+
+$ch = curl_init();
+curl_setopt ($ch, CURLOPT_URL, $cartapiurl);
+curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+$consuloutput = json_decode(curl_exec($ch));
+curl_close($ch);
+
+$cartapi = "http://" . $consuloutput[0]->Address . ":5823";
 
 //////////////////////////////////////////////////////////////////////////////////
 // UNIVERSAL FUNCTIONS INITIALIZATION

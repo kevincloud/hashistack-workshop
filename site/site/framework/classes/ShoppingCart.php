@@ -49,21 +49,10 @@ class ShoppingCart
 	{
 		$answer = NULL;
 		
-		if ($landing)
+		foreach ($this->Items as $item)
 		{
-			foreach ($this->LandingItems as $item)
-			{
-				if ($item->PID == $pid)
-					$answer = $item;
-			}
-		}
-		else
-		{
-			foreach ($this->Items as $item)
-			{
-				if ($item->PID == $pid)
-					$answer = $item;
-			}
+			if ($item->PID == $pid)
+				$answer = $item;
 		}
 		
 		return $answer;
@@ -73,19 +62,9 @@ class ShoppingCart
 	{
 		$answer = 0;
 		
-		if ($landing)
+		foreach ($this->Items as $item)
 		{
-			foreach ($this->LandingItems as $item)
-			{
-				$answer += $item->Quantity;
-			}
-		}
-		else
-		{
-			foreach ($this->Items as $item)
-			{
-				$answer += $item->Quantity;
-			}
+			$answer += $item->Quantity;
 		}
 		
 		return $answer;
@@ -93,47 +72,22 @@ class ShoppingCart
 	
 	public function CleanCart($landing=false)
 	{
-		if ($landing)
+		foreach ($this->Items as $key => &$item)
 		{
-			foreach ($this->LandingItems as $key => &$item)
-			{
-				if ($item->Quantity == 0)
-					unset($this->LandingItems[$key]);
-			}
-		}
-		else
-		{
-			foreach ($this->Items as $key => &$item)
-			{
-				if ($item->Quantity == 0)
-					unset($this->Items[$key]);
-			}
+			if ($item->Quantity == 0)
+				unset($this->Items[$key]);
 		}
 	}
 	
 	public function AddItem($pid, $qty, $landing=false)
 	{
 		$add = true;
-		if ($landing)
+		foreach ($this->Items as &$item)
 		{
-			foreach ($this->LandingItems as &$item)
+			if ($item->PID == $pid)
 			{
-				if ($item->PID == $pid)
-				{
-					$item->Quantity += $qty;
-					$add = false;
-				}
-			}
-		}
-		else
-		{
-			foreach ($this->Items as &$item)
-			{
-				if ($item->PID == $pid)
-				{
-					$item->Quantity += $qty;
-					$add = false;
-				}
+				$item->Quantity += $qty;
+				$add = false;
 			}
 		}
 		
@@ -141,72 +95,41 @@ class ShoppingCart
 		{
 			$p = new Product();
 			$p->GetProduct($pid);
-			if ($landing)
+			if (count($this->Items) > 0 && $p->OrderType == "P")
 			{
-				if (count($this->LandingItems) > 0 && $p->OrderType == "P")
-				{
-					throw new Exception("Sorry, but pre-order items must be purchased individually.<br><br>The item was not added to your cart.");
-				}
-				$this->LandingItems[] = new CartItem($pid, $qty, ($p->PrintType == "POD" || $p->PrintType == "Digital" ? false : true), $p->Weight, ($p->PrintType == "Digital" ? true : false), "", ($p->OrderType == "P" ? true : false));
+				throw new Exception("Sorry, but pre-order items must be purchased individually.<br><br>The item was not added to your cart.");
 			}
-			else
-			{
-				if (count($this->Items) > 0 && $p->OrderType == "P")
-				{
-					throw new Exception("Sorry, but pre-order items must be purchased individually.<br><br>The item was not added to your cart.");
-				}
-				$this->Items[] = new CartItem($pid, $qty, ($p->PrintType == "POD" || $p->PrintType == "Digital" ? false : true), $p->Weight, ($p->PrintType == "Digital" ? true : false), "", ($p->OrderType == "P" ? true : false));
-			}
+
+			// $ch = curl_init();
+			// curl_setopt ($ch, CURLOPT_URL, $this->CartApi);
+			// curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+			// $output = json_decode(curl_exec($ch));
+			// curl_close($ch);
+
+			$this->Items[] = new CartItem($pid, $qty, ($p->PrintType == "POD" || $p->PrintType == "Digital" ? false : true), $p->Weight, ($p->PrintType == "Digital" ? true : false), "", ($p->OrderType == "P" ? true : false));
 		}
 	}
 	
 	
 	public function UpdateItem($pid, $qty, $landing=false)
 	{
-		if ($landing)
+		foreach ($this->Items as &$item)
 		{
-			foreach ($this->LandingItems as &$item)
+			if ($item->PID == $pid)
 			{
-				if ($item->PID == $pid)
-				{
-					$item->Quantity += $qty;
-					$add = true;
-				}
-			}
-		}
-		else
-		{
-			foreach ($this->Items as &$item)
-			{
-				if ($item->PID == $pid)
-				{
-					$item->Quantity += $qty;
-					$add = true;
-				}
+				$item->Quantity += $qty;
+				$add = true;
 			}
 		}
 	}
 	
 	public function DeleteItem($pid, $landing=false)
 	{
-		if ($landing)
+		foreach ($this->Items as $key => &$item)
 		{
-			foreach ($this->LandingItems as $key => &$item)
+			if ($item->PID == $pid)
 			{
-				if ($item->PID == $pid)
-				{
-					unset($this->LandingItems[$key]);
-				}
-			}
-		}
-		else
-		{
-			foreach ($this->Items as $key => &$item)
-			{
-				if ($item->PID == $pid)
-				{
-					unset($this->Items[$key]);
-				}
+				unset($this->Items[$key]);
 			}
 		}
 	}
@@ -296,8 +219,6 @@ class ShoppingCart
 	public function StartOver()
 	{
 		unset($this->Items);
-		unset($this->LandingItems);
-		unset($this->LandingFreeItems);
 		unset($this->ShipMethodList);
 		
 		$this->PromoCode = "";
