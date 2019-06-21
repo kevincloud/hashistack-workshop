@@ -4,7 +4,7 @@ echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-se
 export DEBIAN_FRONTEND=noninteractive
 apt-get update > /dev/null 2>&1
 apt-get -y upgrade > /dev/null 2>&1
-apt-get -y install unzip git jq python3 python3-pip docker.io > /dev/null 2>&1
+apt-get -y install unzip git jq python3 python3-pip docker.io python3-dev default-libmysqlclient-dev npm > /dev/null 2>&1
 
 # create a sudo user
 #useradd -m builder
@@ -30,7 +30,7 @@ EOF
 
 pip3 install botocore
 pip3 install boto3
-pip3 install mysql-connector-python
+pip3 install mysqlclient
 pip3 install awscli
 
 echo "Installing Consul..."

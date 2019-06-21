@@ -24,7 +24,7 @@ resource "aws_dynamodb_table" "customer-data-table" {
         name = "EmailAddress"
         type = "S"
     }
-
+    
     global_secondary_index {
         name = "NameIndex"
         hash_key = "LastName"
@@ -45,6 +45,6 @@ resource "aws_dynamodb_table" "customer-data-table" {
     }
 
     tags = {
-        Name = "cust-mgmt-data"
+        Name = "cust-main-data"
     }
 }
