@@ -1,6 +1,6 @@
 var express = require('express'),
     app = express(),
-    port = process.env.PORT || 8080,
+    port = process.env.PORT || 5823,
     aws = require('aws-sdk'),
     bodyParser = require('body-parser');
 
