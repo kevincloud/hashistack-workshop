@@ -24,7 +24,7 @@ data "template_file" "nomad-client-setup-2" {
 
 resource "aws_instance" "nomad-client-1" {
     ami = "${data.aws_ami.ubuntu.id}"
-    instance_type = "t2.micro"
+    instance_type = "t3.small"
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.nomad-server-sg.id}"]
     user_data = "${data.template_file.nomad-client-setup-1.rendered}"
@@ -40,7 +40,7 @@ resource "aws_instance" "nomad-client-1" {
 
 resource "aws_instance" "nomad-client-2" {
     ami = "${data.aws_ami.ubuntu.id}"
-    instance_type = "t2.micro"
+    instance_type = "t3.small"
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.nomad-server-sg.id}"]
     user_data = "${data.template_file.nomad-client-setup-2.rendered}"

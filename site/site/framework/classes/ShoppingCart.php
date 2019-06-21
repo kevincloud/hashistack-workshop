@@ -3,9 +3,6 @@
 class ShoppingCart
 {
 	public $Items = array();
-	public $FreeItems = array();
-	public $LandingItems = array();
-	public $LandingFreeItems = array();
 	public $PromoCode = "";
 	public $BookstoreDiscount = 0;
 	public $DiscountType = "N";
@@ -29,23 +26,17 @@ class ShoppingCart
 	public $PayType = "NEW";
 	public $Source = "";
 	public $SpecialNotes = "";
-	public $CardName = "";
-	public $CardType = "";
-	public $CardNumber = "";
-	public $CardCVV = "";
-	public $CardExpMonth = "";
-	public $CardExpYear = "";
-	public $SaveCard = false;
-	public $AgreeTerms = false;
 	
-	// ***INLINESQL***
-	// protected $_db;
-	
+	private $CartApi = "";
+
 	public function __construct()
 	{
+		global $cartapi;
+
+		$this->CartApi = $cartapi + "/cart";
 	}
 	
-	public function Contains($pid, $landing=false)
+	public function Contains($pid)
 	{
 		$answer = NULL;
 		
@@ -58,7 +49,7 @@ class ShoppingCart
 		return $answer;
 	}
 	
-	public function Count($landing=false)
+	public function Count()
 	{
 		$answer = 0;
 		
@@ -70,7 +61,7 @@ class ShoppingCart
 		return $answer;
 	}
 	
-	public function CleanCart($landing=false)
+	public function CleanCart()
 	{
 		foreach ($this->Items as $key => &$item)
 		{
@@ -79,14 +70,21 @@ class ShoppingCart
 		}
 	}
 	
-	public function AddItem($pid, $qty, $landing=false)
+	public function AddItem($pid, $qty)
 	{
 		$add = true;
-		foreach ($this->Items as &$item)
+
+		$ch = curl_init();
+		curl_setopt ($ch, CURLOPT_URL, $this->CartApi);
+		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+		$output = json_decode(curl_exec($ch));
+		curl_close($ch);
+
+		foreach ($output as &$item)
 		{
-			if ($item->PID == $pid)
+			if ($item->ProductId == $pid)
 			{
-				$item->Quantity += $qty;
+				//$item->Quantity += $qty;
 				$add = false;
 			}
 		}
@@ -100,18 +98,22 @@ class ShoppingCart
 				throw new Exception("Sorry, but pre-order items must be purchased individually.<br><br>The item was not added to your cart.");
 			}
 
-			// $ch = curl_init();
-			// curl_setopt ($ch, CURLOPT_URL, $this->CartApi);
-			// curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-			// $output = json_decode(curl_exec($ch));
-			// curl_close($ch);
+			$addvars = "sessionid=".session_id()."&productid=".$pid."&quantity=".$qty;
+
+			$ch = curl_init();
+			curl_setopt ($ch, CURLOPT_URL, $this->CartApi);
+			curl_setopt ($ch, CURLOPT_POST, 1);
+			curl_setopt ($ch, CURLOPT_POSTFIELDS, $addvars);
+			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+			$output = json_decode(curl_exec($ch));
+			curl_close($ch);
 
 			$this->Items[] = new CartItem($pid, $qty, ($p->PrintType == "POD" || $p->PrintType == "Digital" ? false : true), $p->Weight, ($p->PrintType == "Digital" ? true : false), "", ($p->OrderType == "P" ? true : false));
 		}
 	}
 	
 	
-	public function UpdateItem($pid, $qty, $landing=false)
+	public function UpdateItem($pid, $qty)
 	{
 		foreach ($this->Items as &$item)
 		{
