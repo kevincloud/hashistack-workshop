@@ -9,6 +9,7 @@ module.exports = function(app) {
         .delete(cartfunc.empty_cart);
     
     app.route('/cart/:productId')
+        .get(cartfunc.get_cart_item)
         .put(cartfunc.update_cart_item)
         .delete(cartfunc.delete_cart_item);
     

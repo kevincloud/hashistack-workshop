@@ -3,13 +3,9 @@
 class CartHandler extends BasePage
 {
 	private $_urltag = "shop";
-	private $CartApi = "";
 
 	public function __construct()
 	{
-		global $cartapi;
-
-		$this->CartApi = $cartapi;
 	}
 	
 	public function Run()

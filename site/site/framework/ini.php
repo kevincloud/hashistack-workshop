@@ -28,6 +28,7 @@ error_reporting(E_ALL);
 include_once("classes/ApplicationSettings.php");
 include_once("classes/Utilities.php");
 include_once("classes/BasePage.php");
+include_once("classes/RestRunner.php");
 include_once("classes/AjaxHandler.php");
 include_once("classes/Product.php");
 include_once("classes/Account.php");

@@ -11,7 +11,6 @@ class ShoppingCart
 	public $SaveAddresses = true;
 	public $Checkout = false;
 	public $LastError = "";
-	public $ShippingService = "USPS1P";
 	public $FulfillmentOnly = true;
 	public $ShippingAmount = 0.0;
 	public $SubtotalAmount = 0.0;
@@ -72,44 +71,19 @@ class ShoppingCart
 	
 	public function AddItem($pid, $qty)
 	{
-		$add = true;
+		$r = new RestRunner();
 
-		$ch = curl_init();
-		curl_setopt ($ch, CURLOPT_URL, $this->CartApi);
-		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-		$output = json_decode(curl_exec($ch));
-		curl_close($ch);
+		$itema = array('Key' => 'productId', 'Value' => $pid);
+		$itemb = array('Key' => 'quantity', 'Value' => $qty);
+		$itemc = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($itema, $itemb, $itemc);
 
-		foreach ($output as &$item)
-		{
-			if ($item->ProductId == $pid)
-			{
-				//$item->Quantity += $qty;
-				$add = false;
-			}
-		}
-		
-		if ($add)
-		{
-			$p = new Product();
-			$p->GetProduct($pid);
-			if (count($this->Items) > 0 && $p->OrderType == "P")
-			{
-				throw new Exception("Sorry, but pre-order items must be purchased individually.<br><br>The item was not added to your cart.");
-			}
+		$p = new Product();
+		$p->GetProduct($pid);
 
-			$addvars = "sessionid=".session_id()."&productid=".$pid."&quantity=".$qty;
-
-			$ch = curl_init();
-			curl_setopt ($ch, CURLOPT_URL, $this->CartApi);
-			curl_setopt ($ch, CURLOPT_POST, 1);
-			curl_setopt ($ch, CURLOPT_POSTFIELDS, $addvars);
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-			$output = json_decode(curl_exec($ch));
-			curl_close($ch);
-
-			$this->Items[] = new CartItem($pid, $qty, ($p->PrintType == "POD" || $p->PrintType == "Digital" ? false : true), $p->Weight, ($p->PrintType == "Digital" ? true : false), "", ($p->OrderType == "P" ? true : false));
-		}
+		$result = $r->Post($this->CartApi, $a);
+	
+		// $this->Items[] = new CartItem($pid, $qty, ($p->PrintType == "POD" || $p->PrintType == "Digital" ? false : true), $p->Weight, ($p->PrintType == "Digital" ? true : false), "", ($p->OrderType == "P" ? true : false));
 	}
 	
 	
@@ -1844,26 +1818,13 @@ class ShoppingCart
 
 class CartItem
 {
-	public $PID = 0;
+	public $PID = "";
 	public $Quantity = 0;
-	public $PreOrder = false;
-	public $Electronic = false;
-	public $ExtraText = "";
-	public $ExtraPrice = 0;
-	public $FundraisingFlag = false;
-	public $Fulfillment = true;
-	public $Weight = 0.0;
-	public $AdItemID = "";
 	
-	public function __construct($pid, $qty, $full, $weight, $esd, $adid="", $preorder=false)
+	public function __construct($pid, $qty)
 	{
 		$this->PID = $pid;
 		$this->Quantity = $qty;
-		$this->Fulfillment = $full;
-		$this->Weight = $weight;
-		$this->Electronic = $esd;
-		$this->AdItemID = $adid;
-		$this->PreOrder = $preorder;
 	}
 }
 ?>

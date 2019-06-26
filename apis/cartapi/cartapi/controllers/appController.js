@@ -10,7 +10,7 @@ var table = 'customer-cart';
 var datetime = new Date().getTime().toString();
 
 exports.list_cart_items = function(req, res) {
-    var sessionid = 'mysession';
+    var sessionid = req.params.sessionId;
 
     ddb.get({
         TableName: table,
@@ -19,19 +19,62 @@ exports.list_cart_items = function(req, res) {
         }
     }, function(err, data) {
         if (err) {
+            res.send({
+                success: false,
+                message: 'Server error'
+            })
             console.log("Error", err);
         } else {
-            res.json(data);
+            const { Items } = data;
+
+            res.send({
+                success: true,
+                message: 'Retrieved all items in cart',
+                items: Items
+            });
             console.log("Success", data);
         }
-    })
+    });
+};
+
+exports.get_cart_item = function(req, res) {
+    var sessionid = req.params.sessionId;
+    var productid = req.params.productId;
+
+    ddb.get({
+        TableName: table,
+        Key: {
+            'SessionId': sessionid,
+            'ProductId': productid
+        }
+    }, function(err, data) {
+        if (err) {
+            res.send({
+                success: false,
+                message: 'Server error'
+            })
+            console.log("Error", err);
+        } else {
+            const { Item } = data;
+
+            res.send({
+                success: true,
+                message: 'Retrieved all items in cart',
+                item: Item
+            });
+            console.log("Success", data);
+        }
+    });
 };
 
 exports.add_to_cart = function(req, res) {
-    var sessionid = 'MySessionID';
-    var productid = 'BE0001';
-    var quantity = 2;
+    var sessionid = req.params.sessionId;
+    var productid = req.params.productid;
+    var quantity = int(req.params.quantity);
 
+    // TODO: make sure to do an update
+    // if the item is already in the cart.
+    
     ddb.put({
         TableName: table,
         Item: {
@@ -42,17 +85,25 @@ exports.add_to_cart = function(req, res) {
         }
     }, function(err, data) {
         if (err) {
+            res.send({
+                success: false,
+                message: 'Server error'
+            });
             console.log("Error", err);
         } else {
+            res.send({
+                success: true,
+                message: 'Item added'
+            });
             console.log("Success", data);
         }
     });
 };
 
 exports.update_cart_item = function(req, res) {
-    var sessionid = 'MySessionID';
-    var productid = 'BE0001';
-    var quantity = 2;
+    var sessionid = req.params.sessionId;
+    var productid = req.params.productId;
+    var quantity = req.params.quantity;
 
     ddb.update({
         TableName: table,
@@ -68,16 +119,24 @@ exports.update_cart_item = function(req, res) {
         ReturnValues: "UPDATED_NEW"
     }, function(err, data) {
         if (err) {
+            res.send({
+                success: false,
+                message: 'Server error'
+            });
             console.log("Error", err);
         } else {
+            res.send({
+                success: true,
+                message: 'Item updated'
+            });
             console.log("Success", data);
         }
     });
 };
 
 exports.delete_cart_item = function(req, res) {
-    var sessionid = 'MySessionID';
-    var productid = 'BE0001';
+    var sessionid = req.params.sessionId;
+    var productid = req.params.productId;
 
     ddb.delete({
         TableName: table,
@@ -90,15 +149,23 @@ exports.delete_cart_item = function(req, res) {
         }
     }, function(err, data) {
         if (err) {
+            res.send({
+                success: false,
+                message: 'Server error'
+            });
             console.log("Error", err);
         } else {
+            res.send({
+                success: true,
+                message: 'Item deleted'
+            });
             console.log("Success", data);
         }
     });
 };
 
 exports.empty_cart = function(req, res) {
-    var sessionid = 'MySessionID';
+    var sessionid = req.params.sessionId;
 
     ddb.delete({
         TableName: table,
@@ -107,8 +174,16 @@ exports.empty_cart = function(req, res) {
         }
     }, function(err, data) {
         if (err) {
+            res.send({
+                success: false,
+                message: 'Server error'
+            });
             console.log("Error", err);
         } else {
+            res.send({
+                success: true,
+                message: 'Cart is now empty'
+            });
             console.log("Success", data);
         }
     });
