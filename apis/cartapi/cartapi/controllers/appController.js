@@ -2,7 +2,7 @@
 
 var AWS = require('aws-sdk');
 
-region = process.env.AWS_REGION;
+var region = process.env.AWS_REGION;
 AWS.config.update({region: region});
 
 var ddb = new AWS.DynamoDB.DocumentClient();
