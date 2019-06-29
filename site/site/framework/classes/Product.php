@@ -125,7 +125,7 @@ class Product {
 	 */
 	public function ImageURL()
 	{
-		return $this->S3Bucket.$this->Image;
+		return $this->S3Bucket."images/".$this->Image;
 	}
 		
 	/*

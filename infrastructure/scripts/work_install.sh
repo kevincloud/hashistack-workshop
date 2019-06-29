@@ -91,7 +91,7 @@ cd /root/hashistack-workshop/apis
 python3 ./scripts/product_load.py
 
 # Upload images to S3
-aws s3 cp /root/hashistack-workshop/apis/productapi/images/ s3://${S3_BUCKET}/ --recursive --acl public-read
+aws s3 cp /root/hashistack-workshop/apis/productapi/images/ s3://${S3_BUCKET}/images/ --recursive --acl public-read
 
 # create product-app image
 cd ./productapi
