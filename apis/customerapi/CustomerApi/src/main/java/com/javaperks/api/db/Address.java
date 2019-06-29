@@ -1,9 +1,8 @@
 package com.javaperks.api.db;
 
-import java.util.*;
-
 public class Address
 {
+    private int addrId;
     private int custId;
     private String address1;
     private String address2;
@@ -11,12 +10,13 @@ public class Address
     private String state;
     private String zip;
     private String phone;
-    private List<Address> addresses = new ArrayList<Address>();
+    private String addrType;
 
     public Address() {
     }
 
-    public Address(int custId, String address1, String address2, String city, String state, String zip, String phone) {
+    public Address(int addrId, int custId, String address1, String address2, String city, String state, String zip, String phone, String addrType) {
+        this.addrId = addrId;
         this.custId = custId;
         this.address1 = address1;
         this.address2 = address2;
@@ -24,6 +24,15 @@ public class Address
         this.state = state;
         this.zip = zip;
         this.phone = phone;
+        this.addrType = addrType;
+    }
+
+    public int getAddrId() {
+        return this.addrId;
+    }
+
+    public void setAddrId(int addrId) {
+        this.addrId = addrId;
     }
 
     public int getCustId() {
@@ -82,12 +91,12 @@ public class Address
         this.phone = phone;
     }
 
-    public void addAddress(Address address) {
-        this.addresses.add(address);
+    public String getAddrType() {
+        return this.addrType;
     }
 
-    public List<Address> getAddresses() {
-        return this.addresses;
+    public void setAddrType(String addrType) {
+        this.addrType = addrType;
     }
 
     @Override

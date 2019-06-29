@@ -20,7 +20,7 @@ data "template_file" "work_install" {
 
 resource "aws_instance" "working-env" {
     ami = "${data.aws_ami.ubuntu.id}"
-    instance_type = "t2.micro"
+    instance_type = "${var.instance_size}"
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.working-env-sg.id}"]
     user_data = "${data.template_file.work_install.rendered}"

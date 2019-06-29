@@ -8,6 +8,9 @@ data "template_file" "vault_setup" {
 
     vars = {
         MYSQL_HOST = "${aws_db_instance.vault-mysql.address}:${aws_db_instance.vault-mysql.port}"
+        MYSQL_USER = "${var.mysql_user}"
+        MYSQL_PASS = "${var.mysql_pass}"
+        MYSQL_DB = "${var.mysql_database}"
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         CONSUL_IP = "${aws_instance.consul-server.private_ip}"
@@ -16,7 +19,7 @@ data "template_file" "vault_setup" {
 
 resource "aws_instance" "vault-server" {
     ami = "${data.aws_ami.ubuntu.id}"
-    instance_type = "t2.micro"
+    instance_type = "${var.instance_size}"
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.vault-server-sg.id}"]
     user_data = "${data.template_file.vault_setup.rendered}"
@@ -73,7 +76,7 @@ resource "aws_db_instance" "vault-mysql" {
     storage_type = "gp2"
     engine = "mysql"
     engine_version = "5.7"
-    instance_class = "db.t2.micro"
+    instance_class = "db.${var.instance_size}"
     name = "vaultdb"
     db_subnet_group_name = "${aws_db_subnet_group.dbsubnets.name}"
     vpc_security_group_ids = ["${aws_security_group.vault-mysql-sg.id}"]

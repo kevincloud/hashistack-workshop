@@ -4,7 +4,7 @@ echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-se
 export DEBIAN_FRONTEND=noninteractive
 apt-get update > /dev/null 2>&1
 apt-get -y upgrade > /dev/null 2>&1
-apt-get -y install unzip git jq python3 python3-pip docker.io python3-dev default-libmysqlclient-dev npm > /dev/null 2>&1
+apt-get -y install unzip git jq python3 python3-pip docker.io python3-dev default-libmysqlclient-dev npm openjdk-8-jdk maven > /dev/null 2>&1
 
 # create a sudo user
 #useradd -m builder
@@ -128,10 +128,8 @@ chmod a+x login.sh
 docker tag online-store:online-store ${REPO_URL_SITE}:online-store
 docker push ${REPO_URL_SITE}:online-store
 
-curl \
-    http://nomad-server.service.dc1.consul:4646/v1/jobs \
-    --request POST \
-    --data @- <<PAYLOAD
+mkdir /root/jobs
+sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
 {
     "Job": {
         "ID": "product-api-job",
@@ -175,12 +173,9 @@ curl \
         }]
     }
 }
-PAYLOAD
+EOF
 
-curl \
-    http://nomad-server.service.dc1.consul:4646/v1/jobs \
-    --request POST \
-    --data @- <<PAYLOAD
+sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
 {
     "Job": {
         "ID": "cart-api-job",
@@ -224,12 +219,9 @@ curl \
         }]
     }
 }
-PAYLOAD
+EOF
 
-curl \
-    http://nomad-server.service.dc1.consul:4646/v1/jobs \
-    --request POST \
-    --data @- <<PAYLOAD
+sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
 {
     "Job": {
         "ID": "online-store-job",
@@ -273,6 +265,20 @@ curl \
         }]
     }
 }
-PAYLOAD
+EOF
 
+curl \
+    --request POST \
+    --data @/root/jobs/product-api-job.nomad \
+    http://nomad-server.service.dc1.consul:4646/v1/jobs
+
+curl \
+    --request POST \
+    --data @/root/jobs/cart-api-job.nomad \
+    http://nomad-server.service.dc1.consul:4646/v1/jobs
+
+curl \
+    --request POST \
+    --data @/root/jobs/online-store-job.nomad \
+    http://nomad-server.service.dc1.consul:4646/v1/jobs
 

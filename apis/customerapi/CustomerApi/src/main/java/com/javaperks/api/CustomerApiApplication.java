@@ -1,14 +1,14 @@
 package com.javaperks.api;
 
 import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+// import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.client.JerseyClientBuilder;
+// import io.dropwizard.client.JerseyClientBuilder;
 
 import com.javaperks.api.api.CustomerInterface;
 
-import javax.ws.rs.client.Client;
+// import javax.ws.rs.client.Client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +30,12 @@ public class CustomerApiApplication extends Application<CustomerApiConfiguration
     }
 
     @Override
-    public void run(CustomerApiConfiguration c, Environment e) {
+    public void run(CustomerApiConfiguration c, Environment e) throws Exception {
         LOGGER.info("Registering API Resources");
 
-        // Client client = new JerseyClientBuilder(e).build("CustomerApiClient");
-        e.jersey().register(new CustomerInterface());
+        final CustomerInterface ci = new CustomerInterface();
+
+        e.jersey().register(ci);
     }
 
 }

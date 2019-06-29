@@ -22,6 +22,10 @@ variable "mysql_pass" {
     description = "Root user password for the MySQL server backend for Vault"
 }
 
+variable "mysql_database" {
+    description = "Name of database for Java Perks"
+}
+
 variable "root_pass" {
     description = "Root password for working vm"
 }
@@ -32,4 +36,8 @@ variable "git_user" {
 
 variable "git_token" {
     description = "Token for the git repository"
+}
+
+variable "instance_size" {
+    description = "Size of instance for most servers"
 }

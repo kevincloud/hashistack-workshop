@@ -1,6 +1,7 @@
 package com.javaperks.api.db;
 
 import java.util.Date;
+import java.util.List;
 
 public class Customer
 {
@@ -12,6 +13,7 @@ public class Customer
     private String dob;
     private String ssn;
     private Date created;
+    private List<Address> addresses;
 
     public Customer() {
     }
@@ -59,6 +61,14 @@ public class Customer
         this.lastName = lastName;
     }
 
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getDOB() {
         return this.dob;
     }
@@ -81,6 +91,14 @@ public class Customer
 
     public void setDateCreated(Date dateCreated) {
         this.created = dateCreated;
+    }
+
+    public List<Address> getAddresses() {
+        return this.addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
     }
 
     @Override

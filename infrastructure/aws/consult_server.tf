@@ -9,7 +9,7 @@ data "template_file" "consul-server-setup" {
 
 resource "aws_instance" "consul-server" {
     ami = "${data.aws_ami.ubuntu.id}"
-    instance_type = "t2.micro"
+    instance_type = "${var.instance_size}"
     key_name = "${var.key_pair}"
     vpc_security_group_ids = ["${aws_security_group.consul-server-sg.id}"]
     user_data = "${data.template_file.consul-server-setup.rendered}"
