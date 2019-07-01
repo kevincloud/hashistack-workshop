@@ -2,8 +2,8 @@ data "template_file" "work_install" {
     template = "${file("${path.module}/../scripts/work_install.sh")}"
 
     vars = {
-        VAULT_SERVER = "${aws_instance.vault-server.public_ip}"
-        ROOT_PASSWORD = "${var.root_pass}"
+        VAULT_IP = "${aws_instance.vault-server.private_ip}"
+        VAULT_TOKEN = "root"
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         AWS_REGION = "${var.aws_region}"

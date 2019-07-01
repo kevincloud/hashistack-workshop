@@ -1,19 +1,9 @@
 package com.javaperks.api.api;
 
-// import java.util.ArrayList;
-// import java.util.List;
-
-// import org.json.JSONArray;
-// import org.json.JSONObject;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import java.util.Properties;
-// import javax.ws.rs.client.Client;
-// import javax.ws.rs.client.Invocation;
-// import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -32,12 +22,11 @@ public class CustomerInterface
     private String password;
     private String database;
 
-    public CustomerInterface() throws Exception {
-        Properties p = new Properties();
+    public CustomerInterface(String vaultAddress, String vaultToken) throws Exception {
         VaultConfig vaultConfig;
 
-        this.vaultaddr = p.getProperty("vaultaddr");
-        this.vaulttoken = p.getProperty("vaulttoken");
+        this.vaultaddr = vaultAddress;
+        this.vaulttoken = vaultToken;
 
         try
         {

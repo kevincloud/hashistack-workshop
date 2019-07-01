@@ -9,14 +9,6 @@ public class CustomerApiConfiguration extends Configuration {
     private String vaultAddress;
     @NotNull
     private String vaultToken;
-    @NotNull
-    private String dbAddress;
-    @NotNull
-    private String dbUsername;
-    @NotNull
-    private String dbPassword;
-    @NotNull
-    private String dbDatabase;
 
     @JsonProperty
     public String getVaultAddress() {
@@ -26,25 +18,5 @@ public class CustomerApiConfiguration extends Configuration {
     @JsonProperty
     public String getVaultToken() {
         return vaultToken;
-    }
-
-    @JsonProperty
-    public String getDbAddress() {
-        return dbAddress;
-    }
-
-    @JsonProperty
-    public String getDbUsername() {
-        return dbUsername;
-    }
-
-    @JsonProperty
-    public String getDbPassword() {
-        return dbPassword;
-    }
-
-    @JsonProperty
-    public String getDbDatabase() {
-        return dbDatabase;
     }
 }

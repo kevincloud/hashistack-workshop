@@ -111,6 +111,12 @@ chmod a+x login.sh
 docker tag cart-app:cart-app ${REPO_URL_CART}:cart-app
 docker push ${REPO_URL_CART}:cart-app
 
+# create customer-api jar
+cd /root/hashistack-workshop/apis/customerapi/CustomerApi
+mvn package
+aws s3 cp /root/hashistack-workshop/apis/customerapi/CustomerApi/target/CustomerApi-0.1.0-SNAPSHOT.jar s3://${S3_BUCKET}/jars/CustomerApi-0.1.0-SNAPSHOT.jar
+
+
 # create online-site image
 cd /root/hashistack-workshop/site
 sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
@@ -129,6 +135,7 @@ docker tag online-store:online-store ${REPO_URL_SITE}:online-store
 docker push ${REPO_URL_SITE}:online-store
 
 mkdir /root/jobs
+
 sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
 {
     "Job": {
@@ -167,6 +174,55 @@ sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
                 },
                 "Services": [{
                     "Name": "product-api",
+                    "PortLabel": "http"
+                }]
+            }]
+        }]
+    }
+}
+EOF
+
+sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
+{
+    "Job": {
+        "ID": "customer-api-job",
+        "Name": "customer-api",
+        "Type": "service",
+        "Datacenters": ["dc1"],
+        "TaskGroups": [{
+            "Name": "customer-api-group",
+            "Tasks": [{
+                "Name": "customer-api",
+                "Driver": "java",
+                "Vault": {
+                    "Policies": ["access-creds"]
+                },
+                "Config": {
+                    "JarPath": "local/CustomerApi-0.1.0-SNAPSHOT.jar",
+                    "Args": {
+                        "server": ""
+                    }
+                },
+                "Artifact": {
+                    "source": "https://s3.amazonaws.com/${S3_BUCKET}/CustomerApi-0.1.0-SNAPSHOT.jar"
+                },
+                "Templates": [{
+                    "EmbeddedTmpl": "logging:\n  level: INFO\n  loggers:\n    com.javaperks.api: DEBUG\nserver:\n  applicationConnectors:\n  - type: http\n    port: 5822\n  adminConnectors:\n  - type: http\n    port: 9001\nvaultAddress = "http://${VAULT_IP}:8200"\nvaultToken = "${VAULT_TOKEN}"\n",
+                    "DestPath": "local/file.env",
+                    "Envvars": true
+                }],
+                "Resources": {
+                    "Networks": [{
+                        "ReservedPorts": [
+                            {
+                                "Label": "http",
+                                "Value": 5822
+                            }
+                        ]
+                    }]
+                },
+                "Services": [{
+                    "Name": "customer-api",
                     "PortLabel": "http"
                 }]
             }]

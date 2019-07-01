@@ -2,29 +2,16 @@
 
 class ShoppingCart
 {
-	public $Items = array();
-	public $PromoCode = "";
-	public $BookstoreDiscount = 0;
-	public $DiscountType = "N";
 	public $ShippingAddress = NULL;
 	public $BillingAddress = NULL;
-	public $SaveAddresses = true;
 	public $Checkout = false;
 	public $LastError = "";
-	public $FulfillmentOnly = true;
 	public $ShippingAmount = 0.0;
 	public $SubtotalAmount = 0.0;
 	public $TaxAmount = 0.0;
 	public $TotalAmount = 0.0;
 	public $Order = NULL;
-	public $ShipMethodList = array();
 	public $Comments = "";
-	public $TmpOrderID = "";
-	
-	public $PayMethod = "CREDIT";
-	public $PayType = "NEW";
-	public $Source = "";
-	public $SpecialNotes = "";
 	
 	private $CartApi = "";
 
@@ -73,17 +60,15 @@ class ShoppingCart
 	{
 		$r = new RestRunner();
 
-		$itema = array('Key' => 'productId', 'Value' => $pid);
-		$itemb = array('Key' => 'quantity', 'Value' => $qty);
-		$itemc = array('Key' => 'sessionId', 'Value' => session_id());
-		$a = array($itema, $itemb, $itemc);
+		$itempid = array('Key' => 'productId', 'Value' => $pid);
+		$itemqty = array('Key' => 'quantity', 'Value' => $qty);
+		$itemsid = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($itempid, $itemqty, $itemsid);
 
 		$p = new Product();
 		$p->GetProduct($pid);
 
 		$result = $r->Post($this->CartApi, $a);
-	
-		// $this->Items[] = new CartItem($pid, $qty, ($p->PrintType == "POD" || $p->PrintType == "Digital" ? false : true), $p->Weight, ($p->PrintType == "Digital" ? true : false), "", ($p->OrderType == "P" ? true : false));
 	}
 	
 	
@@ -194,38 +179,17 @@ class ShoppingCart
 	
 	public function StartOver()
 	{
-		unset($this->Items);
-		unset($this->ShipMethodList);
-		
-		$this->PromoCode = "";
-		$this->BookstoreDiscount = 0;
-		$this->DiscountType = "N";
 		$this->ShippingAddress = NULL;
 		$this->BillingAddress = NULL;
-		$this->SaveAddresses = true;
 		$this->Checkout = false;
 		$this->LastError = "";
-		$this->ShippingService = "USPS1P";
-		$this->FulfillmentOnly = true;
+		$this->ShippingService = "CUSTOM";
 		$this->ShippingAmount = 0.0;
 		$this->SubtotalAmount = 0.0;
 		$this->TaxAmount = 0.0;
 		$this->TotalAmount = 0.0;
 		$this->Order = NULL;
 		$this->Comments = "";
-		$this->TmpOrderID = "";
-		$this->PayMethod = "CREDIT";
-		$this->PayType = "NEW";
-		$this->Source = "";
-		$this->SpecialNotes = "";
-		$this->CardName = "";
-		$this->CardType = "";
-		$this->CardNumber = "";
-		$this->CardCVV = "";
-		$this->CardExpMonth = "";
-		$this->CardExpYear = "";
-		$this->SaveCard = false;
-		$this->AgreeTerms = false;
 	}
 	
 	public function PleaseWait()

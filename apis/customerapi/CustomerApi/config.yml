@@ -9,9 +9,3 @@ server:
   adminConnectors:
   - type: http
     port: 9001
-vaultAddress: ""
-vaultToken: ""
-dbAddress: ""
-dbUsername: ""
-dbPassword: ""
-dbDatabase: "javaperks"
