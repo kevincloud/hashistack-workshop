@@ -182,7 +182,7 @@ sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
 }
 EOF
 
-sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
+sudo bash -c "cat >/root/jobs/customer-api-job.nomad" <<EOF
 {
     "Job": {
         "ID": "customer-api-job",
