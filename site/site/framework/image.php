@@ -56,7 +56,7 @@ function ShowFeaturedImage()
 function ShowProductImage()
 {	
 	$pid = $_REQUEST["pid"];
-	$p = new Product($db);
+	$p = new Product();
 	$p->GetProduct($pid);
 	$p->ShowImage();
 }
