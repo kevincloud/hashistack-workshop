@@ -78,6 +78,7 @@ resource "aws_db_instance" "vault-mysql" {
     engine_version = "5.7"
     instance_class = "db.${var.instance_size}"
     name = "vaultdb"
+    identifier = "kevinvaultdb"
     db_subnet_group_name = "${aws_db_subnet_group.dbsubnets.name}"
     vpc_security_group_ids = ["${aws_security_group.vault-mysql-sg.id}"]
     username = "${var.mysql_user}"
