@@ -122,6 +122,7 @@ cd /root/hashistack-workshop/site
 sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
 <?php
 \$productapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/product-api";
+\$customerapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/customer-api";
 \$cartapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/cart-api";
 \$assetbucket = "https://s3.amazonaws.com/${S3_BUCKET}/"
 ?>
@@ -164,6 +165,7 @@ sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
                 }],
                 "Resources": {
                     "Networks": [{
+                        "MBits": 1,
                         "ReservedPorts": [
                             {
                                 "Label": "http",
@@ -194,25 +196,32 @@ sudo bash -c "cat >/root/jobs/customer-api-job.nomad" <<EOF
             "Tasks": [{
                 "Name": "customer-api",
                 "Driver": "java",
+                "Count": 1,
+                "Update": {
+                    "Stagger": 10000000000,
+                    "MaxParallel": 1,
+                    "HealthCheck": "checks",
+                    "MinHealthyTime": 10000000000,
+                    "HealthyDeadline": 300000000000
+                },
                 "Vault": {
                     "Policies": ["access-creds"]
                 },
                 "Config": {
-                    "JarPath": "local/CustomerApi-0.1.0-SNAPSHOT.jar",
-                    "Args": {
-                        "server": ""
-                    }
+                    "jar_path": "local/CustomerApi-0.1.0-SNAPSHOT.jar",
+                    "args": [ "server", "local/config.yml" ]
                 },
-                "Artifact": {
-                    "source": "https://s3.amazonaws.com/${S3_BUCKET}/CustomerApi-0.1.0-SNAPSHOT.jar"
-                },
+                "Artifacts": [{
+                    "GetterSource": "https://s3.amazonaws.com/${S3_BUCKET}/jars/CustomerApi-0.1.0-SNAPSHOT.jar",
+                    "RelativeDest": "local/"
+                }],
                 "Templates": [{
-                    "EmbeddedTmpl": "logging:\n  level: INFO\n  loggers:\n    com.javaperks.api: DEBUG\nserver:\n  applicationConnectors:\n  - type: http\n    port: 5822\n  adminConnectors:\n  - type: http\n    port: 9001\nvaultAddress = "http://${VAULT_IP}:8200"\nvaultToken = "${VAULT_TOKEN}"\n",
-                    "DestPath": "local/file.env",
-                    "Envvars": true
+                    "EmbeddedTmpl": "logging:\n  level: INFO\n  loggers:\n    com.javaperks.api: DEBUG\nserver:\n  applicationConnectors:\n  - type: http\n    port: 5822\n  adminConnectors:\n  - type: http\n    port: 9001\nvaultAddress: \"http://${VAULT_IP}:8200\"\nvaultToken: \"${VAULT_TOKEN}\"\n",
+                    "DestPath": "local/config.yml"
                 }],
                 "Resources": {
                     "Networks": [{
+                        "MBits": 1,
                         "ReservedPorts": [
                             {
                                 "Label": "http",
@@ -240,6 +249,7 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
         "Datacenters": ["dc1"],
         "TaskGroups": [{
             "Name": "cart-api-group",
+            "Count": 2,
             "Tasks": [{
                 "Name": "cart-api",
                 "Driver": "docker",
@@ -259,6 +269,7 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
                 }],
                 "Resources": {
                     "Networks": [{
+                        "MBits": 1,
                         "ReservedPorts": [
                             {
                                 "Label": "http",
@@ -305,6 +316,7 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
                 }],
                 "Resources": {
                     "Networks": [{
+                        "MBits": 1,
                         "ReservedPorts": [
                            {
                                 "Label": "http",
@@ -338,3 +350,7 @@ curl \
     --data @/root/jobs/online-store-job.nomad \
     http://nomad-server.service.dc1.consul:4646/v1/jobs
 
+curl \
+    --request POST \
+    --data @/root/jobs/customer-api-job.nomad \
+    http://nomad-server.service.dc1.consul:4646/v1/jobs

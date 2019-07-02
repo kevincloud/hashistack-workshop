@@ -127,7 +127,23 @@ class Product {
 	{
 		return $this->S3Bucket."images/".$this->Image;
 	}
+	
+	public function ShowImage()
+	{
+		$url = $this->S3Bucket."images/".$this->Image;
 		
+		$ch = curl_init();
+		curl_setopt ($ch, CURLOPT_URL, $url);
+		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 0);
+		$image = curl_exec($ch);
+		curl_close($ch);		
+		
+		header("Content-type: image/jpeg");
+		header("Content-Disposition: attachment; filename=\"".$this->Image."\"");
+		echo $image;
+	}
+
 	/*
 	 *	Function: 	DetailView()
 	 *	
@@ -203,7 +219,7 @@ class Product {
 		$out .= "		</section>\n";
 		$out .= "	</aside>\n";
 		$out .= "	<div class=\"single-product-thumbnails\" style=\"position:relative;\">\n";
-		$out .= "		<img src=\"".$this->ImageURL()."\" alt=\"".str_replace("-", " ", $this->BeautifiedURL)."\" border=\"0\" />\n";
+		$out .= "		<img src=\"/images/".$this->PID."\" alt=\"".str_replace("-", " ", $this->BeautifiedURL)."\" border=\"0\" />\n";
 		$out .= "	</div>\n";
 		$out .= "	<article class=\"single-description\">\n";
 		$out .= "		<h2>\n";
@@ -293,7 +309,7 @@ class Product {
 		$out = "";
 		
 		$out .= "	<div class=\"product-details\">\n";
-		$out .= "		<div class=\"image\"><a href=\"".$this->Permalink()."\"><img src=\"".$this->ImageURL()."\" alt=\"".$this->ProductName."\" border=\"0\" /></a></div>\n";
+		$out .= "		<div class=\"image\"><a href=\"".$this->Permalink()."\"><img src=\"/images/".$this->PID."\" alt=\"".$this->ProductName."\" border=\"0\" /></a></div>\n";
 		$out .= "		<div class=\"info-block\">\n";
 		$out .= "			<div class=\"title\">".$this->ProductName."</div>\n";
 		$out .= "			by ".$this->Manufacturer."<br>\n";
@@ -499,10 +515,10 @@ class MiniProduct
 	 *	Returns:	string
 	 *	
 	 */
-	public function ImageURL()
-	{
-		return "https://s3-us-west-2.amazonaws.com/hc-workshop-2.0-static-images/".$this->Image;
-	}
+	// public function ImageURL()
+	// {
+	// 	return "https://s3-us-west-2.amazonaws.com/hc-workshop-2.0-static-images/".$this->Image;
+	// }
 }
 
 

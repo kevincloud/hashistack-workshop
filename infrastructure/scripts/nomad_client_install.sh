@@ -159,7 +159,7 @@ vault {
 
 client {
     enabled       = true
-    network_speed = 10
+    network_speed = 100
     options {
         "driver.raw_exec.enable" = "1"
         "docker.auth.config"     = "/etc/docker/config.json"

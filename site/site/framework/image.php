@@ -7,9 +7,6 @@ if (isset($_REQUEST["action"]))
 
 switch ($action)
 {
-	case "feature":
-		ShowFeaturedImage();
-		break;
 	default:
 		ShowProductImage();
 		break;
@@ -57,9 +54,7 @@ function ShowFeaturedImage()
 }
 
 function ShowProductImage()
-{
-	global $db;
-	
+{	
 	$pid = $_REQUEST["pid"];
 	$p = new Product($db);
 	$p->GetProduct($pid);

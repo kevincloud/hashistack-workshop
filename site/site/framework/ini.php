@@ -67,15 +67,20 @@ curl_setopt ($ch, CURLOPT_URL, $productapiurl);
 curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
 $consuloutput = json_decode(curl_exec($ch));
 curl_close($ch);
-
 $productapi = "http://" . $consuloutput[0]->Address . ":5821";
+
+$ch = curl_init();
+curl_setopt ($ch, CURLOPT_URL, $customerapiurl);
+curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+$consuloutput = json_decode(curl_exec($ch));
+curl_close($ch);
+$customerapi = "http://" . $consuloutput[0]->Address . ":5822";
 
 $ch = curl_init();
 curl_setopt ($ch, CURLOPT_URL, $cartapiurl);
 curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
 $consuloutput = json_decode(curl_exec($ch));
 curl_close($ch);
-
 $cartapi = "http://" . $consuloutput[0]->Address . ":5823";
 
 //////////////////////////////////////////////////////////////////////////////////
