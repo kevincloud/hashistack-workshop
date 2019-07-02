@@ -10,10 +10,10 @@ apt-get -y install unzip git jq python3 python3-pip docker.io python3-dev defaul
 #useradd -m builder
 #echo 'builder:test5678' | chpasswd
 #usermod -aG sudo builder
-echo 'root:${ROOT_PASSWORD}' | chpasswd
-sed -i.bak 's/^\(PasswordAuthentication \).*/\1yes/' /etc/ssh/sshd_config
-sed -i.bak 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-service ssh restart
+# echo 'root:$--{ROOT_PASSWORD}--' | chpasswd
+# sed -i.bak 's/^\(PasswordAuthentication \).*/\1yes/' /etc/ssh/sshd_config
+# sed -i.bak 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+# service ssh restart
 
 mkdir -p /root/.aws
 sudo bash -c "cat >/root/.aws/config" <<EOF
@@ -35,7 +35,7 @@ pip3 install awscli
 
 echo "Installing Consul..."
 mkdir /etc/consul.d
-export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
+export CLIENT_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
 wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
 sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
 

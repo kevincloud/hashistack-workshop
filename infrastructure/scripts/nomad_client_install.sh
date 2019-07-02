@@ -37,7 +37,7 @@ sudo bash -c "cat >/etc/docker/config.json" <<EOF
 EOF
 
 echo "Installing Consul..."
-export CLIENT_IP=`ifconfig eth0 | grep "inet " | awk -F' ' '{print $2}'`
+export CLIENT_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
 wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
 sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
 
