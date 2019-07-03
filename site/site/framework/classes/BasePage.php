@@ -197,20 +197,6 @@ abstract class BasePage
 	
 	abstract protected function Run();
 	
-	public function BeginLanding()
-	{
-		$this->_landingpage = true;
-		echo $this->PageOpen();
-		echo $this->Head();
-		echo $this->LandingOpen();
-	}
-	
-	public function EndLanding()
-	{
-		echo $this->LandingClose();
-		echo $this->PageClose();
-	}
-
 	public function BeginPage()
 	{
 		echo $this->PageOpen();
@@ -384,11 +370,11 @@ abstract class BasePage
 		{
 			$out .= "		<nav id=\"customer-info\">\n";
 			$out .= "			<ul>\n";
-			$c = $_SESSION["__cart__"]->Count();
-			if ($c == 1)
-				$out .= "				<li><a href=\"/shop/cart/view\">My Cart: <strong>1 Item</strong></a></li>\n";
-			else
-				$out .= "				<li><a href=\"/shop/cart/view\">My Cart: <strong>".$c." Items</strong></a></li>\n";
+			// $c = $_SESSION["__cart__"]->Count();
+			// if ($c == 1)
+			// 	$out .= "				<li><a href=\"/shop/cart/view\">My Cart: <strong>1 Item</strong></a></li>\n";
+			// else
+			// 	$out .= "				<li><a href=\"/shop/cart/view\">My Cart: <strong>".$c." Items</strong></a></li>\n";
 			if ($this->_loggedin)
 			{
 				$out .= "				<li>Welcome ".$_SESSION["__account__"]->FirstName."!</li>\n";
