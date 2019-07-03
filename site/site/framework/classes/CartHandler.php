@@ -342,18 +342,18 @@ class CartHandler extends BasePage
 			throw new Exception('There was an error while trying to add this product to your cart [Error: 1001].');
 		}
 		
-		$p = new Product($this->_db);
+		$p = new Product();
 		$p->GetProduct($this->PageVariables["cart_pid"]);
 		
 		try
 		{
 			$this->Cart->AddItem($this->PageVariables["cart_pid"], $this->PageVariables["cart_qty"]);
-			$this->Redirect("/shop/cart/add/".$p->PID."/".$p->Identifier);
+			//$this->Redirect("/shop/cart/add/".$p->PID."/".$p->Identifier);
 		}
 		catch (Exception $e)
 		{
 			$this->Cart->LastError = $e->getMessage();
-			$this->Redirect($p->Permalink());
+			//$this->Redirect($p->Permalink());
 		}
 	}
 	

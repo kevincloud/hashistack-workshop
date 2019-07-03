@@ -418,38 +418,6 @@ abstract class BasePage
 		return $out;
 	}
 	
-	private function LandingOpen()
-	{
-		$out = "";
-	
-		$out .= "<body>\n";
-		
-		$out .= "<div class=\"wrapper\">\n";
-		
-		$out .= $this->Header();
-		
-		$out .= "<div id=\"page\">\n";
-		
-		return $out;
-	}
-	
-	private function LandingClose()
-	{
-		$out = "";
-		
-		$out .= "</div>\n";
-		$out .= "<footer>\n";
-		$out .= "	<p>".$this->_copyright."</p>\n";
-		$out .= "</footer>\n";
-		$out .= "</div>\n";
-		
-		$out .= $this->Analytics();
-		
-		$out .= "</body>";
-		
-		return $out;
-	}
-	
 	private function BodyOpen()
 	{
 		$out = "";
