@@ -344,13 +344,13 @@ class CartHandler extends BasePage
 		
 		$p = new Product();
 		$p->GetProduct($this->PageVariables["cart_pid"]);
-		echo "<p>1<p>";
+		echo "<p>1</p>";
 
 		try
 		{
-			echo "<p>2<p>";
+			echo "<p>2</p>";
 			$this->Cart->AddItem($this->PageVariables["cart_pid"], $this->PageVariables["cart_qty"]);
-			echo "<p>6<p>";
+			echo "<p>6</p>";
 			//$this->Redirect("/shop/cart/add/".$p->PID."/".$p->Identifier);
 		}
 		catch (Exception $e)
