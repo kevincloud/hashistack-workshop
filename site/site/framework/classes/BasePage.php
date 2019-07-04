@@ -47,6 +47,7 @@ abstract class BasePage
 		set_error_handler(array("BasePage", "ErrorHandler"));
 		
 		$this->Initialize();
+		echo "<p>Initialized!</p>";
 	}
 	
 	protected function Initialize()
@@ -55,6 +56,7 @@ abstract class BasePage
 		
 		$this->_copyright = "&copy; Copyright HashiCorp ".date("Y").". All Rights Reserved.";
 		
+		echo "<p>made it 1!!</p>";
 		$this->AddStyleSheet("/framework/css/style.css");
 		$this->AddStyleSheet("/framework/css/jquery-ui.css");
 		$this->AddJavascript("/framework/js/jquery.min.js");
@@ -62,6 +64,7 @@ abstract class BasePage
 		$this->AddJavascript("/framework/js/functions.js");
 		$this->AddJavascript("/framework/js/modernizr-1.7.min.js");
 		$this->AddJavascript("/framework/js/cart.js");
+		echo "<p>made it 2!!</p>";
 		
 		$this->AddMenuItem("Brewing Equipment", "/products/categories/brewing-equipment");
 		$this->AddMenuItem("Barista Tools", "/products/categories/barista-tools");

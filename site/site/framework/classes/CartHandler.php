@@ -10,9 +10,7 @@ class CartHandler extends BasePage
 	
 	public function Run()
 	{
-		echo "<p>made it 1</p>";
 		$this->BeginPage();
-		echo "<p>made it 2: ".$this->Action."</p>";
 		
 		switch ($this->Action)
 		{
