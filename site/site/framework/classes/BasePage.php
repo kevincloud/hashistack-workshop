@@ -25,23 +25,10 @@ abstract class BasePage
 	protected $Get = false;
 	protected $Options = array();
 	
-	// **INLINESQL***
-	// protected $_db;
-
 	/*
 	Public Member Functions
 	*/
-	
-	// ***INLINESQL***
-	// public function __construct($db)
-	// {
-	// 	$this->_db = $db;
 		
-	// 	set_error_handler(array("BasePage", "ErrorHandler"));
-		
-	// 	$this->Initialize();
-	// }
-	
 	public function __construct()
 	{
 		set_error_handler(array("BasePage", "ErrorHandler"));
