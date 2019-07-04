@@ -58,8 +58,10 @@ class ShoppingCart
 	
 	public function AddItem($pid, $qty)
 	{
+		echo "<p>3<p>";
 		$r = new RestRunner();
 
+		echo "<p>4<p>";
 		$itempid = array('Key' => 'productId', 'Value' => $pid);
 		$itemqty = array('Key' => 'quantity', 'Value' => $qty);
 		$itemsid = array('Key' => 'sessionId', 'Value' => session_id());
@@ -68,6 +70,7 @@ class ShoppingCart
 		$p = new Product();
 		$p->GetProduct($pid);
 
+		echo "<p>5: ".$pid."<p>";
 		$result = $r->Post($this->CartApi, $a);
 	}
 	
