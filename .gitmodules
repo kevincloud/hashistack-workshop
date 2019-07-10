@@ -1,0 +1,6 @@
+[submodule "apis/account-broker"]
+	path = apis/account-broker
+	url = git@github.com:joshuaNjordan85/account-broker.git
+[submodule "apis/minion"]
+	path = apis/minion
+	url = git@github.com:joshuaNjordan85/minion.git
