@@ -32,7 +32,7 @@ resource "aws_instance" "nomad-client-1" {
     iam_instance_profile = "${aws_iam_instance_profile.nomad-profile.id}"
     
     tags = {
-        Name = "nomad-client-1"
+        Name = "kevinc-nomad-client-1"
     }
 
     depends_on = ["aws_instance.nomad-server"]
@@ -48,7 +48,7 @@ resource "aws_instance" "nomad-client-2" {
     iam_instance_profile = "${aws_iam_instance_profile.nomad-profile.id}"
     
     tags = {
-        Name = "nomad-client-2"
+        Name = "kevinc-nomad-client-2"
     }
 
     depends_on = ["aws_instance.nomad-server"]

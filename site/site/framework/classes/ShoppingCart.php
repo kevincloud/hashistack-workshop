@@ -22,46 +22,44 @@ class ShoppingCart
 		$this->CartApi = $cartapi + "/cart";
 	}
 	
-	public function Contains($pid)
-	{
-		$answer = NULL;
+	// public function Contains($pid)
+	// {
+	// 	$answer = NULL;
 		
-		// foreach ($this->Items as $item)
-		// {
-		// 	if ($item->PID == $pid)
-		// 		$answer = $item;
-		// }
+	// 	// foreach ($this->Items as $item)
+	// 	// {
+	// 	// 	if ($item->PID == $pid)
+	// 	// 		$answer = $item;
+	// 	// }
 		
-		return $answer;
-	}
+	// 	return $answer;
+	// }
 	
-	public function Count()
-	{
-		$answer = 0;
+	// public function Count()
+	// {
+	// 	$answer = 0;
 		
-		// foreach ($this->Items as $item)
-		// {
-		// 	$answer += $item->Quantity;
-		// }
+	// 	// foreach ($this->Items as $item)
+	// 	// {
+	// 	// 	$answer += $item->Quantity;
+	// 	// }
 		
-		return $answer;
-	}
+	// 	return $answer;
+	// }
 	
-	public function CleanCart()
-	{
-		// foreach ($this->Items as $key => &$item)
-		// {
-		// 	if ($item->Quantity == 0)
-		// 		unset($this->Items[$key]);
-		// }
-	}
+	// public function CleanCart()
+	// {
+	// 	// foreach ($this->Items as $key => &$item)
+	// 	// {
+	// 	// 	if ($item->Quantity == 0)
+	// 	// 		unset($this->Items[$key]);
+	// 	// }
+	// }
 	
 	public function AddItem($pid, $qty)
 	{
-		echo "<p>3</p>";
 		$r = new RestRunner();
 
-		echo "<p>4</p>";
 		$itempid = array('Key' => 'productId', 'Value' => $pid);
 		$itemqty = array('Key' => 'quantity', 'Value' => $qty);
 		$itemsid = array('Key' => 'sessionId', 'Value' => session_id());
@@ -70,130 +68,129 @@ class ShoppingCart
 		$p = new Product();
 		$p->GetProduct($pid);
 
-		echo "<p>5: ".$pid."</p>";
 		$result = $r->Post($this->CartApi, $a);
 	}
 	
 	
-	public function UpdateItem($pid, $qty)
-	{
-		// foreach ($this->Items as &$item)
-		// {
-		// 	if ($item->PID == $pid)
-		// 	{
-		// 		$item->Quantity += $qty;
-		// 		$add = true;
-		// 	}
-		// }
-	}
+	// public function UpdateItem($pid, $qty)
+	// {
+	// 	// foreach ($this->Items as &$item)
+	// 	// {
+	// 	// 	if ($item->PID == $pid)
+	// 	// 	{
+	// 	// 		$item->Quantity += $qty;
+	// 	// 		$add = true;
+	// 	// 	}
+	// 	// }
+	// }
 	
-	public function DeleteItem($pid, $landing=false)
-	{
-		// foreach ($this->Items as $key => &$item)
-		// {
-		// 	if ($item->PID == $pid)
-		// 	{
-		// 		unset($this->Items[$key]);
-		// 	}
-		// }
-	}
+	// public function DeleteItem($pid, $landing=false)
+	// {
+	// 	// foreach ($this->Items as $key => &$item)
+	// 	// {
+	// 	// 	if ($item->PID == $pid)
+	// 	// 	{
+	// 	// 		unset($this->Items[$key]);
+	// 	// 	}
+	// 	// }
+	// }
 	
-	/*
-	 *	Function: 	HideSidebar()
-	 *	
-	 *	Summary:	Hides the left-hand sidebar
-	 *	
-	 *	Parameters:	No parameters
-	 *	
-	 *	Returns:	No return value
-	 *	
-	 */
-	public function HideSidebar()
-	{
-		$out = "";
+	// /*
+	//  *	Function: 	HideSidebar()
+	//  *	
+	//  *	Summary:	Hides the left-hand sidebar
+	//  *	
+	//  *	Parameters:	No parameters
+	//  *	
+	//  *	Returns:	No return value
+	//  *	
+	//  */
+	// public function HideSidebar()
+	// {
+	// 	$out = "";
 		
-		$out .= "<style>\n";
-		$out .= "	aside.sidebar {\n";
-		$out .= "		display: none;\n";
-		$out .= "	}\n";
-		$out .= "	div.content {\n";
-		$out .= "		width: 100%;\n";
-		$out .= "		padding: 25px;\n";
-		$out .= "	}\n";
-		$out .= "</style>\n";
+	// 	$out .= "<style>\n";
+	// 	$out .= "	aside.sidebar {\n";
+	// 	$out .= "		display: none;\n";
+	// 	$out .= "	}\n";
+	// 	$out .= "	div.content {\n";
+	// 	$out .= "		width: 100%;\n";
+	// 	$out .= "		padding: 25px;\n";
+	// 	$out .= "	}\n";
+	// 	$out .= "</style>\n";
 		
-		return $out;
-	}
+	// 	return $out;
+	// }
 	
-	public function CartEmpty()
-	{
-		$out = "";
+	// public function CartEmpty()
+	// {
+	// 	$out = "";
 		
-		$out .= "<div class=\"empty-cart\">\n";
-		$out .= "	<div class=\"empty-cart-heading\">\n";
-		$out .= "		<strong>Uh-oh! Your shopping cart is empty.</strong><br>Why not try a few products below?\n";
-		$out .= "	</div>\n";
-		$out .= "	<div class=\"clearfloat\"></div>\n";
-		$out .= "	<div class=\"product-list\">\n";
-		// $out .= $this->ShowAdditionalProducts(NULL, 5);
-		$out .= "	</div>\n";
-		$out .= "	<div class=\"clearfloat\"></div>\n";
-		$out .= "</div>\n";
+	// 	$out .= "<div class=\"empty-cart\">\n";
+	// 	$out .= "	<div class=\"empty-cart-heading\">\n";
+	// 	$out .= "		<strong>Uh-oh! Your shopping cart is empty.</strong><br>Why not try a few products below?\n";
+	// 	$out .= "	</div>\n";
+	// 	$out .= "	<div class=\"clearfloat\"></div>\n";
+	// 	$out .= "	<div class=\"product-list\">\n";
+	// 	// $out .= $this->ShowAdditionalProducts(NULL, 5);
+	// 	$out .= "	</div>\n";
+	// 	$out .= "	<div class=\"clearfloat\"></div>\n";
+	// 	$out .= "</div>\n";
 		
-		return $out;
-	}
+	// 	return $out;
+	// }
 	
-	public function Breadcrumbs($pos)
-	{
-		$out = "";
-		$ident = " style=\"font-weight:bold;\"";
-		$review = "";
-		$bill = "";
-		$ship = "";
-		$pay = "";
+	// public function Breadcrumbs($pos)
+	// {
+	// 	$out = "";
+	// 	$ident = " style=\"font-weight:bold;\"";
+	// 	$review = "";
+	// 	$bill = "";
+	// 	$ship = "";
+	// 	$pay = "";
 		
-		switch($pos)
-		{
-			case "review":
-				$review = $ident;
-				break;
-			case "bill":
-				$bill = $ident;
-				break;
-			case "ship":
-				$ship = $ident;
-				break;
-			case "pay":
-				$pay = $ident;
-				break;
-		}
+	// 	switch($pos)
+	// 	{
+	// 		case "review":
+	// 			$review = $ident;
+	// 			break;
+	// 		case "bill":
+	// 			$bill = $ident;
+	// 			break;
+	// 		case "ship":
+	// 			$ship = $ident;
+	// 			break;
+	// 		case "pay":
+	// 			$pay = $ident;
+	// 			break;
+	// 	}
 		
-		$out .= "	<div class=\"breadcrumbs\">\n";
-		$out .= "		<ul>\n";
-		$out .= "			<li".$review."><a>Review Cart</a></li>\n";
-		$out .= "			<li".$bill."><a>Billing</a></li>\n";
-		$out .= "			<li".$ship."><a>Ship Method</a></li>\n";
-		$out .= "			<li".$pay."><a>Confirm/Payment</a></li>\n";
-		$out .= "		</ul>\n";
-		$out .= "	</div>\n";
+	// 	$out .= "	<div class=\"breadcrumbs\">\n";
+	// 	$out .= "		<ul>\n";
+	// 	$out .= "			<li".$review."><a>Review Cart</a></li>\n";
+	// 	$out .= "			<li".$bill."><a>Billing</a></li>\n";
+	// 	$out .= "			<li".$ship."><a>Ship Method</a></li>\n";
+	// 	$out .= "			<li".$pay."><a>Confirm/Payment</a></li>\n";
+	// 	$out .= "		</ul>\n";
+	// 	$out .= "	</div>\n";
 		
-		return $out;
-	}
+	// 	return $out;
+	// }
 	
-	public function StartOver()
-	{
-		$this->ShippingAddress = NULL;
-		$this->BillingAddress = NULL;
-		$this->Checkout = false;
-		$this->LastError = "";
-		$this->ShippingService = "CUSTOM";
-		$this->ShippingAmount = 0.0;
-		$this->SubtotalAmount = 0.0;
-		$this->TaxAmount = 0.0;
-		$this->TotalAmount = 0.0;
-		$this->Order = NULL;
-		$this->Comments = "";
-	}
+	// public function StartOver()
+	// {
+	// 	$this->ShippingAddress = NULL;
+	// 	$this->BillingAddress = NULL;
+	// 	$this->Checkout = false;
+	// 	$this->LastError = "";
+	// 	$this->ShippingService = "CUSTOM";
+	// 	$this->ShippingAmount = 0.0;
+	// 	$this->SubtotalAmount = 0.0;
+	// 	$this->TaxAmount = 0.0;
+	// 	$this->TotalAmount = 0.0;
+	// 	$this->Order = NULL;
+	// 	$this->Comments = "";
+	// }
 	
 	// public function PleaseWait()
 	// {
@@ -1732,55 +1729,47 @@ class ShoppingCart
 	// 	return $retval;
 	// }
 	
-	// public function JustAdded($pid)
-	// {
-	// 	$out = "";
+	public function JustAdded($pid)
+	{
+		$out = "";
 		
-	// 	$p = new Product();
-	// 	$p->GetProduct($pid);
-	// 	$p->CalculateValues();
+		$p = new Product();
+		$p->GetProduct($pid);
+		//$p->CalculateValues();
 		
-	// 	$out .= $this->HideSidebar();
-	// 	$out .= "<div class=\"just-added\">\n";
-	// 	$out .= "	<div class=\"added-product\">\n";
-	// 	$out .= "		<h2>CART <input class=\"green button\" onclick=\"location='/shop/cart/view';\" type=\"button\" value=\"CHECKOUT NOW\" /></h2>\n";
-	// 	$out .= "		<div class=\"just-added-banner\">You just added this item to your cart.</div>\n";
-	// 	$out .= "		<div class=\"product-thumbnail\">\n";
-	// 	$out .= "			<a href=\"".$p->Permalink()."\"><img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" /></a>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"product-details\">\n";
-	// 	$out .= "			<ul>\n";
-	// 	$out .= "				<li class=\"title\" style=\"\"><a href=\"".$p->Permalink()."\">".$p->ProductName."</a></li>\n";
-	// 	$out .= "				<li class=\"manufacturer\">by <a href=\"#\">".$p->Manufacturer."</a></li>\n";
-	// 	$out .= "				<li class=\"format\">".$p->Format."</li>\n";
-	// 	$out .= "				<li class=\"isbn\">ISBN: ".$p->ISBN."</li>\n";
-	// 	if ($p->CalculatedDiscount > 0)
-	// 	{
-	// 		$out .= "				<li class=\"reg-price\">Reg: ".money_format("%.2n", $p->Price)."</li>\n";
-	// 		$out .= "				<li class=\"list-price\">Price: <strong>".money_format("%.2n", $p->CalculatedPrice)."</strong></li>\n";
-	// 		$out .= "				<li class=\"savings\">Save ".round($p->CalculatedDiscount)."%</li>\n";
-	// 	}
-	// 	else
-	// 	{
-	// 		$out .= "				<li class=\"list-price\">Price: <strong>".money_format("%.2n", $p->Price)."</strong></li>\n";
-	// 	}
-	// 	$out .= "			</ul>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"clearfloat\"></div>\n";
-	// 	$out .= $this->ShowMiniCart();
-	// 	$out .= "		<div class=\"just-added-banner\"></div>\n";
-	// 	$out .= "			<h2>&nbsp;<input class=\"green button\" onclick=\"location='/shop/cart/view';\" type=\"button\" value=\"CHECKOUT NOW\" /></h2>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<div class=\"product-list\">\n";
-	// 	$out .= $this->ShowAdditionalProducts($pid, 4);
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "</div>\n";
+		//$out .= $this->HideSidebar();
+		$out .= "<div class=\"just-added\">\n";
+		$out .= "	<div class=\"added-product\">\n";
+		$out .= "		<h2>CART <input class=\"green button\" onclick=\"location='/shop/cart/view';\" type=\"button\" value=\"CHECKOUT NOW\" /></h2>\n";
+		$out .= "		<div class=\"just-added-banner\">You just added this item to your cart.</div>\n";
+		$out .= "		<div class=\"product-thumbnail\">\n";
+		//$out .= "			<a href=\"".$p->Permalink()."\"><img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" /></a>\n";
+		$out .= "			<a href=\"\"><img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" /></a>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"product-details\">\n";
+		$out .= "			<ul>\n";
+		//$out .= "				<li class=\"title\" style=\"\"><a href=\"".$p->Permalink()."\">".$p->ProductName."</a></li>\n";
+		$out .= "				<li class=\"title\" style=\"\"><a href=\"\">".$p->ProductName."</a></li>\n";
+		$out .= "				<li class=\"manufacturer\">by <a href=\"#\">".$p->Manufacturer."</a></li>\n";
+		$out .= "				<li class=\"format\">".$p->Format."</li>\n";
+		$out .= "				<li class=\"list-price\">Price: <strong>".money_format("%.2n", $p->Price)."</strong></li>\n";
+		$out .= "			</ul>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"clearfloat\"></div>\n";
+		//$out .= $this->ShowMiniCart();
+		$out .= "		<div class=\"just-added-banner\"></div>\n";
+		$out .= "			<h2>&nbsp;<input class=\"green button\" onclick=\"location='/shop/cart/view';\" type=\"button\" value=\"CHECKOUT NOW\" /></h2>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "	</div>\n";
+		$out .= "	<div class=\"product-list\">\n";
+		//$out .= $this->ShowAdditionalProducts($pid, 4);
+		$out .= "	</div>\n";
+		$out .= "	<div class=\"clearfloat\"></div>\n";
+		$out .= "</div>\n";
 		
-	// 	return $out;
-	// }
+		return $out;
+	}
 }
 
 class CartItem

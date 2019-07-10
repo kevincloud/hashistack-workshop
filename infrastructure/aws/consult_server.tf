@@ -17,7 +17,7 @@ resource "aws_instance" "consul-server" {
     iam_instance_profile = "${aws_iam_instance_profile.consul-profile.id}"
     
     tags = {
-        Name = "consul-server"
+        Name = "kevinc-consul-server"
     }
 }
 

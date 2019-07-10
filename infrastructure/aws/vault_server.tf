@@ -27,7 +27,7 @@ resource "aws_instance" "vault-server" {
     iam_instance_profile = "${aws_iam_instance_profile.vault-kms-unseal.id}"
     
     tags = {
-        Name = "cust-mgmt-web"
+        Name = "kevinc-cust-mgmt-web"
     }
 }
 

@@ -6,10 +6,12 @@ class CartHandler extends BasePage
 
 	public function __construct()
 	{
+		$this->Initialize();
 	}
 	
 	public function Run()
 	{
+
 		$this->BeginPage();
 		
 		switch ($this->Action)
@@ -35,9 +37,9 @@ class CartHandler extends BasePage
 			// case "empty":
 			// 	$this->EmptyCart();
 			// 	break;
-			// case "added":
-			// 	$this->ItemAdded();
-			// 	break;
+			case "added":
+				$this->ItemAdded();
+				break;
 			case "add":
 				$this->AddItem();
 				break;
@@ -330,10 +332,10 @@ class CartHandler extends BasePage
 	// 	unset($this->Cart->Items);
 	// }
 	
-	// private function ItemAdded()
-	// {
-	// 	echo $this->Cart->JustAdded($this->PageVariables["pid"]);
-	// }
+	private function ItemAdded()
+	{
+		echo $this->Cart->JustAdded($this->PageVariables["pid"]);
+	}
 	
 	private function AddItem()
 	{
@@ -344,14 +346,11 @@ class CartHandler extends BasePage
 		
 		$p = new Product();
 		$p->GetProduct($this->PageVariables["cart_pid"]);
-		echo "<p>1</p>";
 
 		try
 		{
-			echo "<p>2</p>";
 			$this->Cart->AddItem($this->PageVariables["cart_pid"], $this->PageVariables["cart_qty"]);
-			echo "<p>6</p>";
-			//$this->Redirect("/shop/cart/add/".$p->PID."/".$p->Identifier);
+			$this->Redirect("/shop/cart/add/".$p->PID."/".$p->Identifier);
 		}
 		catch (Exception $e)
 		{

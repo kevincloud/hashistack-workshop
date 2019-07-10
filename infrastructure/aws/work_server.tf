@@ -27,7 +27,7 @@ resource "aws_instance" "working-env" {
     subnet_id = "${aws_subnet.public-subnet.id}"
 
     tags = {
-        Name = "cust-mgmt-work"
+        Name = "kevinc-cust-mgmt-work"
     }
 
     depends_on = [
@@ -54,6 +54,13 @@ resource "aws_security_group" "working-env-sg" {
     ingress {
        from_port = 5801
        to_port = 5801
+       protocol = "tcp"
+       cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    ingress {
+       from_port = 80
+       to_port = 80
        protocol = "tcp"
        cidr_blocks = ["0.0.0.0/0"]
     }

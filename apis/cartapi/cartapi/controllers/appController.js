@@ -70,7 +70,7 @@ exports.get_cart_item = function(req, res) {
 exports.add_to_cart = function(req, res) {
     var sessionid = req.params.sessionId;
     var productid = req.params.productid;
-    var quantity = int(req.params.quantity);
+    var quantity = parseInt(req.params.quantity);
 
     // TODO: make sure to do an update
     // if the item is already in the cart.

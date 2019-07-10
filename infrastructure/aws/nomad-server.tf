@@ -18,7 +18,7 @@ resource "aws_instance" "nomad-server" {
     iam_instance_profile = "${aws_iam_instance_profile.nomad-profile.id}"
     
     tags = {
-        Name = "nomad-server"
+        Name = "kevinc-nomad-server"
     }
 
     depends_on = ["aws_instance.vault-server", "aws_instance.consul-server"]

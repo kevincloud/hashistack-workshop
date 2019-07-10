@@ -6,19 +6,22 @@ RUN echo 'libc6 libraries/restart-without-asking boolean true' | debconf-set-sel
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y unzip jq python3 python3-pip nginx php php-fpm php-common php-cli php-curl supervisor
+# RUN apt-get install -y unzip jq python3 python3-pip nginx php php-fpm php-common php-cli php-curl supervisor
+RUN apt-get install -y unzip jq python3 python3-pip php libapache2-mod-php php-fpm php-common php-curl supervisor
 RUN pip3 install awscli botocore boto3 flask flask-cors
-RUN apt-get -y remove apache2
 RUN rm -rf /var/www/html/*
 RUN mkdir -p /var/run/php
+RUN a2enmod rewrite
 
 ADD site /var/www/html/
 
-RUN chown -R www-data:www-data /var/www/html
+# RUN chown -R www-data:www-data /var/www/html
 
-COPY nginx-default.conf /etc/nginx/sites-enabled/default
+# COPY nginx-default.conf /etc/nginx/sites-enabled/default
+# COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY htaccess /var/www/html/.htaccess
 
-RUN sed -i -e 's/^;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/7.2/fpm/php.ini
+# RUN sed -i -e 's/^;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/7.2/fpm/php.ini
 
 RUN sed -i 's/^\(display_errors\s*=\s*\).*$/\1On/' /etc/php/7.2/fpm/php.ini
 
