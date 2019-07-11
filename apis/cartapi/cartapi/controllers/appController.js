@@ -68,6 +68,8 @@ exports.get_cart_item = function(req, res) {
 };
 
 exports.add_to_cart = function(req, res) {
+    console.log(req);
+    
     res.send({
         success: true,
         message: { sessionid: req.params.sessionId,
