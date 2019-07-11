@@ -95,32 +95,32 @@ class ShoppingCart
 	// 	// }
 	// }
 	
-	// /*
-	//  *	Function: 	HideSidebar()
-	//  *	
-	//  *	Summary:	Hides the left-hand sidebar
-	//  *	
-	//  *	Parameters:	No parameters
-	//  *	
-	//  *	Returns:	No return value
-	//  *	
-	//  */
-	// public function HideSidebar()
-	// {
-	// 	$out = "";
+	/*
+	 *	Function: 	HideSidebar()
+	 *	
+	 *	Summary:	Hides the left-hand sidebar
+	 *	
+	 *	Parameters:	No parameters
+	 *	
+	 *	Returns:	No return value
+	 *	
+	 */
+	public function HideSidebar()
+	{
+		$out = "";
 		
-	// 	$out .= "<style>\n";
-	// 	$out .= "	aside.sidebar {\n";
-	// 	$out .= "		display: none;\n";
-	// 	$out .= "	}\n";
-	// 	$out .= "	div.content {\n";
-	// 	$out .= "		width: 100%;\n";
-	// 	$out .= "		padding: 25px;\n";
-	// 	$out .= "	}\n";
-	// 	$out .= "</style>\n";
+		$out .= "<style>\n";
+		$out .= "	aside.sidebar {\n";
+		$out .= "		display: none;\n";
+		$out .= "	}\n";
+		$out .= "	div.content {\n";
+		$out .= "		width: 100%;\n";
+		$out .= "		padding: 25px;\n";
+		$out .= "	}\n";
+		$out .= "</style>\n";
 		
-	// 	return $out;
-	// }
+		return $out;
+	}
 	
 	// public function CartEmpty()
 	// {
@@ -1737,7 +1737,7 @@ class ShoppingCart
 		$p->GetProduct($pid);
 		//$p->CalculateValues();
 		
-		//$out .= $this->HideSidebar();
+		$out .= $this->HideSidebar();
 		$out .= "<div class=\"just-added\">\n";
 		$out .= "	<div class=\"added-product\">\n";
 		$out .= "		<h2>CART <input class=\"green button\" onclick=\"location='/shop/cart/view';\" type=\"button\" value=\"CHECKOUT NOW\" /></h2>\n";
@@ -1751,7 +1751,7 @@ class ShoppingCart
 		//$out .= "				<li class=\"title\" style=\"\"><a href=\"".$p->Permalink()."\">".$p->ProductName."</a></li>\n";
 		$out .= "				<li class=\"title\" style=\"\"><a href=\"\">".$p->ProductName."</a></li>\n";
 		$out .= "				<li class=\"manufacturer\">by <a href=\"#\">".$p->Manufacturer."</a></li>\n";
-		$out .= "				<li class=\"format\">".$p->Format."</li>\n";
+		//$out .= "				<li class=\"format\">".$p->Format."</li>\n";
 		$out .= "				<li class=\"list-price\">Price: <strong>".money_format("%.2n", $p->Price)."</strong></li>\n";
 		$out .= "			</ul>\n";
 		$out .= "		</div>\n";
