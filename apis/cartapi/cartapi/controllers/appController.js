@@ -88,7 +88,7 @@ exports.add_to_cart = function(req, res) {
             res.send({
                 success: false,
                 message: 'Server error',
-                moreinfo: req
+                moreinfo: req.params
             });
             console.log("Error", err);
         } else {
