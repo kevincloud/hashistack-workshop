@@ -68,37 +68,44 @@ exports.get_cart_item = function(req, res) {
 };
 
 exports.add_to_cart = function(req, res) {
-    var sessionid = req.params.sessionId;
-    var productid = req.params.productid;
-    var quantity = parseInt(req.params.quantity);
-
-    // TODO: make sure to do an update
-    // if the item is already in the cart.
-    
-    ddb.put({
-        TableName: table,
-        Item: {
-            'SessionId': sessionid,
-            'ProductId': productid,
-            'Quantity': quantity,
-            'DateStamp': datetime
-        }
-    }, function(err, data) {
-        if (err) {
-            res.send({
-                success: false,
-                message: 'Server error',
-                moreinfo: req.params
-            });
-            console.log("Error", err);
-        } else {
-            res.send({
-                success: true,
-                message: 'Item added'
-            });
-            console.log("Success", data);
-        }
+    res.send({
+        success: true,
+        sessionid: req.params.sessionId,
+        productid: req.params.productid,
+        quantity: req.params.quantity
     });
+
+    // var sessionid = req.params.sessionId;
+    // var productid = req.params.productid;
+    // var quantity = parseInt(req.params.quantity);
+
+    // // TODO: make sure to do an update
+    // // if the item is already in the cart.
+    
+    // ddb.put({
+    //     TableName: table,
+    //     Item: {
+    //         'SessionId': sessionid,
+    //         'ProductId': productid,
+    //         'Quantity': quantity,
+    //         'DateStamp': datetime
+    //     }
+    // }, function(err, data) {
+    //     if (err) {
+    //         res.send({
+    //             success: false,
+    //             message: 'Server error',
+    //             moreinfo: req.params
+    //         });
+    //         console.log("Error", err);
+    //     } else {
+    //         res.send({
+    //             success: true,
+    //             message: 'Item added'
+    //         });
+    //         console.log("Success", data);
+    //     }
+    // });
 };
 
 exports.update_cart_item = function(req, res) {
