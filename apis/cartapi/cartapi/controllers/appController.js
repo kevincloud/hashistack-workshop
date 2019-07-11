@@ -70,9 +70,9 @@ exports.get_cart_item = function(req, res) {
 exports.add_to_cart = function(req, res) {
     res.send({
         success: true,
-        sessionid: req.params.sessionId,
+        message: { sessionid: req.params.sessionId,
         productid: req.params.productid,
-        quantity: req.params.quantity
+        quantity: req.params.quantity }
     });
 
     // var sessionid = req.params.sessionId;
