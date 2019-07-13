@@ -53,7 +53,7 @@ class RestRunner
     private function Run()
     {
         $pre = curl_exec($this->curl);
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $status = curl_getinfo($pre, CURLINFO_HTTP_CODE);
         
         // TODO: Do something with the return code
 
@@ -65,6 +65,9 @@ class RestRunner
     private function BuildParms($parms)
     {
         $p = "";
+
+        if (!$parms)
+            return "";
 
         foreach ($parms as $x)
         {
