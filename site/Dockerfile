@@ -20,3 +20,5 @@ COPY config.sh /root/config.sh
 RUN sed -i 's/^\(display_errors\s*=\s*\).*$/\1On/' /etc/php/7.2/fpm/php.ini
 
 RUN /root/config.sh
+
+CMD apachectl -D FOREGROUND
