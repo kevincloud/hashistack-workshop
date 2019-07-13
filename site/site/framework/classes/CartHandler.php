@@ -50,7 +50,7 @@ class CartHandler extends BasePage
 			// 	$this->DeleteItem();
 			// 	break;
 			default:
-				// $this->ViewCart();
+				$this->ViewCart();
 				break;
 		}
 		
@@ -365,26 +365,26 @@ class CartHandler extends BasePage
 	// 	$this->Redirect("/shop/cart/view");
 	// }
 	
-	// private function ViewCart()
-	// {
-	// 	$this->Cart->ShippingAmount = 0;
-	// 	$this->Cart->SubtotalAmount = 0;
-	// 	$this->Cart->TaxAmount = 0;
-	// 	$this->Cart->TotalAmount = 0;
-	// 	$this->Cart->ShippingService = "USPS1P";
+	private function ViewCart()
+	{
+		$this->Cart->ShippingAmount = 0;
+		$this->Cart->SubtotalAmount = 0;
+		$this->Cart->TaxAmount = 0;
+		$this->Cart->TotalAmount = 0;
+		$this->Cart->ShippingService = "USPS1P";
 		
-	// 	if ($this->Cart->Count() > 0)
-	// 	{
-	// 		$this->Cart->ShippingAmount = 0;
-	// 		$this->Cart->SubtotalAmount = 0;
-	// 		$this->Cart->TaxAmount = 0;
-	// 		$this->Cart->TotalAmount = 0;
-	// 		$this->Cart->ShippingService = "USPS1P";
-	// 		echo $this->Cart->ReviewCart();
-	// 	}
-	// 	else
-	// 		echo $this->Cart->CartEmpty();
-	// }
+		if ($this->Cart->Count() > 0)
+		{
+			$this->Cart->ShippingAmount = 0;
+			$this->Cart->SubtotalAmount = 0;
+			$this->Cart->TaxAmount = 0;
+			$this->Cart->TotalAmount = 0;
+			$this->Cart->ShippingService = "USPS1P";
+			echo $this->Cart->ReviewCart();
+		}
+		else
+			echo $this->Cart->CartEmpty();
+	}
 }
 
 

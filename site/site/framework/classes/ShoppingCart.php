@@ -19,7 +19,7 @@ class ShoppingCart
 	{
 		global $cartapi;
 
-		$this->CartApi = $cartapi + "/cart";
+		$this->CartApi = $cartapi."/cart";
 	}
 	
 	// public function Contains($pid)
@@ -122,60 +122,60 @@ class ShoppingCart
 		return $out;
 	}
 	
-	// public function CartEmpty()
-	// {
-	// 	$out = "";
+	public function CartEmpty()
+	{
+		$out = "";
 		
-	// 	$out .= "<div class=\"empty-cart\">\n";
-	// 	$out .= "	<div class=\"empty-cart-heading\">\n";
-	// 	$out .= "		<strong>Uh-oh! Your shopping cart is empty.</strong><br>Why not try a few products below?\n";
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "	<div class=\"product-list\">\n";
-	// 	// $out .= $this->ShowAdditionalProducts(NULL, 5);
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "</div>\n";
+		$out .= "<div class=\"empty-cart\">\n";
+		$out .= "	<div class=\"empty-cart-heading\">\n";
+		$out .= "		<strong>Uh-oh! Your shopping cart is empty.</strong><br>Why not try a few products below?\n";
+		$out .= "	</div>\n";
+		$out .= "	<div class=\"clearfloat\"></div>\n";
+		$out .= "	<div class=\"product-list\">\n";
+		// $out .= $this->ShowAdditionalProducts(NULL, 5);
+		$out .= "	</div>\n";
+		$out .= "	<div class=\"clearfloat\"></div>\n";
+		$out .= "</div>\n";
 		
-	// 	return $out;
-	// }
+		return $out;
+	}
 	
-	// public function Breadcrumbs($pos)
-	// {
-	// 	$out = "";
-	// 	$ident = " style=\"font-weight:bold;\"";
-	// 	$review = "";
-	// 	$bill = "";
-	// 	$ship = "";
-	// 	$pay = "";
+	public function Breadcrumbs($pos)
+	{
+		$out = "";
+		$ident = " style=\"font-weight:bold;\"";
+		$review = "";
+		$bill = "";
+		$ship = "";
+		$pay = "";
 		
-	// 	switch($pos)
-	// 	{
-	// 		case "review":
-	// 			$review = $ident;
-	// 			break;
-	// 		case "bill":
-	// 			$bill = $ident;
-	// 			break;
-	// 		case "ship":
-	// 			$ship = $ident;
-	// 			break;
-	// 		case "pay":
-	// 			$pay = $ident;
-	// 			break;
-	// 	}
+		switch($pos)
+		{
+			case "review":
+				$review = $ident;
+				break;
+			case "bill":
+				$bill = $ident;
+				break;
+			case "ship":
+				$ship = $ident;
+				break;
+			case "pay":
+				$pay = $ident;
+				break;
+		}
 		
-	// 	$out .= "	<div class=\"breadcrumbs\">\n";
-	// 	$out .= "		<ul>\n";
-	// 	$out .= "			<li".$review."><a>Review Cart</a></li>\n";
-	// 	$out .= "			<li".$bill."><a>Billing</a></li>\n";
-	// 	$out .= "			<li".$ship."><a>Ship Method</a></li>\n";
-	// 	$out .= "			<li".$pay."><a>Confirm/Payment</a></li>\n";
-	// 	$out .= "		</ul>\n";
-	// 	$out .= "	</div>\n";
+		$out .= "	<div class=\"breadcrumbs\">\n";
+		$out .= "		<ul>\n";
+		$out .= "			<li".$review."><a>Review Cart</a></li>\n";
+		$out .= "			<li".$bill."><a>Billing</a></li>\n";
+		$out .= "			<li".$ship."><a>Ship Method</a></li>\n";
+		$out .= "			<li".$pay."><a>Confirm/Payment</a></li>\n";
+		$out .= "		</ul>\n";
+		$out .= "	</div>\n";
 		
-	// 	return $out;
-	// }
+		return $out;
+	}
 	
 	// public function StartOver()
 	// {
@@ -1381,184 +1381,105 @@ class ShoppingCart
 	// 	return $out;
 	// }
 	
-	// public function ReviewCart()
-	// {
-	// 	$out = "";
-	// 	$savings = 0.0;
-	// 	$subtotal = 0.0;
-	// 	$num = 1;
-	// 	$shipping = $this->IsESDOnly() ? 0 : count($this->Items) + 5.50;
-	// 	$tax = 0.0;
-	// 	$total = 0.0;
-	// 	$loggedin = false;
-	// 	if (isset($_SESSION["__account__"]))
-	// 	{
-	// 		$loggedin = $_SESSION["__account__"]->LoggedIn();
-	// 	}
+	public function ReviewCart()
+	{
+		$out = "";
+		$savings = 0.0;
+		$subtotal = 0.0;
+		$num = 1;
+		$shipping = 0;
+		$tax = 0.0;
+		$total = 0.0;
+		$loggedin = false;
+		if (isset($_SESSION["__account__"]))
+		{
+			$loggedin = $_SESSION["__account__"]->LoggedIn();
+		}
 		
-	// 	$out .= $this->HideSidebar();
-	// 	$out .= "<div class=\"content\">\n";
-	// 	$out .= $this->Breadcrumbs("review");
-	// 	$out .= "<form action=\"/shop/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
-	// 	$out .= "	<div class=\"order-summary\">\n";
-	// 	$out .= "		<div class=\"order-summary-heading\">ORDER SUMMARY</div>\n";
-	// 	$out .= "		<div class=\"order-summary-titles\">";
-	// 	$out .= "			<p class=\"product\">Product</p>\n";
-	// 	$out .= "			<p class=\"format\">Format</p>\n";
-	// 	$out .= "			<p class=\"qty\">Qty</p>\n";
-	// 	$out .= "			<p class=\"price\">Price</p>\n";
-	// 	$out .= "			<p class=\"itemtotal\">Item Total</p>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	foreach ($this->Items as &$item)
-	// 	{
-	// 		$p = new Product();
-	// 		$p->GetProduct($item->PID);
-	// 		$p->CalculateValues();
-	// 		$out .= "	<div class=\"order-summary-items".($num == 1 ? "-first" : "")."\">\n";
-	// 		$out .= "		<p class=\"product\">\n";
-	// 		$out .= "			<img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" />\n";
-	// 		$out .= "			<strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."<br>Ships in 2 to 3 business days\n";
-	// 		$out .= "		</p>\n";
-	// 		$out .= "		<p class=\"format\">".$p->Format."</p>\n";
-	// 		$out .= "		<p class=\"qty\">\n";
-	// 		$out .= "			<input type=\"text\" name=\"cart_item[".$item->PID."]\" id=\"cart_item[".$item->PID."]\" value=\"".$item->Quantity."\" maxlength=\"3\" /><br>\n";
-	// 		$out .= "			<span class=\"remove\"><a href=\"/shop/cart/remove/".$item->PID."\">remove &rsaquo;</a></span>\n";
-	// 		$out .= "		</p>\n";
-	// 		if ($p->CalculatedDiscount > 0)
-	// 		{
-	// 			$out .= "		<p class=\"price\">";
-	// 			$out .= "			<strong>$".money_format("%.2n", round($p->CalculatedPrice, 2))."</strong><br>\n";
-	// 			$out .= "			<span class=\"savings\">Save ".round($p->CalculatedDiscount)."%</span>\n";
-	// 			$out .= "		</p>\n";
-	// 			$out .= "		<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->CalculatedPrice * $item->Quantity, 2))."</strong></p>\n";
-	// 			$savings += round($p->Price - $p->CalculatedPrice, 2) * $item->Quantity;
-	// 			$subtotal += round($p->CalculatedPrice * $item->Quantity, 2); 
-	// 		}
-	// 		else
-	// 		{
-	// 			$out .= "		<p class=\"price\"><strong>$".money_format("%.2n", round($p->Price, 2))."</strong></p>\n";
-	// 			$out .= "		<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->Price * $item->Quantity, 2))."</strong></p>\n";
-	// 			$subtotal += round($p->Price * $item->Quantity, 2); 
-	// 		}
-	// 		$out .= "		</p>\n";
-	// 		$out .= "		<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "	</div>\n";
-	// 		$num++;
-	// 	}
+		$out .= $this->HideSidebar();
+		$out .= "<div class=\"content\">\n";
+		$out .= $this->Breadcrumbs("review");
+		$out .= "<form action=\"/shop/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
+		$out .= "	<div class=\"order-summary\">\n";
+		$out .= "		<div class=\"order-summary-heading\">ORDER SUMMARY</div>\n";
+		$out .= "		<div class=\"order-summary-titles\">";
+		$out .= "			<p class=\"product\">Product</p>\n";
+		$out .= "			<p class=\"format\">Format</p>\n";
+		$out .= "			<p class=\"qty\">Qty</p>\n";
+		$out .= "			<p class=\"price\">Price</p>\n";
+		$out .= "			<p class=\"itemtotal\">Item Total</p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		foreach ($this->Items as &$item)
+		{
+			$p = new Product();
+			$p->GetProduct($item->PID);
+			$out .= "	<div class=\"order-summary-items".($num == 1 ? "-first" : "")."\">\n";
+			$out .= "		<p class=\"product\">\n";
+			$out .= "			<img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" />\n";
+			$out .= "			<strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."<br>Ships in 2 to 3 business days\n";
+			$out .= "		</p>\n";
+			// $out .= "		<p class=\"format\">".$p->Format."</p>\n";
+			$out .= "		<p class=\"qty\">\n";
+			$out .= "			<input type=\"text\" name=\"cart_item[".$item->PID."]\" id=\"cart_item[".$item->PID."]\" value=\"".$item->Quantity."\" maxlength=\"3\" /><br>\n";
+			$out .= "			<span class=\"remove\"><a href=\"/shop/cart/remove/".$item->PID."\">remove &rsaquo;</a></span>\n";
+			$out .= "		</p>\n";
+			$out .= "		<p class=\"price\"><strong>$".money_format("%.2n", round($p->Price, 2))."</strong></p>\n";
+			$out .= "		<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->Price * $item->Quantity, 2))."</strong></p>\n";
+			$subtotal += round($p->Price * $item->Quantity, 2); 
+			$out .= "		</p>\n";
+			$out .= "		<div class=\"clearfloat\"></div>\n";
+			$out .= "	</div>\n";
+			$num++;
+		}
 		
-	// 	$tax = $loggedin === false ? 0 : ($subtotal + $shipping) * $this->GetTaxRate();
+		$tax = $loggedin === false ? 0 : ($subtotal + $shipping) * $this->GetTaxRate();
 		
-	// 	$total = $subtotal + $shipping + $tax;
+		$total = $subtotal + $shipping + $tax;
 		
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<div class=\"order-summary\">\n";
-	// 	$out .= "		<div class=\"order-summary-heading\">ORDER TOTAL</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">\n";
-	// 	$out .= "			<p class=\"summary\">Order Subtotal: </p>\n";
-	// 	$out .= "			<p class=\"totals\">$".money_format("%.2n", round($subtotal, 2))."</p>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	if (!$this->IsESDOnly())
-	// 	{
-	// 		$out .= "		<div class=\"order-summary-total\">\n";
-	// 		$out .= "			<p class=\"summary\">Shipping: </p>\n";
-	// 		$out .= "			<p class=\"totals\">$".money_format("%.2n", round($shipping, 2))."</p>\n";
-	// 		$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "		</div>\n";
-	// 		$out .= "		<div class=\"order-summary-total\">\n";
-	// 		$out .= "			<p class=\"summary\"><span class=\"estship\">(Estimated using US Standard Rate)</p></p>\n";
-	// 		$out .= "			<p class=\"totals\">&nbsp;</p>\n";
-	// 		$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "		</div>\n";
-	// 	}
-	// 	$out .= "		<div class=\"order-summary-total\">\n";
-	// 	$out .= "			<p class=\"summary\">Estimated Tax: </p>\n";
-	// 	$out .= "			<p class=\"totals\">".($tax <= 0 ? "---" : "$".money_format("%.2n", round($tax, 2)))."</p>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">\n";
-	// 	$out .= "			<p class=\"summary\"><strong>Estimated Total: </strong></p>\n";
-	// 	$out .= "			<p class=\"totals\"><strong>$".money_format("%.2n", round($total, 2))."</strong></p>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">\n";
-	// 	$out .= "			<div class=\"order-summary-continue\"><input class=\"green button\" name=\"cart_btn\" id=\"checkout_first\" value=\"CONTINUE CHECKOUT\" onclick=\"scCheckCheckout();return false;\" type=\"button\" /></div>\n";
-	// 	$out .= "			<div class=\"order-summary-promo\">Promo Code: <input type=\"text\" maxlength=\"10\" value=\"".$this->PromoCode."\" name=\"cart_promocode\" id=\"cart_promocode\"> <input class=\"button smallbutton\" name=\"cart_btn\" type=\"submit\" value=\"Update Cart\" /></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<input type=\"hidden\" name=\"cart_process\" id=\"cart_process\" value=\"\">\n";
-	// 	$out .= "	<input type=\"hidden\" name=\"command\" value=\"review\" />\n";
-	// 	$out .= "	</form>\n";
-	// 	$out .= "</div>\n";
+		$out .= "	</div>\n";
+		$out .= "	<div class=\"order-summary\">\n";
+		$out .= "		<div class=\"order-summary-heading\">ORDER TOTAL</div>\n";
+		$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<p class=\"summary\">Order Subtotal: </p>\n";
+		$out .= "			<p class=\"totals\">$".money_format("%.2n", round($subtotal, 2))."</p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<p class=\"summary\">Shipping: </p>\n";
+		$out .= "			<p class=\"totals\">$".money_format("%.2n", round($shipping, 2))."</p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<p class=\"summary\"><span class=\"estship\">(Estimated using US Standard Rate)</p></p>\n";
+		$out .= "			<p class=\"totals\">&nbsp;</p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<p class=\"summary\">Estimated Tax: </p>\n";
+		$out .= "			<p class=\"totals\">".($tax <= 0 ? "---" : "$".money_format("%.2n", round($tax, 2)))."</p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<p class=\"summary\"><strong>Estimated Total: </strong></p>\n";
+		$out .= "			<p class=\"totals\"><strong>$".money_format("%.2n", round($total, 2))."</strong></p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<div class=\"order-summary-continue\"><input class=\"green button\" name=\"cart_btn\" id=\"checkout_first\" value=\"CONTINUE CHECKOUT\" onclick=\"scCheckCheckout();return false;\" type=\"button\" /></div>\n";
+		$out .= "			<div class=\"order-summary-promo\">Promo Code: <input type=\"text\" maxlength=\"10\" value=\"".$this->PromoCode."\" name=\"cart_promocode\" id=\"cart_promocode\"> <input class=\"button smallbutton\" name=\"cart_btn\" type=\"submit\" value=\"Update Cart\" /></div>\n";
+		$out .= "		</div>\n";
+		$out .= "	</div>\n";
+		$out .= "	<input type=\"hidden\" name=\"cart_process\" id=\"cart_process\" value=\"\">\n";
+		$out .= "	<input type=\"hidden\" name=\"command\" value=\"review\" />\n";
+		$out .= "	</form>\n";
+		$out .= "</div>\n";
 		
-	// 	return $out;
-	// }
-	
-	// public function ShowLandingCart()
-	// {
-	// 	$out = "";
-	// 	$savings = 0.0;
-	// 	$subtotal = 0.0;
-	// 	$pageid = 1;
-		
-	// 	$out .= "<div class=\"landing-banner\">There ".($this->Count(true) == 1 ? "is" : "are")." ".$this->Count(true)." item".($this->Count(true) == 1 ? "" : "s")." in your cart</div>";
-	// 	$out .= "<div>";
-	// 	$out .= "<div class=\"mini-cart\">\n";
-	// 	$out .= "	<div class=\"header\">\n";
-	// 	$out .= "		<p class=\"item\" style=\"width:180px;\">Item</p>\n";
-	// 	$out .= "		<p class=\"qty\">Qty</p>\n";
-	// 	$out .= "		<p class=\"price\">Price</p>\n";
-	// 	$out .= "		<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "	</div>\n";
-	// 	foreach ($this->LandingItems as &$item)
-	// 	{
-	// 		$p = new Product();
-	// 		$p->GetProduct($item->PID);
-	// 		$p->CalculateValues();
-	// 		$out .= "	<div class=\"cart-item\">\n";
-	// 		$out .= "		<p class=\"item\" style=\"width:180px;\"><strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."</p>\n";
-	// 		$out .= "		<p class=\"qty\"><input type=\"text\" name=\"cart_item[".$item->PID."]\" id=\"cart_item[".$item->PID."]\" value=\"".$item->Quantity."\" maxlength=\"3\" /></p>\n";
-	// 		$out .= "		<p class=\"price\">";
-	// 		if ($p->CalculatedDiscount > 0)
-	// 		{
-	// 			$out .= "				$".money_format("%.2n", round($p->CalculatedPrice * $item->Quantity, 2))."<br>\n";
-	// 			$subtotal += round($p->CalculatedPrice * $item->Quantity, 2); 
-	// 		}
-	// 		else
-	// 		{
-	// 			$out .= "				$".money_format("%.2n", round($p->Price * $item->Quantity, 2))."\n";
-	// 			$subtotal += round($p->Price * $item->Quantity, 2); 
-	// 		}
-	// 		$out .= "		</p>\n";
-	// 		$out .= "		<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "	</div>\n";
-	// 	}
-	// 	$out .= "	<hr class=\"divider\">\n";
-	// 	$out .= "	<div class=\"totals\">\n";
-	// 	$out .= "		<div class=\"subtotal\">Subtotal: <strong>$".money_format("%.2n", $subtotal)."</strong></div>\n";
-	// 	$out .= "		<div></div>\n";
-	// 	$out .= "		<div></div>\n";
-	// 	$out .= "	</div>\n";
-	// 	$out .= "</div>";
-	// 	$out .= "<div>\n";
-	// 	$out .= "	<div style=\"margin-left:10px;\"> ";
-	// 	$out .= "		<button class=\"button smallbutton\" style=\"font-weight:bold; float:right;margin-bottom:10px;\" onclick=\"javascript:itmUpdateCart();\">Update Cart</button>\n";
-	// 	$out .= "	</div>\n";
-	// 	$out .= "</div>\n";
-	// 	$out .= "<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "<div id=\"updated-notify\" class=\"just-added-banner\"></div>\n";
-	// 	$out .= "	<h2>&nbsp;<button id=\"free-books-button\" class=\"green button\" style=\"font-weight:bold; float:right; font-size:16px;\" onclick=\"itmDisplayEbooks(".$pageid.");\">SELECT FREE BOOKS</button></h2>\n";
-	// 	$out .= "	<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "</div>\n";
-	// 	$out .= "<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "</div>";
-		
-	// 	return $out;
-	// }
+		return $out;
+	}
 	
 	// public function ShowMiniCart()
 	// {
@@ -1622,13 +1543,6 @@ class ShoppingCart
 	// 	$out .= "</form>\n";
 		
 	// 	return $out;
-	// }
-	
-	// public function PromoCodeValid($code)
-	// {
-	// 	$retval = false;
-		
-	// 	return $retval;
 	// }
 	
 	// private function ShowAdditionalProducts($pid, $num)
@@ -1735,7 +1649,6 @@ class ShoppingCart
 		
 		$p = new Product();
 		$p->GetProduct($pid);
-		//$p->CalculateValues();
 		
 		$out .= $this->HideSidebar();
 		$out .= "<div class=\"just-added\">\n";
