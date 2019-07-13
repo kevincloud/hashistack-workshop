@@ -21,7 +21,7 @@ exports.list_cart_items = function(req, res) {
         if (err) {
             res.send({
                 success: false,
-                message: 'Server error'
+                message: err
             })
             console.log("Error", err);
         } else {
@@ -52,7 +52,7 @@ exports.get_cart_item = function(req, res) {
         if (err) {
             res.send({
                 success: false,
-                message: 'Server error'
+                message: err
             })
             console.log("Error", err);
         } else {
@@ -72,7 +72,6 @@ exports.add_to_cart = function(req, res) {
     var sessionid = req.body.sessionId;
     var productid = req.body.productId;
     var quantity = parseInt(req.body.quantity);
-    var items = null;
 
     ddb.query({
         TableName: table,
@@ -205,7 +204,7 @@ exports.delete_cart_item = function(req, res) {
         if (err) {
             res.send({
                 success: false,
-                message: 'Server error'
+                message: err
             });
             console.log("Error", err);
         } else {
@@ -230,7 +229,7 @@ exports.empty_cart = function(req, res) {
         if (err) {
             res.send({
                 success: false,
-                message: 'Server error'
+                message: err
             });
             console.log("Error", err);
         } else {
