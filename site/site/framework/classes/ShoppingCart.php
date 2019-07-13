@@ -41,7 +41,7 @@ class ShoppingCart
 
 		$r = new RestRunner();
 
-		$result = $Get($this->CartApi);
+		$result = $r->Get($this->CartApi);
 		$answer = $result->Count;
 		
 		return $answer;
