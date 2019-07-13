@@ -20,4 +20,4 @@ run request
 curl -X POST \
     -H "Content-Type: application/x-www-form-urlencoded" \
     -d "sessionId=asdfasdf&productId=BE0001&quantity=1" \
-    http://10.0.1.180:5823/cart
+    http://10.0.1.118:5823/cart

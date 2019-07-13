@@ -107,7 +107,7 @@ exports.add_to_cart = function(req, res) {
                     if (err) {
                         res.send({
                             success: false,
-                            message: 'Server error'
+                            message: err
                         });
                         console.log("Error", err);
                     } else {
@@ -138,7 +138,7 @@ exports.add_to_cart = function(req, res) {
                     if (err) {
                         res.send({
                             success: false,
-                            message: 'Server error'
+                            message: err
                         });
                         console.log("Error", err);
                     } else {
