@@ -15,13 +15,8 @@ RUN a2enmod rewrite
 ADD site /var/www/html/
 
 COPY htaccess /var/www/html/.htaccess
+COPY config.sh /root/config.sh
 
 RUN sed -i 's/^\(display_errors\s*=\s*\).*$/\1On/' /etc/php/7.2/fpm/php.ini
 
-# RUN cat<<EOT >>/etc/apache2/apache2.conf
-# <Directory /var/www/html/>
-#         Options Indexes FollowSymLinks
-#         AllowOverride All
-#         Require all granted
-# </Directory>
-# EOT
+RUN /root/config.sh
