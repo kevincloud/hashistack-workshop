@@ -53,7 +53,7 @@ class RestRunner
     private function Run()
     {
         $pre = curl_exec($this->curl);
-        $status = curl_getinfo($pre, CURLINFO_HTTP_CODE);
+        $status = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
         
         // TODO: Do something with the return code
 
