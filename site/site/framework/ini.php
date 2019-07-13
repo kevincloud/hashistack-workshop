@@ -47,10 +47,10 @@ header('Content-Type: text/html; charset=iso-8859-1');
 @session_start();
 
 // Regenerate session ID to reduce risk of session cloning
-if (!isset($_SESSION['userID']))
-{
-	session_regenerate_id();
-}
+// if (!isset($_SESSION['userID']))
+// {
+// 	session_regenerate_id();
+// }
 
 // Open and clear the output buffer with gzip compression enabled
 ob_start("ob_gzhandler");

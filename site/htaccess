@@ -1,7 +1,7 @@
 RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^products/(.*)/(.*)$ /product.php?pid=$1 [QSA]
-RewriteRule ^images/(.*)$ /framework/image.php?pid=$1 [QSA]
+RewriteRule ^products/(.*)/(.*)$ /product.php?pid=$1 [L,QSA]
+RewriteRule ^images/(.*)$ /framework/image.php?pid=$1 [L,QSA]
 RewriteRule ^shop/cart/add/(.*)/(.*)$ /manage_cart.php?action=added&pid=$1 [L,QSA]
 RewriteRule ^shop/cart/add$ /manage_cart.php?action=add [L,QSA]

@@ -125,10 +125,11 @@ abstract class BasePage
 			}
 		}
 		
-		if (!isset($_SESSION["__cart__"]))
-			$_SESSION["__cart__"] = new ShoppingCart();
+		// if (!isset($_SESSION["__cart__"]))
+		// 	$_SESSION["__cart__"] = new ShoppingCart();
 		
-		$this->Cart = &$_SESSION["__cart__"];
+		// $this->Cart = &$_SESSION["__cart__"];
+		$this->Cart = new ShoppingCart();
 		$this->Account = &$_SESSION["__account__"];
 		$this->_loggedin = $this->Account->LoggedIn();
 	}

@@ -43,6 +43,7 @@ exports.get_cart_item = function(req, res) {
 
     ddb.get({
         TableName: table,
+        IndexName: 'NameIndex',
         Key: {
             'SessionId': sessionid,
             'ProductId': productid
@@ -59,7 +60,7 @@ exports.get_cart_item = function(req, res) {
 
             res.send({
                 success: true,
-                message: 'Retrieved all items in cart',
+                message: 'Retrieved item in cart',
                 item: Item
             });
             console.log("Success", data);
@@ -71,17 +72,19 @@ exports.add_to_cart = function(req, res) {
     var sessionid = req.body.sessionId;
     var productid = req.body.productId;
     var quantity = parseInt(req.body.quantity);
+    var items = null;
 
-    // TODO: make sure to do an update
-    // if the item is already in the cart.
-    
-    ddb.put({
+    ddb.query({
         TableName: table,
-        Item: {
-            'SessionId': sessionid,
-            'ProductId': productid,
-            'Quantity': quantity,
-            'DateStamp': datetime
+        IndexName: 'NameIndex',
+        KeyConditionExpression: "#sid = :sid and #pid = :pid",
+        ExpressionAttributeNames:{
+            "#sid": "SessionId",
+            "#pid": "ProductId",
+        },
+        ExpressionAttributeValues: {
+            ":sid": sessionid,
+            ":pid": productid
         }
     }, function(err, data) {
         if (err) {
@@ -89,13 +92,64 @@ exports.add_to_cart = function(req, res) {
                 success: false,
                 message: 'Server error'
             });
-            console.log("Error", err);
-        } else {
-            res.send({
-                success: true,
-                message: 'Item added'
-            });
-            console.log("Success", data);
+        }
+        else {
+            if (data.Count == 0) {
+                ddb.put({
+                    TableName: table,
+                    Item: {
+                        'SessionId': sessionid,
+                        'ProductId': productid,
+                        'Quantity': quantity,
+                        'DateStamp': datetime
+                    }
+                }, function(err, data) {
+                    if (err) {
+                        res.send({
+                            success: false,
+                            message: 'Server error'
+                        });
+                        console.log("Error", err);
+                    } else {
+                        res.send({
+                            success: true,
+                            message: 'Item added'
+                        });
+                        console.log("Success", data);
+                    }
+                });
+            }
+            else {
+                quantity += data.Items[0].Quantity;
+                
+                ddb.update({
+                    TableName: table,
+                    Key: {
+                        'SessionId': sessionid,
+                        'ProductId': productid
+                    },
+                    UpdateExpression: "set Quantity = :q, DateStamp = :d",
+                    ExpressionAttributeValues: {
+                        ":q": quantity,
+                        ":d": datetime
+                    },
+                    ReturnValues: "UPDATED_NEW"
+                }, function(err, data) {
+                    if (err) {
+                        res.send({
+                            success: false,
+                            message: 'Server error'
+                        });
+                        console.log("Error", err);
+                    } else {
+                        res.send({
+                            success: true,
+                            message: 'Item updated'
+                        });
+                        console.log("Success", data);
+                    }
+                });
+            }
         }
     });
 };

@@ -42,6 +42,9 @@ class RestRunner
     {
         $p = $this->BuildParms($parms);
 
+        if ($p != "")
+            $p = "?".$p;
+
         curl_setopt ($this->curl, CURLOPT_URL, $url.$p);
 
         return $this->Run();
@@ -70,7 +73,7 @@ class RestRunner
         }
 
         if (substr($p, 0, 1) == "&")
-            return "?".substr($p, 1);
+            return substr($p, 1);
         else
             return "";
     }
