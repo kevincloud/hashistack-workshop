@@ -35,17 +35,17 @@ class ShoppingCart
 	// 	return $answer;
 	// }
 	
-	// public function Count()
-	// {
-	// 	$answer = 0;
+	public function Count()
+	{
+		$answer = 0;
+
+		$r = new RestRunner();
+
+		$result = $Get($this->CartApi);
+		$answer = $result->Count;
 		
-	// 	// foreach ($this->Items as $item)
-	// 	// {
-	// 	// 	$answer += $item->Quantity;
-	// 	// }
-		
-	// 	return $answer;
-	// }
+		return $answer;
+	}
 	
 	// public function CleanCart()
 	// {
