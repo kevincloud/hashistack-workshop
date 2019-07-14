@@ -10,7 +10,7 @@ var table = 'customer-cart';
 var datetime = new Date().getTime().toString();
 
 exports.list_cart_items = function(req, res) {
-    var sessionid = req.params.sessionId;
+    var sessionid = req.query.sessionId;
 
     console.log("sessionid: " + sessionid);
 
