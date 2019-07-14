@@ -12,7 +12,7 @@ var datetime = new Date().getTime().toString();
 exports.list_cart_items = function(req, res) {
     var sessionid = req.query.sessionId;
 
-    console.log("sessionid: " + sessionid);
+    console.log("sessionid: " + req);
 
     ddb.query({
         TableName: table,
