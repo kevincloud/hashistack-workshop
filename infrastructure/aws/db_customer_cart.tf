@@ -4,6 +4,7 @@ resource "aws_dynamodb_table" "customer-cart" {
     read_capacity = 20
     write_capacity = 20
     hash_key = "SessionId"
+    range_key = "ProductId"
     
     attribute {
         name = "SessionId"
@@ -16,13 +17,11 @@ resource "aws_dynamodb_table" "customer-cart" {
     }
     
     global_secondary_index {
-        name = "NameIndex"
+        name = "SessionIndex"
         hash_key = "SessionId"
-        range_key = "ProductId"
         write_capacity = 10
         read_capacity = 10
         projection_type = "ALL"
-        # non_key_attributes = ["CustomerId"]
     }
 
     # global_secondary_index {
@@ -30,8 +29,7 @@ resource "aws_dynamodb_table" "customer-cart" {
     #     hash_key = "EmailAddress"
     #     write_capacity = 10
     #     read_capacity = 10
-    #     projection_type = "INCLUDE"
-    #     non_key_attributes = ["CustomerId"]
+    #     projection_type = "ALL"
     # }
 
     tags = {

@@ -47,7 +47,6 @@ exports.get_cart_item = function(req, res) {
 
     ddb.get({
         TableName: table,
-        IndexName: 'NameIndex',
         Key: {
             'SessionId': sessionid,
             'ProductId': productid
@@ -79,7 +78,6 @@ exports.add_to_cart = function(req, res) {
 
     ddb.query({
         TableName: table,
-        IndexName: 'NameIndex',
         KeyConditionExpression: "#sid = :sid and #pid = :pid",
         ExpressionAttributeNames:{
             "#sid": "SessionId",
