@@ -16,7 +16,7 @@ exports.list_cart_items = function(req, res) {
         TableName: table,
         KeyConditionExpression: '#sid = :sid',
         ExpressionAttributeNames: {
-            "#pid": SessionId
+            "#pid": "SessionId"
         },
         ExpressionAttributeValues: {
             ":sid": sessionid
