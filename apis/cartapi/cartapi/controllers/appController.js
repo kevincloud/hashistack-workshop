@@ -84,8 +84,7 @@ exports.add_to_cart = function(req, res) {
         ExpressionAttributeValues: {
             ":sid": sessionid,
             ":pid": productid
-        },
-        ProjectionExpression: "#sid, #pid, Quantity, DateStamp"
+        }
     }, function(err, data) {
         if (err) {
             res.send({
