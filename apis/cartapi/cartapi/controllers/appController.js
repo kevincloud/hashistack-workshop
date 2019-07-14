@@ -5,6 +5,7 @@ var AWS = require('aws-sdk');
 var region = process.env.AWS_REGION;
 AWS.config.update({region: region});
 
+
 var ddb = new AWS.DynamoDB.DocumentClient();
 var table = 'customer-cart';
 var datetime = new Date().getTime().toString();
