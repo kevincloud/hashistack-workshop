@@ -120,13 +120,13 @@ exports.add_to_cart = function(req, res) {
             }
             else {
                 quantity += data.Items[0].Quantity;
+                console.log ("Updating...");
                 
                 ddb.update({
                     TableName: table,
                     Key: { 'SessionId': sessionid },
                     ConditionExpression: "ProductId = :pid",
                     UpdateExpression: "set Quantity = :q",
-                    ExpressionAttributeNames: { '#q' : 'Quantity' },
                     ExpressionAttributeValues: {
                         ':q': quantity,
                         ':pid': productid
