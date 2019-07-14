@@ -124,9 +124,9 @@ exports.add_to_cart = function(req, res) {
                 ddb.update({
                     TableName: table,
                     Key: { 'SessionId': sessionid },
-                    ConditionExpression: "#pid = :pid",
+                    ConditionExpression: "ProductId = :pid",
                     UpdateExpression: "set Quantity = :q",
-                    ExpressionAttributeNames: { '#q' : 'Quantity', '#pid': 'ProductId' },
+                    ExpressionAttributeNames: { '#q' : 'Quantity' },
                     ExpressionAttributeValues: {
                         ':q': quantity,
                         ':pid': productid
