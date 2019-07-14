@@ -40,8 +40,10 @@ class ShoppingCart
 		$answer = 0;
 
 		$r = new RestRunner();
+		$sessionid = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($sessionid);
 
-		$result = $r->Get($this->CartApi, null);
+		$result = $r->Get($this->CartApi, $a);
 		echo "<pre>";
 		print_r($result);
 		echo "</pre>";
