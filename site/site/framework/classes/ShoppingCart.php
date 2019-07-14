@@ -1422,7 +1422,7 @@ class ShoppingCart
 		foreach ($result->items as $item)
 		{
 			$p = new Product();
-			$p->GetProduct($item->PID);
+			$p->GetProduct($item->ProductId);
 			$out .= "	<div class=\"order-summary-items".($num == 1 ? "-first" : "")."\">\n";
 			$out .= "		<p class=\"product\">\n";
 			$out .= "			<img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" />\n";
