@@ -19,7 +19,7 @@ exports.list_cart_items = function(req, res) {
             "#pid": SessionId
         },
         ExpressionAttributeValues: {
-            ':sid': sessionid
+            ":sid": sessionid
         }
     }, function(err, data) {
         if (err) {
