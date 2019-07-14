@@ -1413,7 +1413,13 @@ class ShoppingCart
 		$out .= "			<p class=\"itemtotal\">Item Total</p>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
 		$out .= "		</div>\n";
-		foreach ($this->Items as &$item)
+
+		$r = new RestRunner();
+		$sessionid = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($sessionid);
+
+		$result = $r->Get($this->CartApi, $a);
+		foreach ($result->items as $item)
 		{
 			$p = new Product();
 			$p->GetProduct($item->PID);
@@ -1422,7 +1428,6 @@ class ShoppingCart
 			$out .= "			<img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" />\n";
 			$out .= "			<strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."<br>Ships in 2 to 3 business days\n";
 			$out .= "		</p>\n";
-			// $out .= "		<p class=\"format\">".$p->Format."</p>\n";
 			$out .= "		<p class=\"qty\">\n";
 			$out .= "			<input type=\"text\" name=\"cart_item[".$item->PID."]\" id=\"cart_item[".$item->PID."]\" value=\"".$item->Quantity."\" maxlength=\"3\" /><br>\n";
 			$out .= "			<span class=\"remove\"><a href=\"/shop/cart/remove/".$item->PID."\">remove &rsaquo;</a></span>\n";
