@@ -45,8 +45,8 @@ class ShoppingCart
 		echo "<pre>";
 		print_r($result);
 		echo "</pre>";
-		
-		$answer = $result->Count;
+
+		$answer = 0; //$result->Count;
 		
 		return $answer;
 	}
