@@ -12,7 +12,7 @@ var datetime = new Date().getTime().toString();
 exports.list_cart_items = function(req, res) {
     var sessionid = req.params.sessionId;
 
-    ddb.get({
+    ddb.query({
         TableName: table,
         KeyConditionExpression: 'SessionId = :sid',
         ExpressionAttributeNames: {
