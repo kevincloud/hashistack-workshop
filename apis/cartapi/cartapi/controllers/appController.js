@@ -119,6 +119,7 @@ exports.add_to_cart = function(req, res) {
                 });
             }
             else {
+                console.log(data);
                 console.log(quantity);
                 console.log(data.Items[0].Quantity);
                 quantity += data.Items[0].Quantity;
