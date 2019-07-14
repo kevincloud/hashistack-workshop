@@ -37,20 +37,17 @@ class ShoppingCart
 	
 	public function Count()
 	{
-		$answer = 0;
-
 		$r = new RestRunner();
 		$sessionid = array('Key' => 'sessionId', 'Value' => session_id());
 		$a = array($sessionid);
+		$cnt = 0;
 
 		$result = $r->Get($this->CartApi, $a);
-		echo "<pre>";
-		print_r($result);
-		echo "</pre>";
-
-		$answer = 0; // $result->Count;
+		foreach ($result->items as $itm) {
+			$cnt += $itm->Quantity;
+		}
 		
-		return $answer;
+		return $cnt;
 	}
 	
 	// public function CleanCart()
