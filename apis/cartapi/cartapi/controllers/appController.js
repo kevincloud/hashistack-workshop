@@ -14,8 +14,9 @@ exports.list_cart_items = function(req, res) {
 
     ddb.get({
         TableName: table,
-        Key: {
-            'SessionId': sessionid
+        KeyConditionExpression: 'SessionId = :sid',
+        ExpressionAttributeNames: {
+            ':sid': sessionid
         }
     }, function(err, data) {
         if (err) {
@@ -120,7 +121,6 @@ exports.add_to_cart = function(req, res) {
             }
             else {
                 quantity += data.Items[0].Quantity;
-                console.log ("Updating...");
                 
                 ddb.update({
                     TableName: table,
