@@ -119,7 +119,10 @@ exports.add_to_cart = function(req, res) {
                 });
             }
             else {
+                console.log(quantity);
+                console.log(data.Items[0].Quantity);
                 quantity += data.Items[0].Quantity;
+                console.log(quantity);
                 
                 ddb.update({
                     TableName: table,
