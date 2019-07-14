@@ -5,7 +5,6 @@ var AWS = require('aws-sdk');
 var region = process.env.AWS_REGION;
 AWS.config.update({region: region});
 
-
 var ddb = new AWS.DynamoDB.DocumentClient();
 var table = 'customer-cart';
 var datetime = new Date().getTime().toString();
@@ -120,22 +119,17 @@ exports.add_to_cart = function(req, res) {
                 });
             }
             else {
-                console.log(data);
-                console.log(quantity);
-                console.log(data.Items[0].Quantity);
                 quantity += data.Items[0].Quantity;
-                console.log(quantity);
                 
                 ddb.update({
                     TableName: table,
-                    Key: {
-                        'SessionId': sessionid,
-                        'ProductId': productid
-                    },
-                    UpdateExpression: "set Quantity = :q, DateStamp = :d",
+                    Key: { 'SessionId': sessionid },
+                    ConditionExpression: "#pid = :pid",
+                    UpdateExpression: "set Quantity = :q",
+                    ExpressionAttributeNames: { '#q' : 'Quantity', '#pid': 'ProductId' },
                     ExpressionAttributeValues: {
-                        ":q": quantity,
-                        ":d": datetime
+                        ':q': quantity,
+                        ':pid': productid
                     },
                     ReturnValues: "UPDATED_NEW"
                 }, function(err, data) {
