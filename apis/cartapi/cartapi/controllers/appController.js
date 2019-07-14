@@ -12,6 +12,8 @@ var datetime = new Date().getTime().toString();
 exports.list_cart_items = function(req, res) {
     var sessionid = req.params.sessionId;
 
+    console.log("sessionid: " + sessionid);
+
     ddb.query({
         TableName: table,
         KeyConditionExpression: '#sid = :sid',
