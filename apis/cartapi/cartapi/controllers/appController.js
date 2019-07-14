@@ -14,7 +14,10 @@ exports.list_cart_items = function(req, res) {
 
     ddb.query({
         TableName: table,
-        KeyConditionExpression: 'SessionId = :sid',
+        KeyConditionExpression: '#sid = :sid',
+        ExpressionAttributeNames: {
+            "#pid": SessionId
+        },
         ExpressionAttributeValues: {
             ':sid': sessionid
         }
