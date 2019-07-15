@@ -187,7 +187,7 @@ exports.update_cart_item = function(req, res) {
 
 exports.delete_cart_item = function(req, res) {
     var sessionid = req.body.sessionId;
-    var productid = req.body.productId;
+    var productid = req.query.productId;
 
     console.log("sessionid: " + sessionid);
     console.log("productid: " + productid);

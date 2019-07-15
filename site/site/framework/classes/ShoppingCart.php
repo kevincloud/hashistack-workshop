@@ -78,14 +78,13 @@ class ShoppingCart
 	{
 		$r = new RestRunner();
 
-		$itempid = array('Key' => 'productId', 'Value' => $pid);
 		$itemsid = array('Key' => 'sessionId', 'Value' => session_id());
 		$a = array($itempid, $itemqty, $itemsid);
 
 		$p = new Product();
 		$p->GetProduct($pid);
 
-		$result = $r->Delete($this->CartApi, $a);
+		$result = $r->Delete($this->CartApi."/".$pid, $a);
 	}
 	
 	/*
