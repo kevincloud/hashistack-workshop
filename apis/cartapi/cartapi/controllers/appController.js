@@ -186,17 +186,14 @@ exports.update_cart_item = function(req, res) {
 };
 
 exports.delete_cart_item = function(req, res) {
-    var sessionid = req.params.sessionId;
-    var productid = req.params.productId;
+    var sessionid = req.body.sessionId;
+    var productid = req.query.productId;
 
     ddb.delete({
         TableName: table,
         Key: {
-            'SessionId': sessionid
-        },
-        ConditionExpression: "ProductId = :p",
-        ExpressionAttributeValues: {
-            ":p": productid
+            'SessionId': sessionid,
+            'ProductId': productid
         }
     }, function(err, data) {
         if (err) {

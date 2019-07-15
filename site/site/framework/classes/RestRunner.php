@@ -27,6 +27,19 @@ class RestRunner
         return $output;
     }
 
+    public function Delete($url, $parms)
+    {
+        $p = $this->BuildParms($parms);
+
+        curl_setopt ($this->curl, CURLOPT_URL, $url);
+        curl_setopt ($this->curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt ($this->curl, CURLOPT_POSTFIELDS, $p);
+        
+        $output = json_decode(curl_exec($this->curl));
+
+        return $output;
+    }
+
     public function Put($url, $parms)
     {
         $p = $this->BuildParms($parms);

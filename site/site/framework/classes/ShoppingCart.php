@@ -21,20 +21,7 @@ class ShoppingCart
 
 		$this->CartApi = $cartapi."/cart";
 	}
-	
-	// public function Contains($pid)
-	// {
-	// 	$answer = NULL;
 		
-	// 	// foreach ($this->Items as $item)
-	// 	// {
-	// 	// 	if ($item->PID == $pid)
-	// 	// 		$answer = $item;
-	// 	// }
-		
-	// 	return $answer;
-	// }
-	
 	public function Count()
 	{
 		$r = new RestRunner();
@@ -87,16 +74,19 @@ class ShoppingCart
 	// 	// }
 	// }
 	
-	// public function DeleteItem($pid, $landing=false)
-	// {
-	// 	// foreach ($this->Items as $key => &$item)
-	// 	// {
-	// 	// 	if ($item->PID == $pid)
-	// 	// 	{
-	// 	// 		unset($this->Items[$key]);
-	// 	// 	}
-	// 	// }
-	// }
+	public function DeleteItem($pid)
+	{
+		$r = new RestRunner();
+
+		$itempid = array('Key' => 'productId', 'Value' => $pid);
+		$itemsid = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($itempid, $itemqty, $itemsid);
+
+		$p = new Product();
+		$p->GetProduct($pid);
+
+		$result = $r->Delete($this->CartApi, $a);
+	}
 	
 	/*
 	 *	Function: 	HideSidebar()
@@ -1429,8 +1419,8 @@ class ShoppingCart
 			$out .= "			<strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."<br>Ships in 2 to 3 business days\n";
 			$out .= "		</p>\n";
 			$out .= "		<p class=\"qty\">\n";
-			$out .= "			<input type=\"text\" name=\"cart_item[".$item->PID."]\" id=\"cart_item[".$item->PID."]\" value=\"".$item->Quantity."\" maxlength=\"3\" /><br>\n";
-			$out .= "			<span class=\"remove\"><a href=\"/shop/cart/remove/".$item->PID."\">remove &rsaquo;</a></span>\n";
+			$out .= "			<input type=\"text\" name=\"cart_item[".$p->PID."]\" id=\"cart_item[".$p->PID."]\" value=\"".$item->Quantity."\" maxlength=\"3\" /><br>\n";
+			$out .= "			<span class=\"remove\"><a href=\"/shop/cart/remove/".$p->PID."\">remove &rsaquo;</a></span>\n";
 			$out .= "		</p>\n";
 			$out .= "		<p class=\"price\"><strong>$".money_format("%.2n", round($p->Price, 2))."</strong></p>\n";
 			$out .= "		<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->Price * $item->Quantity, 2))."</strong></p>\n";
@@ -1474,11 +1464,6 @@ class ShoppingCart
 		$out .= "			<p class=\"summary\"><strong>Estimated Total: </strong></p>\n";
 		$out .= "			<p class=\"totals\"><strong>$".money_format("%.2n", round($total, 2))."</strong></p>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
-		$out .= "		</div>\n";
-		$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
-		$out .= "		<div class=\"order-summary-total\">\n";
-		$out .= "			<div class=\"order-summary-continue\"><input class=\"green button\" name=\"cart_btn\" id=\"checkout_first\" value=\"CONTINUE CHECKOUT\" onclick=\"scCheckCheckout();return false;\" type=\"button\" /></div>\n";
-		$out .= "			<div class=\"order-summary-promo\">Promo Code: <input type=\"text\" maxlength=\"10\" value=\"".$this->PromoCode."\" name=\"cart_promocode\" id=\"cart_promocode\"> <input class=\"button smallbutton\" name=\"cart_btn\" type=\"submit\" value=\"Update Cart\" /></div>\n";
 		$out .= "		</div>\n";
 		$out .= "	</div>\n";
 		$out .= "	<input type=\"hidden\" name=\"cart_process\" id=\"cart_process\" value=\"\">\n";
