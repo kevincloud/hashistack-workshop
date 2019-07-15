@@ -187,7 +187,7 @@ exports.update_cart_item = function(req, res) {
 
 exports.delete_cart_item = function(req, res) {
     var sessionid = req.body.sessionId;
-    var productid = req.query.productId;
+    var productid = req.body.productId;
 
     ddb.delete({
         TableName: table,
