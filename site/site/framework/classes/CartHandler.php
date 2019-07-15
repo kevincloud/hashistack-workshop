@@ -46,9 +46,9 @@ class CartHandler extends BasePage
 			// case "update":
 			// 	$this->UpdateItem();
 			// 	break;
-			// case "remove":
-			// 	$this->DeleteItem();
-			// 	break;
+			case "remove":
+				$this->DeleteItem();
+				break;
 			default:
 				$this->ViewCart();
 				break;
@@ -359,11 +359,11 @@ class CartHandler extends BasePage
 		}
 	}
 	
-	// private function DeleteItem()
-	// {
-	// 	$this->Cart->DeleteItem($this->PageVariables["pid"]);
-	// 	$this->Redirect("/shop/cart/view");
-	// }
+	private function DeleteItem()
+	{
+		$this->Cart->DeleteItem($this->PageVariables["pid"]);
+		$this->Redirect("/shop/cart/view");
+	}
 	
 	private function ViewCart()
 	{
