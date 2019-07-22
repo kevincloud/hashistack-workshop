@@ -56,7 +56,7 @@ class Search
 				$label = "Search Results";
 				break;
 			case "categories":
-				$label = $data.replace("-", " ");
+				$label = str_replace("-", " ", $data);
 				break;
 			case "manufacturer":
 				$label = "";
@@ -83,19 +83,11 @@ class Search
 				// 	$resultnext = "/products/search/".($page + 1)."/".urlencode($data);
 				// 	$resultprev = "/products/search/".($page - 1)."/".urlencode($data);
 				// 	break;
-				// case "categories":
-				// 	$resultinfo = "";
-				// 	$tmpcat = "";
-				// 	$sql = "exec s_catFindParentsByID ".$data;
-				// 	$rs = $this->_db->get_results($sql);
-				// 	if ($rs)
-				// 	{
-				// 		foreach ($rs as $row)
-				// 			$tmpcat .= "/".Utilities::BeautifyURL($row->category);
-				// 	}
-				// 	$resultnext = $tmpcat."/categories/".urlencode($data)."/".($page + 1);
-				// 	$resultprev = $tmpcat."/categories/".urlencode($data)."/".($page - 1);
-				// 	break;
+				case "categories":
+					$resultinfo = "";
+					$resultnext = "/products/categories/".$data."/".($page + 1);
+					$resultprev = "/products/categories/".$data."/".($page - 1);
+					break;
 				// case "manufacturer":
 				// 	$resultinfo = " products for this manufacturer";
 				// 	$resultnext = "/products/manufacturer/".$data;
@@ -149,7 +141,6 @@ class Search
 					// $p = new Product();
 					try
 					{
-						// $p->GetProduct($pg->PID);
 						$out .= $pg->ListView();
 					}
 					catch (Exception $e)
@@ -159,7 +150,6 @@ class Search
 				}
 				$shown++;
 			}
-			//exit();
 			$out .= "	</ul>\n";
 			$out .= $paginator;
 		}

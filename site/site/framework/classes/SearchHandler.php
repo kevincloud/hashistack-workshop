@@ -77,10 +77,11 @@ class SearchHandler extends BasePage
 	private function ShowCategory()
 	{
 		$catid = $this->PageVariables["category"];
+		$page = isset($this->PageVariables["page"]) ? $this->PageVariables["page"] : 1;
 	
 		$s = new Search();
 		
-		echo $s->Category($catid);
+		echo $s->Category($catid, $page);
 	}
 	
 	private function Popular()

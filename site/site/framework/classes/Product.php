@@ -347,7 +347,7 @@ class Product {
 		
 		$out .= "<li class=\"product\">\n";
 		$out .= "	<div class=\"product-thumbnail\">\n";
-		$out .= "		<a href=\"/products/".$this->PID."/".$this->Identifier."\"><img src=\"/products/images/".$this->PID."/large/".$this->Identifier.".jpg\" alt=\"".$this->ProductName."\" border=\"0\" /></a>\n";
+		$out .= "		<a href=\"/products/".$this->PID."/".$this->Identifier."\"><img src=\"/images/".$this->PID."/".$this->Identifier.".jpg\" alt=\"".$this->ProductName."\" border=\"0\" /></a>\n";
 		$out .= "	</div>\n";
 		$out .= "	<div class=\"cart-details\" style=\"width:140px;\">\n";
 		$out .= "		<ul>\n";
