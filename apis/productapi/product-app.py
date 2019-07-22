@@ -66,7 +66,7 @@ def category_info(category):
         for i in items:
             cats = json.loads(i['Categories'])
             try:
-                x = cats.index("Brewing Equipment")
+                x = cats.index(ncat)
                 output.append(i);
             except:
                 found = False
