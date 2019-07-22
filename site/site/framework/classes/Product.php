@@ -18,6 +18,7 @@ class Product {
 	public $Unit = "";
 	public $SetCount = 0;
 	public $Categories = array();
+	public $Identifier = "";
 	
 	/*
 	 * Class Options
@@ -91,6 +92,7 @@ class Product {
 			$this->Unit = $row[0]->Unit;
 			$this->SetCount = $row[0]->Count;
 			$this->Categories = $row[0]->Categories;
+			$this->Identifier = Utilities::BeautifyURL($this->ProductName);
 }
 		else
 			throw new Exception("No product was specified.");
@@ -109,7 +111,7 @@ class Product {
 	 */
 	public function Permalink()
 	{
-		return "/".$this->BeautifiedURL."/products/".$this->PID."/".$this->Identifier;
+		return "/products/".$this->PID."/".$this->Identifier;
 	}
 	
 	/*
@@ -206,7 +208,7 @@ class Product {
 		foreach ($seealso as $p)
 		{
 			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/".$p->BeautifiedURL."/products/".$p->PID."/".$p->Identifier."\">\n";
+			$out .= "					<a href=\"/products/".$p->PID."/".$p->Identifier."\">\n";
 			$out .= "						<img src=\"/products/images/".$p->PID."/large/".$p->Identifier.".jpg\" alt=\"".$p->EasyName."\" border=\"0\" />\n";
 			$out .= "						<span class=\"product-details\">\n";
 			$out .= "							<strong>".$p->Name."</strong>\n";
@@ -219,7 +221,7 @@ class Product {
 		$out .= "		</section>\n";
 		$out .= "	</aside>\n";
 		$out .= "	<div class=\"single-product-thumbnails\" style=\"position:relative;\">\n";
-		$out .= "		<img src=\"/images/".$this->PID."\" alt=\"".str_replace("-", " ", $this->BeautifiedURL)."\" border=\"0\" />\n";
+		$out .= "		<img src=\"/images/".$this->PID."\" alt=\"".str_replace("-", " ", $this->Identifier)."\" border=\"0\" />\n";
 		$out .= "	</div>\n";
 		$out .= "	<article class=\"single-description\">\n";
 		$out .= "		<h2>\n";
@@ -242,8 +244,8 @@ class Product {
 		$out .= "		<nav class=\"sub-tabs\">\n";
 		$out .= "			<ul>\n";
 		$out .= "				<li><a class=\"selected\" id=\"description-tab\">Description</a></li>\n";
-		$out .= "				<li><a id=\"excerpt-tab\">Excerpt</a></li>\n";
-		$out .= "				<li><a id=\"reviews-tab\">Reviews</a></li>\n";
+		// $out .= "				<li><a id=\"excerpt-tab\">Excerpt</a></li>\n";
+		// $out .= "				<li><a id=\"reviews-tab\">Reviews</a></li>\n";
 		$out .= "			</ul>\n";
 		$out .= "		</nav>\n";
 		$out .= "		<section class=\"selected\" id=\"description-content\">\n";
@@ -345,7 +347,7 @@ class Product {
 		
 		$out .= "<li class=\"product\">\n";
 		$out .= "	<div class=\"product-thumbnail\">\n";
-		$out .= "		<a href=\"/".$this->BeautifiedURL."/products/".$this->PID."/".$this->Identifier."\"><img src=\"/products/images/".$this->PID."/large/".$this->Identifier.".jpg\" alt=\"".$this->ProductName."\" border=\"0\" /></a>\n";
+		$out .= "		<a href=\"/products/".$this->PID."/".$this->Identifier."\"><img src=\"/products/images/".$this->PID."/large/".$this->Identifier.".jpg\" alt=\"".$this->ProductName."\" border=\"0\" /></a>\n";
 		$out .= "	</div>\n";
 		$out .= "	<div class=\"cart-details\" style=\"width:140px;\">\n";
 		$out .= "		<ul>\n";
@@ -355,7 +357,7 @@ class Product {
 		$out .= "	</div>\n";
 		$out .= "	<div class=\"product-details\">\n";
 		$out .= "		<ul>\n";
-		$out .= "			<li class=\"title\"><a href=\"/".$this->BeautifiedURL."/products/".$this->PID."/".$this->Identifier."\">".$this->ProductName."</a></li>\n";
+		$out .= "			<li class=\"title\"><a href=\"/products/".$this->PID."/".$this->Identifier."\">".$this->ProductName."</a></li>\n";
 		$out .= "			<li class=\"manufacturer\">by ".$this->Manufacturer."</li>\n";
 		$out .= "		</ul>\n";
 		$out .= "	</div>\n";
@@ -410,7 +412,7 @@ class Product {
 		
 		$out .= "<li class=\"product\">\n";
 		$out .= "	<div class=\"product-thumbnail\">\n";
-		$out .= "		<a href=\"/".$this->BeautifiedURL."/products/".$this->PID."/".$this->Identifier."\"><img src=\"/products/images/".$this->PID."/large/".$this->Identifier.".jpg\" alt=\"".$this->ProductName."\" border=\"0\" /></a>\n";
+		$out .= "		<a href=\"/products/".$this->PID."/".$this->Identifier."\"><img src=\"/products/images/".$this->PID."/large/".$this->Identifier.".jpg\" alt=\"".$this->ProductName."\" border=\"0\" /></a>\n";
 		$out .= "	</div>\n";
 		$out .= "	<div class=\"cart-details\">\n";
 		$out .= "		<ul>\n";
@@ -462,7 +464,6 @@ class MiniProduct
 	public $Manufacturer = "";
 	public $EasyName = "";
 	public $Identifier = "";
-	public $BeautifiedURL = "";
 	
 	/*
 	 *	Function: 	__construct()
@@ -478,14 +479,13 @@ class MiniProduct
 	 *	Returns:	No return value
 	 *	
 	 */
-	public function __construct($pid, $name, $manufacturer, $id, $url)
+	public function __construct($pid, $name, $manufacturer, $url)
 	{
 		$this->PID = $pid;
 		$this->Name = $name;
 		$this->Manufacturer = $manufacturer;
 		$this->EasyName = str_replace("-", " ", $url);
-		$this->Identifier = $id;
-		$this->BeautifiedURL = $url;
+		$this->Identifier = $url;
 	}
 	
 	/*
@@ -501,7 +501,7 @@ class MiniProduct
 	 */
 	public function Permalink()
 	{
-		return "/".$this->BeautifiedURL."/products/".$this->PID."/".$this->Identifier."";
+		return "/products/".$this->PID."/".$this->Identifier."";
 	}
 	
 	/*

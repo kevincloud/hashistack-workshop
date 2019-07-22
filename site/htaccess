@@ -7,3 +7,6 @@ RewriteRule ^shop/cart/add/(.*)/(.*)$ /manage_cart.php?action=added&pid=$1 [L,QS
 RewriteRule ^shop/cart/add$ /manage_cart.php?action=add [L,QSA]
 RewriteRule ^shop/cart/view$ /manage_cart.php?action=view [L,QSA]
 RewriteRule ^shop/cart/remove/(.*)$ /manage_cart.php?action=remove&pid=$1 [L,QSA]
+RewriteRule ^shop/cart/continue$ /manage_cart.php?action=continue [L,QSA]
+RewriteRule ^shop/cart/shipping$ /manage_cart.php?action=shipping [L,QSA]
+RewriteRule ^shop/cart/billing$ /manage_cart.php?action=billing [L,QSA]

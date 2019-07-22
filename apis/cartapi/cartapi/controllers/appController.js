@@ -7,7 +7,6 @@ AWS.config.update({region: region});
 
 var ddb = new AWS.DynamoDB.DocumentClient();
 var table = 'customer-cart';
-var datetime = new Date().getTime().toString();
 
 exports.list_cart_items = function(req, res) {
     var sessionid = req.query.sessionId;
@@ -75,6 +74,7 @@ exports.add_to_cart = function(req, res) {
     var sessionid = req.body.sessionId;
     var productid = req.body.productId;
     var quantity = parseInt(req.body.quantity);
+    var datetime = new Date().getTime().toString();
 
     ddb.query({
         TableName: table,
@@ -155,6 +155,7 @@ exports.update_cart_item = function(req, res) {
     var sessionid = req.params.sessionId;
     var productid = req.params.productId;
     var quantity = req.params.quantity;
+    var datetime = new Date().getTime().toString();
 
     ddb.update({
         TableName: table,

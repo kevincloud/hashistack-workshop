@@ -76,11 +76,11 @@ class HomePageHandler extends BasePage
 		foreach ($popular as $p)
 		{
 			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/".$p->BeautifiedURL."/products/".$p->PID."/".$p->Identifier."\">\n";
-			$out .= "						<img src=\"/products/images/".$p->PID."/large/".$p->Identifier.".jpg\" alt=\"".$p->EasyName."\" border=\"0\" />\n";
+			$out .= "					<a href=\"/products/".$p->PID."/".$p->Identifier."\">\n";
+			$out .= "						<img src=\"/images/".$p->PID."/".$p->Identifier.".jpg\" alt=\"".$p->EasyName."\" border=\"0\" />\n";
 			$out .= "						<span class=\"product-details\">\n";
 			$out .= "							<strong>".$p->Name."</strong>\n";
-			$out .= "							by ".$p->Author."\n";
+			$out .= "							by ".$p->Manufacturer."\n";
 			$out .= "						</span>\n";
 			$out .= "					</a>\n";
 			$out .= "				</li>\n";
@@ -94,11 +94,11 @@ class HomePageHandler extends BasePage
 		foreach ($newproducts as $p)
 		{
 			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/".$p->BeautifiedURL."/products/".$p->PID."/".$p->Identifier."\">\n";
-			$out .= "						<img src=\"/products/images/".$p->PID."/large/".$p->Identifier.".jpg\" alt=\"".$p->EasyName."\" border=\"0\" />\n";
+			$out .= "					<a href=\"/products/".$p->PID."/".$p->Identifier."\">\n";
+			$out .= "						<img src=\"/images/".$p->PID."/".$p->Identifier.".jpg\" alt=\"".$p->EasyName."\" border=\"0\" />\n";
 			$out .= "						<span class=\"product-details\">\n";
 			$out .= "							<strong>".$p->Name."</strong>\n";
-			$out .= "							by ".$p->Author."\n";
+			$out .= "							by ".$p->Manufacturer."\n";
 			$out .= "						</span>\n";
 			$out .= "					</a>\n";
 			$out .= "				</li>\n";
@@ -112,53 +112,53 @@ class HomePageHandler extends BasePage
 //		$out .= "			<p>Highlighted products from a variety of categories.</p>\n";
 		$out .= "			<ul class=\"product-grid\">\n";
 
-			$p = new Product();
-			$p->GetProduct("BE0001");
-			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
-			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
-			$out .= "						<span class=\"product-details\">\n";
-			$out .= "							<strong>".$p->Name."</strong>\n";
-			$out .= "							by ".$p->Manufacturer."\n";
-			$out .= "						</span>\n";
-			$out .= "					</a>\n";
-			$out .= "				</li>\n";
+			// $p = new Product();
+			// $p->GetProduct("BE0001");
+			// $out .= "				<li class=\"product\">\n";
+			// $out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
+			// $out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
+			// $out .= "						<span class=\"product-details\">\n";
+			// $out .= "							<strong>".$p->Name."</strong>\n";
+			// $out .= "							by ".$p->Manufacturer."\n";
+			// $out .= "						</span>\n";
+			// $out .= "					</a>\n";
+			// $out .= "				</li>\n";
 
-			$p = new Product();
-			$p->GetProduct("EM0016");
-			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
-			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
-			$out .= "						<span class=\"product-details\">\n";
-			$out .= "							<strong>".$p->Name."</strong>\n";
-			$out .= "							by ".$p->Manufacturer."\n";
-			$out .= "						</span>\n";
-			$out .= "					</a>\n";
-			$out .= "				</li>\n";
+			// $p = new Product();
+			// $p->GetProduct("EM0016");
+			// $out .= "				<li class=\"product\">\n";
+			// $out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
+			// $out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
+			// $out .= "						<span class=\"product-details\">\n";
+			// $out .= "							<strong>".$p->Name."</strong>\n";
+			// $out .= "							by ".$p->Manufacturer."\n";
+			// $out .= "						</span>\n";
+			// $out .= "					</a>\n";
+			// $out .= "				</li>\n";
 
-			$p = new Product();
-			$p->GetProduct("KA0023");
-			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
-			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
-			$out .= "						<span class=\"product-details\">\n";
-			$out .= "							<strong>".$p->Name."</strong>\n";
-			$out .= "							by ".$p->Manufacturer."\n";
-			$out .= "						</span>\n";
-			$out .= "					</a>\n";
-			$out .= "				</li>\n";
+			// $p = new Product();
+			// $p->GetProduct("KA0023");
+			// $out .= "				<li class=\"product\">\n";
+			// $out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
+			// $out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
+			// $out .= "						<span class=\"product-details\">\n";
+			// $out .= "							<strong>".$p->Name."</strong>\n";
+			// $out .= "							by ".$p->Manufacturer."\n";
+			// $out .= "						</span>\n";
+			// $out .= "					</a>\n";
+			// $out .= "				</li>\n";
 
-			$p = new Product();
-			$p->GetProduct("BE0027");
-			$out .= "				<li class=\"product\">\n";
-			$out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
-			$out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
-			$out .= "						<span class=\"product-details\">\n";
-			$out .= "							<strong>".$p->Name."</strong>\n";
-			$out .= "							by ".$p->Manufacturer."\n";
-			$out .= "						</span>\n";
-			$out .= "					</a>\n";
-			$out .= "				</li>\n";
+			// $p = new Product();
+			// $p->GetProduct("BE0027");
+			// $out .= "				<li class=\"product\">\n";
+			// $out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
+			// $out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
+			// $out .= "						<span class=\"product-details\">\n";
+			// $out .= "							<strong>".$p->Name."</strong>\n";
+			// $out .= "							by ".$p->Manufacturer."\n";
+			// $out .= "						</span>\n";
+			// $out .= "					</a>\n";
+			// $out .= "				</li>\n";
 			
 		$out .= "			</ul>\n";
 		$out .= "		</section>\n";
@@ -184,30 +184,15 @@ class HomePageHandler extends BasePage
 		
 		if ($num == NULL)
 			$num = $this->Options["popularproducts"];
-		
-		// ***INLINESQL***
-		// $sql = "select top ".smartQuote($num)." i.pid, p.pname, p.isbn, p.code, p.author, COUNT(i.pid) ".
-		// 	"from cc_orders_items as i  ".
-		// 	"	inner join cc_orders as o on (o.ordid = i.ordid) ".
-		// 	"	inner join cc_product as p on (p.PID = i.pid) ".
-		// 	"where i.ordid like 'CO%' ".
-		// 	"	and o.orderdate > DATEADD(D, -".smartQuote($this->Options["popularrange"]).", GETDATE()) ".
-		// 	"	and p.active = 1 ".
-		// 	"	and p.ordertype = 'S' ".
-		// 	"group by i.pid, p.pname, p.isbn, p.code, p.author ".
-		// 	"order by COUNT(i.pid) desc";
-		// $rs = $this->_db->get_results($sql);
-		// if ($rs)
-		// {
-		// 	foreach ($rs as $row)
-		// 	{
-		// 		$x = Utilities::ToISBN13($row->isbn);
-		// 		$url = Utilities::BeautifyURL($row->pname);
-		// 		$titles[] = new MiniProduct($row->pid, $row->pname, $row->author, $row->isbn, $x, isBlank($row->isbn) ? $row->code : $x, $url);
-		// 	}
-		// }
-		
-		return $titles;
+
+		$list = array('BE0001', 'EM0016', 'KA0023', 'BE0027');
+		foreach ($list as $i) {
+			$p = new Product();
+			$p->GetProduct($i);
+			$items[] = new MiniProduct($p->PID, $p->ProductName, $p->Manufacturer, $p->Identifier);
+		}
+
+		return $items;
 	}
 	
 	private function NewProducts()

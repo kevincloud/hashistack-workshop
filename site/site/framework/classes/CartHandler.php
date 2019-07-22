@@ -19,18 +19,18 @@ class CartHandler extends BasePage
 			// case "order":
 			// 	$this->DisplayOrder();
 			// 	break;
-			// case "continue":
-			// 	$this->ProcessCart();
-			// 	break;
+			case "continue":
+				$this->ProcessCart();
+				break;
 			// case "confirm":
 			// 	$this->ShowPayment();
 			// 	break;
-			// case "shipping":
-			// 	$this->ShowShipping();
-			// 	break;
-			// case "billing":
-			// 	$this->ShowBilling();
-			// 	break;
+			case "shipping":
+				$this->ShowShipping();
+				break;
+			case "billing":
+				$this->ShowBilling();
+				break;
 			// case "update":
 			// 	$this->UpdateCart();
 			// 	break;
@@ -299,33 +299,33 @@ class CartHandler extends BasePage
 	// 		echo $this->Cart->ConfirmPayment($this->_urltag);
 	// }
 	
-	// private function ShowShipping()
-	// {
-	// 	if (!$this->Cart->Checkout)
-	// 		$this->Redirect("/shop/cart/view");
-	// 	else
-	// 	{
-	// 		$out = $this->Cart->ShippingMethod($this->_urltag);
-	// 		if ($out == "")
-	// 		{
-	// 			$this->Cart->LastError = "<div>There are no shipping services available for your address. Please check your address again, enter a different address, or call 800-421-7323 for additional options.</div>";
-	// 			$this->Redirect("/".$this->_urltag."/cart/billing");
-	// 		}
-	// 		else
-	// 			echo $out;
-	// 	}
-	// }
+	private function ShowShipping()
+	{
+		if (!$this->Cart->Checkout)
+			$this->Redirect("/shop/cart/view");
+		else
+		{
+			$out = $this->Cart->ShippingMethod($this->_urltag);
+			if ($out == "")
+			{
+				$this->Cart->LastError = "<div>There are no shipping services available for your address. Please check your address again, enter a different address, or call 800-421-7323 for additional options.</div>";
+				$this->Redirect("/".$this->_urltag."/cart/billing");
+			}
+			else
+				echo $out;
+		}
+	}
 	
-	// private function ShowBilling()
-	// {
-	// 	if ($this->Account->LoggedIn())
-	// 		echo $this->Cart->BillingInfo($this->_urltag);
-	// 	else
-	// 	{
-	// 		$this->Cart->Checkout = true;
-	// 		$this->Redirect("/profile/login");
-	// 	}
-	// }
+	private function ShowBilling()
+	{
+		if ($this->Account->LoggedIn())
+			echo $this->Cart->BillingInfo($this->_urltag);
+		else
+		{
+			$this->Cart->Checkout = true;
+			$this->Redirect("/profile/login");
+		}
+	}
 	
 	// private function EmptyCart()
 	// {

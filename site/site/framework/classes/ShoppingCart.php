@@ -854,107 +854,10 @@ class ShoppingCart
 	// 	return $out;
 	// }
 	
-	// public function GetCartWeight($landing=false)
-	// {
-	// 	$retval = 0.0;
-		
-	// 	if ($landing)
-	// 	{
-	// 		foreach ($this->LandingItems as $p)
-	// 		{
-	// 			$retval += ($p->Weight * $p->Quantity);
-	// 		}
-			
-	// 		if (count($this->LandingItems) > 1)
-	// 			$retval += 3;
-	// 	}
-	// 	else
-	// 	{
-	// 		foreach ($this->Items as $p)
-	// 		{
-	// 			$retval += ($p->Weight * $p->Quantity);
-	// 		}
-			
-	// 		if (count($this->Items) > 1)
-	// 			$retval += 3;
-	// 	}
-		
-	// 	return $retval;
-	// }
-	
-	// public function IsFulfillmentOnly()
-	// {
-	// 	$retval = true;
-		
-	// 	foreach ($this->Items as &$p)
-	// 	{
-	// 		if ($p->Fulfillment === false)
-	// 		{
-	// 			$retval = false;
-	// 		}
-	// 	}
-		
-	// 	foreach ($this->LandingItems as &$p)
-	// 	{
-	// 		if ($p->Fulfillment === false)
-	// 		{
-	// 			$retval = false;
-	// 		}
-	// 	}
-		
-	// 	return $retval;
-	// }
-	
-	// public function IsESDOnly()
-	// {
-	// 	$retval = true;
-		
-	// 	foreach ($this->Items as &$p)
-	// 	{
-	// 		if ($p->Electronic === false)
-	// 		{
-	// 			$retval = false;
-	// 		}
-	// 	}
-		
-	// 	foreach ($this->LandingItems as &$p)
-	// 	{
-	// 		if ($p->Electronic === false)
-	// 		{
-	// 			$retval = false;
-	// 		}
-	// 	}
-		
-	// 	return $retval;
-	// }
-	
-	// public function HasESD()
-	// {
-	// 	$retval = false;
-		
-	// 	foreach ($this->Items as &$p)
-	// 	{
-	// 		if ($p->Electronic === true)
-	// 		{
-	// 			$retval = true;
-	// 		}
-	// 	}
-		
-	// 	foreach ($this->LandingItems as &$p)
-	// 	{
-	// 		if ($p->Electronic === true)
-	// 		{
-	// 			$retval = true;
-	// 		}
-	// 	}
-		
-	// 	return $retval;
-	// }
-	
-	// public function GetTaxRate()
-	// {
-	// 	return 0.0;
-	// }
+	public function GetTaxRate()
+	{
+		return 0.065;
+	}
 	
 	// public function ShippingMethod($urltag="shop")
 	// {
@@ -1430,7 +1333,7 @@ class ShoppingCart
 			$num++;
 		}
 		
-		$tax = $loggedin === false ? 0 : ($subtotal + $shipping) * $this->GetTaxRate();
+		$tax = ($subtotal + $shipping) * $this->GetTaxRate();
 		
 		$total = $subtotal + $shipping + $tax;
 		
@@ -1449,11 +1352,6 @@ class ShoppingCart
 		$out .= "			<div class=\"clearfloat\"></div>\n";
 		$out .= "		</div>\n";
 		$out .= "		<div class=\"order-summary-total\">\n";
-		$out .= "			<p class=\"summary\"><span class=\"estship\">(Estimated using US Standard Rate)</p></p>\n";
-		$out .= "			<p class=\"totals\">&nbsp;</p>\n";
-		$out .= "			<div class=\"clearfloat\"></div>\n";
-		$out .= "		</div>\n";
-		$out .= "		<div class=\"order-summary-total\">\n";
 		$out .= "			<p class=\"summary\">Estimated Tax: </p>\n";
 		$out .= "			<p class=\"totals\">".($tax <= 0 ? "---" : "$".money_format("%.2n", round($tax, 2)))."</p>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
@@ -1463,6 +1361,11 @@ class ShoppingCart
 		$out .= "			<p class=\"summary\"><strong>Estimated Total: </strong></p>\n";
 		$out .= "			<p class=\"totals\"><strong>$".money_format("%.2n", round($total, 2))."</strong></p>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<div class=\"order-summary-continue\"><input class=\"green button\" name=\"cart_btn\" id=\"checkout_first\" value=\"CONTINUE CHECKOUT\" onclick=\"scCheckCheckout();return false;\" type=\"button\" /></div>\n";
+		$out .= "			<div class=\"order-summary-promo\"><!--<input class=\"button smallbutton\" name=\"cart_btn\" type=\"submit\" value=\"Update Cart\" />--></div>\n";
 		$out .= "		</div>\n";
 		$out .= "	</div>\n";
 		$out .= "	<input type=\"hidden\" name=\"cart_process\" id=\"cart_process\" value=\"\">\n";
