@@ -50,10 +50,10 @@ abstract class BasePage
 		$this->AddJavascript("/framework/js/modernizr-1.7.min.js");
 		$this->AddJavascript("/framework/js/cart.js");
 		
-		$this->AddMenuItem("Brewing Equipment", "/products/categories/brewing-equipment");
-		$this->AddMenuItem("Barista Tools", "/products/categories/barista-tools");
-		$this->AddMenuItem("Espresso Machines", "/products/categories/espresso-machines");
-		$this->AddMenuItem("Appliances", "/products/categories/kitchen-appliances");
+		$this->AddMenuItem("Brewing Equipment", "/products/categories/Brewing-Equipment");
+		$this->AddMenuItem("Barista Tools", "/products/categories/Barista-Tools");
+		$this->AddMenuItem("Espresso Machines", "/products/categories/Espresso-Machines");
+		$this->AddMenuItem("Appliances", "/products/categories/Kitchen-Appliances");
 		
 		foreach ($_GET as $key => $value)
 		{

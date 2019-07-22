@@ -53,6 +53,32 @@ def product_info(product_id):
 
     return json.dumps(output, cls=DecimalEncoder)
 
+@app.route('/category/<category>', strict_slashes=False, methods=['GET'])
+def category_info(category):
+    table = ddb.Table(tablename)
+    response = table.scan()
+    found = False
+    ncat = category.replace("-", " ")
+
+    output = []
+    items = response['Items']
+    while True:
+        for i in items:
+            cats = json.loads(i['Categories'])
+            try:
+                x = cats.index("Brewing Equipment")
+                output.append(i);
+            except:
+                found = False
+
+        if response.get('LastEvaluatedKey'):
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            items = response['Items']
+        else:
+            break;
+
+    return json.dumps(output, cls=DecimalEncoder)
+
 @app.route('/image/<product_id>', strict_slashes=False, methods=['GET'])
 def product_image(product_id):
     table = ddb.Table(tablename)

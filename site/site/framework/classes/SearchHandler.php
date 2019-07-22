@@ -76,34 +76,11 @@ class SearchHandler extends BasePage
 	
 	private function ShowCategory()
 	{
-		$catid = isset($this->PageVariables["catid"]) ? trim($this->PageVariables["catid"]) : "";
-		$page = isset($this->PageVariables["page"]) ? intval($this->PageVariables["page"]) : 1;
+		$catid = $this->PageVariables["category"];
 	
-		$s = new Search($this->_db);
+		$s = new Search();
 		
-		echo $s->Category($catid, $page);
-	}
-	
-	private function ShowEBooks()
-	{
-		$page = isset($this->PageVariables["page"]) ? intval($this->PageVariables["page"]) : 1;
-		if (!$page)
-			$page = 1;
-	
-		$s = new Search($this->_db);
-		
-		echo $s->EBookList(10000, $page);
-	}
-	
-	private function ShowAudioBooks()
-	{
-		$page = isset($this->PageVariables["page"]) ? intval($this->PageVariables["page"]) : 1;
-		if (!$page)
-			$page = 1;
-	
-		$s = new Search($this->_db);
-		
-		echo $s->AudioBookList(10000, $page);
+		echo $s->Category($catid);
 	}
 	
 	private function Popular()

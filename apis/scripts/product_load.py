@@ -31,7 +31,7 @@ response = table.put_item(
 		'Weight': Decimal('3.35'),
 		'Unit': 'each',
 		'Count': 1,
-		'Categories': '["Brewing Equipment,"Pour Over"]'
+		'Categories': '["Brewing Equipment","Pour Over"]'
 	}
 )
 
