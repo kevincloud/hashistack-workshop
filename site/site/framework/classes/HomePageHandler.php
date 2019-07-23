@@ -62,11 +62,12 @@ class HomePageHandler extends BasePage
 	
 	public function DisplayHomePage()
 	{
+		$featured = array("BT0011", "BE0031", "BE0034", "BT0015");
 		$out = "";
 		
 		$out .= "<div class=\"content\">\n";
 		$out .= "	<div class=\"rotator\">\n";
-		$out .= $this->GetNextAd("large");
+		$out .= $this->GetNextAd();
 		$out .= "	</div>\n";
 		$out .= "	<aside class=\"right\">\n";
 		$out .= "		<section class=\"popular\">\n";
@@ -88,7 +89,7 @@ class HomePageHandler extends BasePage
 		$out .= "			</ul>\n";
 		$out .= "		</section>\n";
 		$out .= "		<section class=\"new-releases\">\n";
-		$out .= "			<h4>New Releases</h4>\n";
+		$out .= "			<h4>New Products</h4>\n";
 		$out .= "			<ul class=\"product-grid-mini\">\n";
 		$newproducts = $this->NewProducts();
 		foreach ($newproducts as $p)
@@ -111,55 +112,20 @@ class HomePageHandler extends BasePage
 		$out .= "			<h2>Featured Products</h2>\n";
 //		$out .= "			<p>Highlighted products from a variety of categories.</p>\n";
 		$out .= "			<ul class=\"product-grid\">\n";
-
-			// $p = new Product();
-			// $p->GetProduct("BE0001");
-			// $out .= "				<li class=\"product\">\n";
-			// $out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
-			// $out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
-			// $out .= "						<span class=\"product-details\">\n";
-			// $out .= "							<strong>".$p->Name."</strong>\n";
-			// $out .= "							by ".$p->Manufacturer."\n";
-			// $out .= "						</span>\n";
-			// $out .= "					</a>\n";
-			// $out .= "				</li>\n";
-
-			// $p = new Product();
-			// $p->GetProduct("EM0016");
-			// $out .= "				<li class=\"product\">\n";
-			// $out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
-			// $out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
-			// $out .= "						<span class=\"product-details\">\n";
-			// $out .= "							<strong>".$p->Name."</strong>\n";
-			// $out .= "							by ".$p->Manufacturer."\n";
-			// $out .= "						</span>\n";
-			// $out .= "					</a>\n";
-			// $out .= "				</li>\n";
-
-			// $p = new Product();
-			// $p->GetProduct("KA0023");
-			// $out .= "				<li class=\"product\">\n";
-			// $out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
-			// $out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
-			// $out .= "						<span class=\"product-details\">\n";
-			// $out .= "							<strong>".$p->Name."</strong>\n";
-			// $out .= "							by ".$p->Manufacturer."\n";
-			// $out .= "						</span>\n";
-			// $out .= "					</a>\n";
-			// $out .= "				</li>\n";
-
-			// $p = new Product();
-			// $p->GetProduct("BE0027");
-			// $out .= "				<li class=\"product\">\n";
-			// $out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
-			// $out .= "						<img src=\"".$p->ImageURL()."\" border=\"0\" />\n";
-			// $out .= "						<span class=\"product-details\">\n";
-			// $out .= "							<strong>".$p->Name."</strong>\n";
-			// $out .= "							by ".$p->Manufacturer."\n";
-			// $out .= "						</span>\n";
-			// $out .= "					</a>\n";
-			// $out .= "				</li>\n";
-			
+		foreach ($featured as $f)
+		{
+			$p = new Product();
+			$p->GetProduct($f);
+			$out .= "				<li class=\"product\">\n";
+			$out .= "					<a href=\"/products/".$p->PID."/product-name".$p->Identifier."\">\n";
+			$out .= "						<img src=\"/images/".$p->PID."/".$p->Identifier.".jpg\" border=\"0\" />\n";
+			$out .= "						<span class=\"product-details\">\n";
+			$out .= "							<strong>".$p->ProductName."</strong>\n";
+			$out .= "							by ".$p->Manufacturer."\n";
+			$out .= "						</span>\n";
+			$out .= "					</a>\n";
+			$out .= "				</li>\n";
+		}
 		$out .= "			</ul>\n";
 		$out .= "		</section>\n";
 
@@ -234,75 +200,26 @@ class HomePageHandler extends BasePage
 		return $titles;
 	}
 	
-	private function GetNextAd($adtype)
+	private function GetNextAd()
 	{
 		$out = "";
+		$pid = "EM0019";
 		
-		// ***INLINESQL***
-		// $sql = "select top 1 a.advertid, a.adimage, a.pid, a.category, a.adguid, p.pname, p.isbn, p.author, p.code, p.binding, isnull(a.adspecial, '') as adspecial from cc_store_ads as a inner join cc_store_ads_viewed as v on (v.advertid = a.advertid) left join cc_product as p on (p.pid = a.pid) where a.adtype = ".smartQuote($adtype)." and a.active = 1 and getdate() >= a.startdate and getdate() < dateadd(d, 1, a.enddate) order by v.datestamp";
-		// $row = $this->_db->get_row($sql);
-		// if ($row)
-		// {
-		// 	$p = new Product($this->_db);
-		// 	if (!isBlank($row->pid))
-		// 	{
-		// 		$p->GetProduct($row->pid);
-		// 		$p->CalculateValues();
-		// 	}
-			
-		// 	switch($adtype)
-		// 	{
-		// 		case "small":
-		// 			$out .= "				<li class=\"product\">\n";
-		// 			$out .= "					<div class=\"product-thumbnail\">\n";
-		// 			$out .= "						<a href=\"".$p->FeaturedLink(mssql_guid_string($row->adguid))."\"><img src=\"".$p->ImageURL()."\" alt=\"".str_replace("-", " ", $p->BeautifiedURL)."\" border=\"0\" /></a>\n";
-		// 			$out .= "					</div>\n";
-		// 			$out .= "					<div class=\"product-details\">\n";
-		// 			$out .= "						<ul>\n";
-		// 			$out .= "							<li class=\"title\"><a href=\"".$p->FeaturedLink(mssql_guid_string($row->adguid))."\">".$p->ProductName."</a></li>\n";
-		// 			if (!isBlank($p->AuthorID))
-		// 				$out .= "							<li class=\"author\">by <a href=\"/products/author/".base64url_encode($p->AuthorID)."\">".$p->Author."</a></li>\n";
-		// 			else
-		// 				$out .= "							<li class=\"author\">by ".$p->Author."</li>\n";
-		// 			if ($p->Rating > 0)
-		// 			{
-		// 				$out .= "							<li class=\"rating\">\n";
-		// 				$out .= "								Rating: ".$p->ShowRating()."\n";
-		// 				$out .= "							</li>\n";
-		// 			}
-		// 			$out .= "							<li class=\"format\">".$p->Format."</li>\n";
-		// 			if ($p->CalculatedDiscount > 0)
-		// 			{
-		// 				$out .= "							<li class=\"reg-price\">Reg: ".money_format("%.2n", $p->Price)."</li>\n";
-		// 				$out .= "							<li class=\"list-price\">Price: <strong>".money_format("%.2n", $p->CalculatedPrice)."</strong></li>\n";
-		// 				$out .= "							<li class=\"savings\">Save ".round($p->CalculatedDiscount)."%</li>\n";
-		// 			}
-		// 			else
-		// 			{
-		// 				$out .= "							<li class=\"list-price\">Price: <strong>".money_format("%.2n", $p->Price)."</strong></li>\n";
-		// 			}
-		// 			$out .= "						</ul>\n";
-		// 			$out .= "					</div>\n";
-		// 			$out .= "				</li>\n";
-		// 			break;
-		// 		case "large":
-		// 			if (isBlank($row->pid))
-		// 			{
-		// 				$out .= "		<a href=\"https://www.java-perks.com/Featured-Products/categories/".$row->category."\">\n";
-		// 				$out .= "			<img src=\"/products/images/featured/".str_replace("-", "", mssql_guid_string($row->adguid))."/".$row->category.".jpg\" alt=\"Featured Product\" border=\"0\" />\n";
-		// 				$out .= "		</a>\n";
-		// 			}
-		// 			else
-		// 			{
-		// 				$out .= "		<a href=\"".$p->FeaturedLink(mssql_guid_string($row->adguid))."\">\n";
-		// 				$out .= "			<img src=\"/products/images/featured/".str_replace("-", "", mssql_guid_string($row->adguid))."/".$p->Identifier.".jpg\" alt=\"Featured Product\" border=\"0\" />\n";
-		// 				$out .= "		</a>\n";
-		// 			}
-		// 			break;
-		// 	}
-		// 	$sql = "update cc_store_ads_viewed set counter = counter + 1, datestamp = getdate() where advertid = ".smartQuote($row->advertid);
-		// 	$this->_db->query($sql);
-		// }
+		$p = new Product();
+		$p->GetProduct($pid);
+		
+		$out .= "				<li class=\"product\">\n";
+		$out .= "					<div class=\"product-thumbnail\">\n";
+		$out .= "						<a href=\"/products/".$p->PID."/".$p->Identifier."\"><img src=\"/images/".$p->PID."/".$p->Identifier.".jpg\" alt=\"".str_replace("-", " ", $p->ProductName)."\" border=\"0\" /></a>\n";
+		$out .= "					</div>\n";
+		$out .= "					<div class=\"product-details\">\n";
+		$out .= "						<ul>\n";
+		$out .= "							<li class=\"title\"><a href=\"/products/".$p->PID."/".$p->Identifier."\">".$p->ProductName."</a></li>\n";
+		$out .= "							<li class=\"author\">by ".$p->Manufacturer."</li>\n";
+		$out .= "							<li class=\"list-price\">Price: <strong>".money_format("%.2n", $p->Price)."</strong></li>\n";
+		$out .= "						</ul>\n";
+		$out .= "					</div>\n";
+		$out .= "				</li>\n";
 		
 		return $out;
 	}
