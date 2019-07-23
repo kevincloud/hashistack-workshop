@@ -473,7 +473,7 @@ abstract class BasePage
 		$out .= "			<ul style=\"list-style-type:none !important;\">\n";
 		
 		$rr = new RestRunner();
-		$rs = $rr.Get($this->ProductApi."/category");
+		$rs = $rr.Get($this->ProductApi."/category", null);
 		foreach ($rs as $cat)
 		{
 			$out .= "				<li style=\"list-style:none !important;\"><a href=\"/products/categories/".str_replace(" ", "-", $cat)."\">".$cat."</a></li>\n";
