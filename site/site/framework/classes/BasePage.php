@@ -462,23 +462,19 @@ abstract class BasePage
 	private function SidebarCategories($catid=NULL)
 	{
 		$out = "";
-		$prefix = "";
-		$trail = array();
-		$tmpcat = 0;
-		
-		$out .= "		<nav class=\"categories\">\n";
-		if (isBlank($catid))
-			$out .= "			<h4>Browse</h4>\n";
-		
-		$out .= "			<ul style=\"list-style-type:none !important;\">\n";
-		
+
 		$rr = new RestRunner();
 		$rs = $rr->Get($this->ProductApi."/category");
+		if (!$rs)
+			return $out;
+
+		$out .= "		<nav class=\"categories\">\n";
+		$out .= "			<h4>Browse</h4>\n";
+		$out .= "			<ul style=\"list-style-type:none !important;\">\n";
 		foreach ($rs as $cat)
 		{
 			$out .= "				<li style=\"list-style:none !important;\"><a href=\"/products/categories/".str_replace(" ", "-", $cat)."\">".$cat."</a></li>\n";
 		}
-		
 		$out .= "			</ul>\n";
 		$out .= "		</nav>\n";
 		
