@@ -7,6 +7,9 @@ if [ ${1,,} = "-purge" ]; then
     aws ecr batch-delete-image --repository-name cart-app --image-ids "`aws ecr list-images --repository-name cart-app --query 'imageIds[*]' --output json`" || true
 fi
 
+# Get latest code updates
+git pull
+
 # Delete Nomad job
 curl \
     --request DELETE \
