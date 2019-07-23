@@ -69,7 +69,7 @@ class Product {
 		{
 			$request = $this->ProductAPI."/detail/".$pid;
 			$rr = new RestRunner();
-			$row = $rr.Get($request);
+			$row = $rr->Get($request);
 			echo "<pre>".$row."</pre>";
 
 			$this->PID = $row[0]->ProductId;
