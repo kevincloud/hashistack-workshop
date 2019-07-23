@@ -70,7 +70,9 @@ class Product {
 			$request = $this->ProductAPI."/detail/".$pid;
 			$rr = new RestRunner();
 			$row = $rr->Get($request);
-			echo "<pre>".$row."</pre>";
+			echo "<pre>";
+			print_r($row);
+			echo "</pre>";
 
 			$this->PID = $row[0]->ProductId;
 			$this->ProductName = $row[0]->ProductName;
