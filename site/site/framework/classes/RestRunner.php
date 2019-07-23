@@ -51,7 +51,7 @@ class RestRunner
         return $this->Run();
     }
 
-    public function Get($url, $parms)
+    public function Get($url, $parms=null)
     {
         $p = $this->BuildParms($parms);
 

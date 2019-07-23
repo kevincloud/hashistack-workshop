@@ -16,6 +16,7 @@ abstract class BasePage
 	private $_storeid = 1;
 	private $_loggedin = false;
 	private $_landingpage = false;
+	private $ProductApi;
 	
 	protected $Cart;
 	protected $Account;
@@ -31,8 +32,10 @@ abstract class BasePage
 		
 	public function __construct()
 	{
+		global $productapi;
 		set_error_handler(array("BasePage", "ErrorHandler"));
 		
+		$this->ProductApi = $productapi;
 		$this->Initialize();
 	}
 	
@@ -463,50 +466,18 @@ abstract class BasePage
 		$trail = array();
 		$tmpcat = 0;
 		
-		if (isset($_REQUEST["catid"]))
-		{
-			$added = 1;
-			$tmpcat = $_REQUEST["catid"];
-			// ***INLINESQL***
-			// $sql = "exec s_catFindParentsByID ".$_REQUEST["catid"];
-			// $rs = $this->_db->get_results($sql);
-			// if (count($rs) > 0)
-			// {
-			// 	foreach ($rs as $row)
-			// 	{
-			// 		$trail[$row->id] = $row->category;
-			// 		if ($added < count($rs))
-			// 			$prefix .= "/".Utilities::BeautifyURL($row->category);
-			// 		$added++;
-			// 	}
-			// }
-		}
-		
 		$out .= "		<nav class=\"categories\">\n";
 		if (isBlank($catid))
 			$out .= "			<h4>Browse</h4>\n";
 		
 		$out .= "			<ul style=\"list-style-type:none !important;\">\n";
 		
-		// ***INLINESQL***
-		// if (isBlank($catid))
-		// 	$sql = "select id, category from pw_categories where (parentid is null) and type = 'C' order by category";
-		// else
-		// 	$sql = "select id, category from pw_categories where parentid = ".smartQuote($catid)." and type = 'C' order by category";
-		// $rs = $this->_db->get_results($sql);
-		// if (count($rs) > 0)
-		// {
-		// 	foreach ($rs as $row)
-		// 	{
-		// 		$tmpitem = $row->category;
-		// 		if ($tmpitem == "Biography/Autobiography") $tmpitem = "Biographies";
-		// 		$out .= "				<li style=\"list-style:none !important;\"><a".($tmpcat == $row->id ? " style=\"font-weight:bold;\"" : "")." href=\"".$prefix."/".Utilities::BeautifyURL($row->category)."/categories/".$row->id."\">".$tmpitem."</a></li>\n";
-		// 		if (array_key_exists($row->id, $trail))
-		// 		{
-		// 			$out .= "<li style=\"padding-left:20px; list-style-type:none !important;\">".$this->SidebarCategories($row->id)."</li>\n";
-		// 		}
-		// 	}
-		// }
+		$rr = new RestRunner();
+		$rs = $rr.Get($this->ProductApi."/category");
+		foreach ($rs as $cat)
+		{
+			$out .= "				<li style=\"list-style:none !important;\"><a href=\"/products/categories/".str_replace(" ", "-", $cat)."\">".$cat."</a></li>\n";
+		}
 		
 		$out .= "			</ul>\n";
 		$out .= "		</nav>\n";

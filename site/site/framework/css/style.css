@@ -389,6 +389,10 @@ aside.right li {
 	list-style: none;
 }
 
+.product-grid img {
+	max-width: 30%;
+}
+
 .product-grid .product {
 	display: inline-block;
 	width: 47%;

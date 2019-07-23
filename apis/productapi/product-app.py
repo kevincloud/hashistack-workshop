@@ -79,6 +79,32 @@ def category_info(category):
 
     return json.dumps(output, cls=DecimalEncoder)
 
+@app.route('/category', strict_slashes=False, methods=['GET'])
+def all_categories():
+    table = ddb.Table(tablename)
+    response = table.scan()
+
+    categories = []
+    items = response['Items']
+    while True:
+        for i in items:
+            cats = json.loads(i['Categories'])
+            for c in cats:
+                try:
+                    x = categories.index(c)
+                except:
+                    categories.append(c)
+
+        if response.get('LastEvaluatedKey'):
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            items = response['Items']
+        else:
+            break;
+
+    categories.sort()
+
+    return json.dumps(categories, cls=DecimalEncoder)
+
 @app.route('/image/<product_id>', strict_slashes=False, methods=['GET'])
 def product_image(product_id):
     table = ddb.Table(tablename)
