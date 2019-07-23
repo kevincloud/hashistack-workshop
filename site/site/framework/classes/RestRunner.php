@@ -7,8 +7,11 @@ class RestRunner
     public function __construct()
     {
         $this->curl = curl_init();
-        curl_setopt ($this->curl, CURLOPT_RETURNTRANSFER, true);
-    }
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($this->curl, CURLOPT_HEADER, false);
+}
 
     public function __destruct()
     {
@@ -19,9 +22,9 @@ class RestRunner
     {
         $p = $this->BuildParms($parms);
 
-        curl_setopt ($this->curl, CURLOPT_URL, $url);
-        curl_setopt ($this->curl, CURLOPT_POST, 1);
-        curl_setopt ($this->curl, CURLOPT_POSTFIELDS, $p);
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_POST, 1);
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $p);
         $output = json_decode(curl_exec($this->curl));
 
         return $output;
@@ -31,9 +34,9 @@ class RestRunner
     {
         $p = $this->BuildParms($parms);
 
-        curl_setopt ($this->curl, CURLOPT_URL, $url);
-        curl_setopt ($this->curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-        curl_setopt ($this->curl, CURLOPT_POSTFIELDS, $p);
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $p);
         
         $output = json_decode(curl_exec($this->curl));
 
@@ -44,21 +47,22 @@ class RestRunner
     {
         $p = $this->BuildParms($parms);
 
-        curl_setopt ($this->curl, CURLOPT_URL, $url);
-        curl_setopt ($this->curl, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt ($this->curl, CURLOPT_POSTFIELDS, $p);
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $p);
 
         return $this->Run();
     }
 
-    public function Get($url, $parms)
+    public function Get($url, $parms=null)
     {
         $p = $this->BuildParms($parms);
 
         if ($p != "")
             $p = "?".$p;
 
-        curl_setopt ($this->curl, CURLOPT_URL, $url.$p);
+        curl_setopt($this->curl, CURLOPT_URL, $url.$p);
+        curl_setopt($this->curl, CURLOPT_HTTPGET, true);
 
         return $this->Run();
     }

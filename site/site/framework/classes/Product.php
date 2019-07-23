@@ -68,16 +68,9 @@ class Product {
 		if (!isBlank($pid))
 		{
 			$request = $this->ProductAPI."/detail/".$pid;
-			$row = "";
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $request);
-			curl_setopt($ch, CURLOPT_HEADER, false);
-			curl_setopt($ch, CURLOPT_HTTPGET, true);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			$row = json_decode(curl_exec($ch));
-			curl_close($ch);
+			$rr = new RestRunner();
+			$row = $rr.Get($request);
+			echo "<pre>".$row."</pre>";
 
 			$this->PID = $row[0]->ProductId;
 			$this->ProductName = $row[0]->ProductName;
