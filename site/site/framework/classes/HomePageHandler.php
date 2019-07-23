@@ -66,9 +66,9 @@ class HomePageHandler extends BasePage
 		$out = "";
 		
 		$out .= "<div class=\"content\">\n";
-		$out .= "	<div class=\"rotator\">\n";
-		$out .= $this->GetNextAd();
-		$out .= "	</div>\n";
+		// $out .= "	<div class=\"rotator\">\n";
+		// $out .= $this->GetNextAd();
+		// $out .= "	</div>\n";
 		$out .= "	<aside class=\"right\">\n";
 		$out .= "		<section class=\"popular\">\n";
 		$out .= "			<h4>Popular Products</h4>\n";
