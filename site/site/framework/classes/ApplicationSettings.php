@@ -6,16 +6,6 @@ class ApplicationSettings
 	public $SSLURL = "";
 	public $SiteHost = "";
 	
-	// ***INLINESQL***
-	// private $_db;
-	
-	// public function __construct($db)
-	// {
-	// 	$this->_db = $db;
-		
-	// 	$this->Load();
-	// }
-	
 	public function __construct()
 	{
 		$this->Load();
@@ -23,9 +13,9 @@ class ApplicationSettings
 
 	public function Load()
 	{
-		$this->SiteHost = "www.cloudapp.com";
-		$this->SiteURL = "http://www.cloudapp.com";
-		$this->SSLURL = "http://www.cloudapp.com";
+		$this->SiteHost = "www.java-perks.com";
+		$this->SiteURL = "http://www.java-perks.com";
+		$this->SSLURL = "http://www.java-perks.com";
 	}
 }
 
