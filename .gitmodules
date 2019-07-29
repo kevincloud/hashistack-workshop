@@ -1,6 +1,0 @@
-[submodule "apis/account-broker"]
-	path = apis/account-broker
-	url = https://github.com/joshuaNjordan85/account-broker.git
-[submodule "apis/minion"]
-	path = apis/minion
-	url = https://github.com/joshuaNjordan85/minion.git
