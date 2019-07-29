@@ -27,7 +27,7 @@ sudo bash -c "cat >/root/.aws/credentials" <<EOF
 [default]
 aws_access_key_id=${AWS_ACCESS_KEY}
 aws_secret_access_key=${AWS_SECRET_KEY}
-region=${AWS_REGION}
+region=${REGION}
 EOF
 
 sudo bash -c "cat >/etc/docker/config.json" <<EOF
@@ -38,17 +38,17 @@ EOF
 
 echo "Installing Consul..."
 export CLIENT_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
-wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
-sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
+wget ${CONSUL_URL}
+sudo unzip $(basename ${CONSUL_URL}) -d /usr/local/bin/
 
 # Server configuration
 sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
 {
-    "datacenter": "dc1",
+    "datacenter": "${REGION}",
     "bind_addr": "$CLIENT_IP",
     "data_dir": "/opt/consul",
     "node_name": "consul-${CLIENT_NAME}",
-    "retry_join": ["${CONSUL_IP}"],
+    "retry_join": ["provider=aws tag_key=${CONSUL_JOIN_KEY} tag_value=${CONSUL_JOIN_VALUE}"],
     "server": false
 }
 EOF
@@ -90,13 +90,13 @@ wget https://releases.hashicorp.com/nomad/0.9.3/nomad_0.9.3_linux_amd64.zip
 sudo unzip nomad_0.9.3_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
-export VAULT_ADDR=http://vault-main.service.dc1.consul:8200
+export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200
 export VAULT_TOKEN=root
 
 echo "Setting up environment variables..."
-echo "export VAULT_ADDR=http://vault-main.service.dc1.consul:8200" >> /home/ubuntu/.profile
+echo "export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200" >> /home/ubuntu/.profile
 echo "export VAULT_TOKEN=root" >> /home/ubuntu/.profile
-echo "export VAULT_ADDR=http://vault-main.service.dc1.consul:8200" >> /root/.profile
+echo "export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200" >> /root/.profile
 echo "export VAULT_TOKEN=root" >> /root/.profile
 echo "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY}" >> /root/.profile
 echo "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_KEY}" >> /root/.profile
@@ -134,6 +134,7 @@ sudo bash -c "cat >/etc/nomad.d/nomad.hcl" << 'EOF'
 data_dir  = "/opt/nomad"
 plugin_dir = "/opt/nomad/plugins"
 bind_addr = "0.0.0.0"
+datacenter = "${REGION}"
 
 name = "${CLIENT_NAME}"
 
@@ -154,7 +155,7 @@ consul {
 
 vault {
   enabled          = true
-  address          = "http://vault-main.service.dc1.consul:8200"
+  address          = "http://vault-main.service.${REGION}.consul:8200"
 }
 
 client {
@@ -165,7 +166,7 @@ client {
         "docker.auth.config"     = "/etc/docker/config.json"
         "docker.auth.helper"     = "ecr-login"
     }
-    servers = ["nomad-server.service.dc1.consul:4647"]
+    servers = ["nomad-server.service.${REGION}.consul:4647"]
 }
 EOF
 

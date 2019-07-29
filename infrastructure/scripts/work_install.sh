@@ -25,7 +25,7 @@ sudo bash -c "cat >/root/.aws/credentials" <<EOF
 [default]
 aws_access_key_id=${AWS_ACCESS_KEY}
 aws_secret_access_key=${AWS_SECRET_KEY}
-region=${AWS_REGION}
+region=${REGION}
 EOF
 
 pip3 install botocore
@@ -42,7 +42,7 @@ sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
 # Server configuration
 sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
 {
-    "datacenter": "dc1",
+    "datacenter": "${REGION}",
     "bind_addr": "$CLIENT_IP",
     "data_dir": "/opt/consul",
     "node_name": "consul-${CLIENT_NAME}",
@@ -96,7 +96,7 @@ aws s3 cp /root/hashistack-workshop/apis/productapi/images/ s3://${S3_BUCKET}/im
 # create product-app image
 cd ./productapi
 docker build -t product-app:product-app .
-aws ecr get-login --region ${AWS_REGION} --no-include-email > login.sh
+aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
 ./login.sh
 docker tag product-app:product-app ${REPO_URL_PROD}:product-app
@@ -105,7 +105,7 @@ docker push ${REPO_URL_PROD}:product-app
 # create cart-app image
 cd /root/hashistack-workshop/apis/cartapi
 docker build -t cart-app:cart-app .
-aws ecr get-login --region ${AWS_REGION} --no-include-email > login.sh
+aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
 ./login.sh
 docker tag cart-app:cart-app ${REPO_URL_CART}:cart-app
@@ -129,7 +129,7 @@ sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<E
 EOF
 
 docker build -t online-store:online-store .
-aws ecr get-login --region ${AWS_REGION} --no-include-email > login.sh
+aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
 ./login.sh
 docker tag online-store:online-store ${REPO_URL_SITE}:online-store
@@ -143,7 +143,7 @@ sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
         "ID": "product-api-job",
         "Name": "product-api",
         "Type": "service",
-        "Datacenters": ["dc1"],
+        "Datacenters": ["${REGION}"],
         "TaskGroups": [{
             "Name": "product-api-group",
             "Tasks": [{
@@ -159,7 +159,7 @@ sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"${AWS_REGION}\"\n                ",
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"${REGION}\"\n                ",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],
@@ -190,7 +190,7 @@ sudo bash -c "cat >/root/jobs/customer-api-job.nomad" <<EOF
         "ID": "customer-api-job",
         "Name": "customer-api",
         "Type": "service",
-        "Datacenters": ["dc1"],
+        "Datacenters": ["${REGION}"],
         "TaskGroups": [{
             "Name": "customer-api-group",
             "Tasks": [{
@@ -246,7 +246,7 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
         "ID": "cart-api-job",
         "Name": "cart-api",
         "Type": "service",
-        "Datacenters": ["dc1"],
+        "Datacenters": ["${REGION}"],
         "TaskGroups": [{
             "Name": "cart-api-group",
             "Count": 2,
@@ -263,7 +263,7 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY_ID = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_ACCESS_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"${AWS_REGION}\"\n                ",
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY_ID = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_ACCESS_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nREGION = \"${REGION}\"\n                ",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],
@@ -294,7 +294,7 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
         "ID": "online-store-job",
         "Name": "online-store",
         "Type": "service",
-        "Datacenters": ["dc1"],
+        "Datacenters": ["${REGION}"],
         "TaskGroups": [{
             "Name": "online-store-group",
             "Tasks": [{
@@ -310,7 +310,7 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"${AWS_REGION}\"\n                ",
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nREGION = \"${REGION}\"\n                ",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],
@@ -338,19 +338,19 @@ EOF
 curl \
     --request POST \
     --data @/root/jobs/product-api-job.nomad \
-    http://nomad-server.service.dc1.consul:4646/v1/jobs
+    http://nomad-server.service.${REGION}.consul:4646/v1/jobs
 
 curl \
     --request POST \
     --data @/root/jobs/cart-api-job.nomad \
-    http://nomad-server.service.dc1.consul:4646/v1/jobs
+    http://nomad-server.service.${REGION}.consul:4646/v1/jobs
 
 curl \
     --request POST \
     --data @/root/jobs/online-store-job.nomad \
-    http://nomad-server.service.dc1.consul:4646/v1/jobs
+    http://nomad-server.service.${REGION}.consul:4646/v1/jobs
 
 curl \
     --request POST \
     --data @/root/jobs/customer-api-job.nomad \
-    http://nomad-server.service.dc1.consul:4646/v1/jobs
+    http://nomad-server.service.${REGION}.consul:4646/v1/jobs

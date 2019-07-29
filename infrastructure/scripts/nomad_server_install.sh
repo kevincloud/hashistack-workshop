@@ -34,18 +34,18 @@ EOF
 
 echo "Installing Consul..."
 export CLIENT_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
-wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
-sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
+wget ${CONSUL_URL}
+sudo unzip $(basename ${CONSUL_URL}) -d /usr/local/bin/
 
 # Server configuration
 sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
 {
     "bootstrap": false,
-    "datacenter": "dc1",
+    "datacenter": "${REGION}",
     "bind_addr": "$CLIENT_IP",
     "data_dir": "/opt/consul",
     "node_name": "consul-nomad-server",
-    "retry_join": ["${CONSUL_IP}"],
+    "retry_join": ["provider=aws tag_key=${CONSUL_JOIN_KEY} tag_value=${CONSUL_JOIN_VALUE}"],
     "server": false,
     "ui": true
 }
@@ -88,13 +88,13 @@ wget https://releases.hashicorp.com/nomad/0.9.3/nomad_0.9.3_linux_amd64.zip
 sudo unzip nomad_0.9.3_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
-export VAULT_ADDR=http://vault-main.service.dc1.consul:8200
+export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200
 export VAULT_TOKEN=root
 
 echo "Setting up environment variables..."
-echo "export VAULT_ADDR=http://vault-main.service.dc1.consul:8200" >> /home/ubuntu/.profile
+echo "export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200" >> /home/ubuntu/.profile
 echo "export VAULT_TOKEN=root" >> /home/ubuntu/.profile
-echo "export VAULT_ADDR=http://vault-main.service.dc1.consul:8200" >> /root/.profile
+echo "export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200" >> /root/.profile
 echo "export VAULT_TOKEN=root" >> /root/.profile
 
 sudo bash -c "cat >/etc/nomad.d/vault-token.json" <<EOF
@@ -112,7 +112,7 @@ curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
     --data @/etc/nomad.d/vault-token.json \
-    http://vault-main.service.dc1.consul:8200/v1/auth/token/create | jq . > /etc/nomad.d/token.json
+    http://vault-main.service.${REGION}.consul:8200/v1/auth/token/create | jq . > /etc/nomad.d/token.json
 
 export CLIENT_TOKEN="$(cat /etc/nomad.d/token.json | jq -r .auth.client_token | tr -d '\n')"
 
@@ -120,6 +120,7 @@ sudo bash -c "cat >/etc/nomad.d/nomad.hcl" <<EOF
 data_dir  = "/opt/nomad"
 plugin_dir = "/opt/nomad/plugins"
 bind_addr = "0.0.0.0"
+datacenter = "${REGION}"
 
 ports {
     http = 4646
@@ -138,7 +139,7 @@ consul {
 
 vault {
   enabled          = true
-  address          = "http://vault-main.service.dc1.consul:8200"
+  address          = "http://vault-main.service.${REGION}.consul:8200"
   task_token_ttl   = "1h"
   create_from_role = "nomad-cluster"
   token            = "$CLIENT_TOKEN"

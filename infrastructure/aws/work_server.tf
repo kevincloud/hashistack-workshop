@@ -6,14 +6,14 @@ data "template_file" "work_install" {
         VAULT_TOKEN = "root"
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
-        AWS_REGION = "${var.aws_region}"
+        REGION = "${var.aws_region}"
         REPO_URL_PROD = "${aws_ecr_repository.ecr-product-app.repository_url}"
         REPO_URL_CART = "${aws_ecr_repository.ecr-cart-app.repository_url}"
         REPO_URL_SITE = "${aws_ecr_repository.ecr-online-store.repository_url}"
         S3_BUCKET = "${aws_s3_bucket.staticimg.id}"
         GIT_USER = "${var.git_user}"
         GIT_TOKEN = "${var.git_token}"
-        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
+        CONSUL_IP = "${aws_instance.consul-server-1.private_ip}"
         CLIENT_NAME = "work-client"
     }
 }
@@ -27,7 +27,9 @@ resource "aws_instance" "working-env" {
     subnet_id = "${aws_subnet.public-subnet.id}"
 
     tags = {
-        Name = "kevinc-cust-mgmt-work"
+        Name = "${var.unit_prefix}-worker-server"
+        TTL = "-1"
+        owner = "kcochran@hashicorp.com"
     }
 
     depends_on = [
@@ -92,7 +94,8 @@ data "aws_iam_policy_document" "work-s3-setup" {
     resources = ["*"]
 
     actions = [
-      "s3:*"
+      "s3:*",
+      "ec2:DescribeInstances"
     ]
   }
 }

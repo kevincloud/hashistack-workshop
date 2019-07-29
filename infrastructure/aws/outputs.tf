@@ -19,11 +19,19 @@ output "nomad-server-ssh" {
 }
 
 output "consul-server" {
-    value = "http://${aws_instance.consul-server.public_ip}:8500/"
+    value = "http://${aws_instance.consul-server-1.public_ip}:8500/"
 }
 
-output "consul-server-ssh" {
-    value = "ssh -i ~/keys/${var.key_pair}.pem ubuntu@${aws_instance.consul-server.public_ip}"
+output "consul-server-1-ssh" {
+    value = "ssh -i ~/keys/${var.key_pair}.pem ubuntu@${aws_instance.consul-server-1.public_ip}"
+}
+
+output "consul-server-2-ssh" {
+    value = "ssh -i ~/keys/${var.key_pair}.pem ubuntu@${aws_instance.consul-server-2.public_ip}"
+}
+
+output "consul-server-3-ssh" {
+    value = "ssh -i ~/keys/${var.key_pair}.pem ubuntu@${aws_instance.consul-server-3.public_ip}"
 }
 
 output "nomad-client-1" {

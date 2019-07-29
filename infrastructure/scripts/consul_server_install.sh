@@ -26,19 +26,22 @@ aws_secret_access_key=${AWS_SECRET_KEY}
 EOF
 
 echo "Installing Consul..."
-wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
-sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
+wget ${CONSUL_URL}
+sudo unzip $(basename ${CONSUL_URL}) -d /usr/local/bin/
 
 # Server configuration
 sudo bash -c "cat >/etc/consul.d/consul-server.json" <<EOF
 {
     "data_dir": "/opt/consul",
-    "datacenter": "dc1",
-    "node_name": "consul-server",
+    "datacenter": "${REGION}",
+    "node_name": "${CONSUL_SERVER_NAME}",
     "client_addr": "0.0.0.0",
+    "bind_addr": "0.0.0.0",
     "domain": "consul",
+    "acl_enforce_version_8": false,
     "server": true,
-    "bootstrap_expect": 1,
+    "bootstrap_expect": 3,
+    "retry_join": ["provider=aws tag_key=${CONSUL_JOIN_KEY} tag_value=${CONSUL_JOIN_VALUE}"],
     "ui": true
 }
 EOF
@@ -48,14 +51,21 @@ echo "Installing systemd service for Consul..."
 sudo bash -c "cat >/etc/systemd/system/consul.service" << 'EOF'
 [Unit]
 Description=Hashicorp Consul
-After=network.target
+Requires=network-online.target
+After=network-online.target
 
 [Service]
-Type=simple
 User=root
-WorkingDirectory=/root
-ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d
-Restart=on-failure # or always, on-abort, etc
+Group=root
+PIDFile=/var/run/consul/consul.pid
+PermissionsStartOnly=true
+ExecStartPre=-/bin/mkdir -p /var/run/consul
+ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d -pid-file=/var/run/consul/consul.pid
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+KillSignal=SIGTERM
+Restart=on-failure
+RestartSec=42s
 
 [Install]
 WantedBy=multi-user.target
@@ -63,5 +73,13 @@ EOF
 
 sudo systemctl start consul
 sudo systemctl enable consul
+
+echo "Waiting for Consul leader"
+while [ -z "$(curl -s http://127.0.0.1:8500/v1/status/leader)" ]; do
+  sleep 3
+done
+
+echo "--> apply Consul License"
+sudo consul license put "${CONSUL_LICENSE}" > /root/license.txt
 
 echo "Consul installation complete."

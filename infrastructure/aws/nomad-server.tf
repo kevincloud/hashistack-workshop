@@ -4,7 +4,11 @@ data "template_file" "nomad-server-setup" {
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
-        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
+        REGION = "${var.aws_region}"
+        CONSUL_URL = "${var.consul_dl_url}"
+        CONSUL_LICENSE = "${var.consul_license_key}"
+        CONSUL_JOIN_KEY = "${var.consul_join_key}"
+        CONSUL_JOIN_VALUE = "${var.consul_join_value}"
     }
 }
 
@@ -19,9 +23,16 @@ resource "aws_instance" "nomad-server" {
     
     tags = {
         Name = "kevinc-nomad-server"
+        TTL = "-1"
+        owner = "kcochran@hashicorp.com"
     }
 
-    depends_on = ["aws_instance.vault-server", "aws_instance.consul-server"]
+    depends_on = [
+        "aws_instance.vault-server", 
+        "aws_instance.consul-server-1",
+        "aws_instance.consul-server-2",
+        "aws_instance.consul-server-3"
+    ]
 }
 
 resource "aws_security_group" "nomad-server-sg" {
@@ -111,7 +122,9 @@ data "aws_iam_policy_document" "full-s3-access" {
         "ecr:GetRepositoryPolicy",
         "ecr:DescribeRepositories",
         "ecr:ListImages",
-        "ecr:BatchGetImage"
+        "ecr:BatchGetImage",
+        "ec2:DescribeInstances",
+        "ssm:UpdateInstanceInformation"
     ]
   }
 }

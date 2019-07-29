@@ -9,7 +9,7 @@ from boto3.dynamodb.conditions import Key, Attr
 
 access_key = os.environ["AWS_ACCESS_KEY"]
 secret_key = os.environ["AWS_SECRET_KEY"]
-aws_region = os.environ["AWS_REGION"]
+aws_region = os.environ["REGION"]
 tablename = "product-main"
 
 app = Flask(__name__)

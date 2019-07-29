@@ -1,6 +1,6 @@
 # provider "consul" {
 #   address    = "${aws_instance.consul-server.private_ip}:80"
-#   datacenter = "dc1"
+#   datacenter = "${var.aws_region}"
 # }
 
 data "template_file" "vault_setup" {
@@ -13,7 +13,13 @@ data "template_file" "vault_setup" {
         MYSQL_DB = "${var.mysql_database}"
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
-        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
+        REGION = "${var.aws_region}"
+        VAULT_URL = "${var.vault_dl_url}"
+        VAULT_LICENSE = "${var.vault_license_key}"
+        CONSUL_URL = "${var.consul_dl_url}"
+        CONSUL_LICENSE = "${var.consul_license_key}"
+        CONSUL_JOIN_KEY = "${var.consul_join_key}"
+        CONSUL_JOIN_VALUE = "${var.consul_join_value}"
     }
 }
 
@@ -28,6 +34,8 @@ resource "aws_instance" "vault-server" {
     
     tags = {
         Name = "kevinc-cust-mgmt-web"
+        TTL = "-1"
+        owner = "kcochran@hashicorp.com"
     }
 }
 
@@ -127,7 +135,8 @@ data "aws_iam_policy_document" "vault-kms-unseal" {
     actions = [
       "kms:Encrypt",
       "kms:Decrypt",
-      "kms:DescribeKey"
+      "kms:DescribeKey",
+      "ec2:DescribeInstances"
     ]
   }
 }

@@ -13,7 +13,7 @@ git pull
 # Delete Nomad job
 curl \
     --request DELETE \
-    http://nomad-server.service.dc1.consul:4646/v1/job/cart-api-job?purge=true
+    http://nomad-server.service.us-east-1.consul:4646/v1/job/cart-api-job?purge=true
 
 
 # Package a new image
@@ -30,4 +30,4 @@ docker push 753646501470.dkr.ecr.us-east-1.amazonaws.com/cart-app:cart-app
 curl \
     --request POST \
     --data @/root/jobs/cart-api-job.nomad \
-    http://nomad-server.service.dc1.consul:4646/v1/jobs
+    http://nomad-server.service.us-east-1.consul:4646/v1/jobs

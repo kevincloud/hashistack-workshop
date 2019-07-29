@@ -4,8 +4,11 @@ data "template_file" "nomad-client-setup-1" {
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
-        AWS_REGION = "${var.aws_region}"
-        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
+        REGION = "${var.aws_region}"
+        CONSUL_URL = "${var.consul_dl_url}"
+        CONSUL_LICENSE = "${var.consul_license_key}"
+        CONSUL_JOIN_KEY = "${var.consul_join_key}"
+        CONSUL_JOIN_VALUE = "${var.consul_join_value}"
         CLIENT_NAME = "client1"
     }
 }
@@ -16,8 +19,11 @@ data "template_file" "nomad-client-setup-2" {
     vars = {
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
-        AWS_REGION = "${var.aws_region}"
-        CONSUL_IP = "${aws_instance.consul-server.private_ip}"
+        REGION = "${var.aws_region}"
+        CONSUL_URL = "${var.consul_dl_url}"
+        CONSUL_LICENSE = "${var.consul_license_key}"
+        CONSUL_JOIN_KEY = "${var.consul_join_key}"
+        CONSUL_JOIN_VALUE = "${var.consul_join_value}"
         CLIENT_NAME = "client2"
     }
 }
@@ -33,6 +39,8 @@ resource "aws_instance" "nomad-client-1" {
     
     tags = {
         Name = "kevinc-nomad-client-1"
+        TTL = "-1"
+        owner = "kcochran@hashicorp.com"
     }
 
     depends_on = ["aws_instance.nomad-server"]
@@ -49,6 +57,8 @@ resource "aws_instance" "nomad-client-2" {
     
     tags = {
         Name = "kevinc-nomad-client-2"
+        TTL = "-1"
+        owner = "kcochran@hashicorp.com"
     }
 
     depends_on = ["aws_instance.nomad-server"]

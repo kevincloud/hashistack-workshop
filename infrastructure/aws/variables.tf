@@ -41,3 +41,35 @@ variable "git_token" {
 variable "instance_size" {
     description = "Size of instance for most servers"
 }
+
+variable "consul_dl_url" {
+    description = "URL for downloading Consul"
+}
+
+variable "vault_dl_url" {
+    description = "URL for downloading Vault"
+}
+
+variable "nomad_dl_url" {
+    description = "URL for downloading Nomad"
+}
+
+variable "consul_license_key" {
+    description = "License key for Consul Enterprise"
+}
+
+variable "vault_license_key" {
+    description = "License key for Vault Enterprise"
+}
+
+variable "unit_prefix" {
+    description = "Prefix for each resource to be created"
+}
+
+variable "consul_join_key" {
+    description = "Key for joining Consul"
+}
+
+variable "consul_join_value" {
+    description = "value for the join key"
+}

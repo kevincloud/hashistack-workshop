@@ -12,44 +12,19 @@ sudo apt-get install -y unzip jq cowsay mysql-client > /dev/null 2>&1
 mkdir -p /etc/vault.d
 mkdir -p /etc/consul.d
 
-echo "Installing Vault..."
-wget https://releases.hashicorp.com/vault/1.1.3/vault_1.1.3_linux_amd64.zip
-sudo unzip vault_1.1.3_linux_amd64.zip -d /usr/local/bin/
-
-# Set Vault up as a systemd service
-echo "Installing systemd service for Vault..."
-sudo bash -c "cat >/etc/systemd/system/vault.service" << 'EOF'
-[Unit]
-Description=Hashicorp Vault
-After=network.target
-
-[Service]
-Type=simple
-User=root
-WorkingDirectory=/root
-ExecStart=/usr/local/bin/vault server -dev -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200
-Restart=on-failure # or always, on-abort, etc
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-sudo systemctl start vault
-sudo systemctl enable vault
-
 echo "Installing Consul..."
 export CLIENT_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
-wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
-sudo unzip consul_1.5.1_linux_amd64.zip -d /usr/local/bin/
+curl -sfLo "consul.zip" "${CONSUL_URL}"
+sudo unzip consul.zip -d /usr/local/bin/
 
 # Server configuration
 sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
 {
-    "datacenter": "dc1",
+    "datacenter": "${REGION}",
     "bind_addr": "$CLIENT_IP",
     "data_dir": "/opt/consul",
     "node_name": "consul-vault",
-    "retry_join": ["${CONSUL_IP}"],
+    "retry_join": ["provider=aws tag_key=${CONSUL_JOIN_KEY} tag_value=${CONSUL_JOIN_VALUE}"],
     "server": false
 }
 EOF
@@ -86,6 +61,32 @@ sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT
 sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
 sudo service systemd-resolved restart
 
+echo "Installing Vault..."
+curl -sfLo "vault.zip" "${VAULT_URL}"
+sudo unzip vault.zip -d /usr/local/bin/
+
+# Set Vault up as a systemd service
+echo "Installing systemd service for Vault..."
+sudo bash -c "cat >/etc/systemd/system/vault.service" << 'EOF'
+[Unit]
+Description=Hashicorp Vault
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/usr/local/bin/vault server -dev -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200
+Restart=on-failure # or always, on-abort, etc
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl start vault
+sudo systemctl enable vault
+vault write sys/license text=${VAULT_LICENSE}
+
 echo "Setting up environment variables..."
 export VAULT_ADDR=http://localhost:8200
 export VAULT_TOKEN=root
@@ -110,16 +111,89 @@ EOF
 
 sudo bash -c "cat >/etc/vault.d/nomad-cluster-role.json" <<EOF
 {
-  "disallowed_policies": "nomad-server",
-  "explicit_max_ttl": 0,
-  "name": "nomad-cluster",
-  "orphan": true,
-  "period": 259200,
-  "renewable": true
+    "disallowed_policies": "nomad-server",
+    "explicit_max_ttl": 0,
+    "name": "nomad-cluster",
+    "orphan": true,
+    "period": 259200,
+    "renewable": true
 }
 EOF
 
 echo "Configuring Vault..."
+
+# vault secrets enable -path=usercreds -version=2 kv
+
+# Enable secrets mount point for kv2
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"type": "kv", "options": { "version": "2" } }' \
+    http://127.0.0.1:8200/v1/sys/mounts/usercreds
+
+# add usernames and passwords
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "jthomp4423@example.com", "password": "SuperSecret1", "customerno": "CS100312" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/jthomp4423@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "wilson@example.com", "password": "SuperSecret1", "customerno": "CS106004" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/wilson@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "tommy6677@example.com", "password": "SuperSecret1", "customerno": "CS101438" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/tommy6677@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "mmccann1212@example.com", "password": "SuperSecret1", "customerno": "CS210895" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/mmccann1212@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "cjpcomp@example.com", "password": "SuperSecret1", "customerno": "CS122955" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/cjpcomp@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "jjhome7823@example.com", "password": "SuperSecret1", "customerno": "CS602934" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/jjhome7823@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "clint.mason312@example.com", "password": "SuperSecret1", "customerno": "CS157843" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/clint.mason312@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "greystone89@example.com", "password": "SuperSecret1", "customerno": "CS523484" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/greystone89@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "runwayyourway@example.com", "password": "SuperSecret1", "customerno": "CS658871" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/runwayyourway@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "olsendog1979@example.com", "password": "SuperSecret1", "customerno": "CS103393" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/olsendog1979@example.com
+
+# Additional configs
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
