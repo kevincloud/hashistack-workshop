@@ -105,6 +105,7 @@ EOF
 
 sudo systemctl start vault
 sudo systemctl enable vault
+sleep 5
 
 echo "Initializing and setting up environment variables..."
 export VAULT_ADDR=http://localhost:8200
