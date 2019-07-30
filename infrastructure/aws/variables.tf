@@ -10,6 +10,10 @@ variable "aws_region" {
     description = "AWS Region"
 }
 
+variable "aws_kms_key_id" {
+    description = "AWS KMS Key for Unsealing"
+}
+
 variable "key_pair" {
     description = "Key pair used to login to the instance"
 }

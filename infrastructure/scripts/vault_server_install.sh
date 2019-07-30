@@ -11,6 +11,7 @@ sudo apt-get install -y unzip jq cowsay mysql-client > /dev/null 2>&1
 
 mkdir -p /etc/vault.d
 mkdir -p /etc/consul.d
+mkdir -p /opt/vault
 
 echo "Installing Consul..."
 export CLIENT_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
@@ -65,6 +66,25 @@ echo "Installing Vault..."
 curl -sfLo "vault.zip" "${VAULT_URL}"
 sudo unzip vault.zip -d /usr/local/bin/
 
+# Server configuration
+sudo bash -c "cat >/etc/vault.d/vault.hcl" << 'EOF'
+storage "file" {
+  path = "/opt/vault"
+}
+
+listener "tcp" {
+  address     = "0.0.0.0:8200"
+  tls_disable = 1
+}
+
+seal "awskms" {
+    region = "${REGION}"
+    kms_key_id = "${AWS_KMS_KEY_ID}"
+}
+
+ui = true
+EOF
+
 # Set Vault up as a systemd service
 echo "Installing systemd service for Vault..."
 sudo bash -c "cat >/etc/systemd/system/vault.service" << 'EOF'
@@ -76,7 +96,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/root
-ExecStart=/usr/local/bin/vault server -dev -dev-root-token-id=root -dev-listen-address=0.0.0.0:8200
+ExecStart=/usr/local/bin/vault server -config=/etc/vault.d/vault.hcl
 Restart=on-failure # or always, on-abort, etc
 
 [Install]
@@ -86,14 +106,21 @@ EOF
 sudo systemctl start vault
 sudo systemctl enable vault
 
-echo "Setting up environment variables..."
+echo "Initializing and setting up environment variables..."
 export VAULT_ADDR=http://localhost:8200
-export VAULT_TOKEN=root
+
+vault operator init -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1 > /root/init.txt 2>&1
+
+export VAULT_TOKEN=`cat /root/init.txt | sed -n -e '/^Initial Root Token/ s/.*\: *//p'`
+consul kv put service/vault/root-token $VAULT_TOKEN
+export RECOVERY_KEY=`cat /root/init.txt | sed -n -e '/^Recovery Key 1/ s/.*\: *//p'`
+consul kv put service/vault/recovery-key $RECOVERY_KEY
+
 echo "export VAULT_ADDR=http://localhost:8200" >> /home/ubuntu/.profile
-echo "export VAULT_TOKEN=root" >> /home/ubuntu/.profile
+echo "export VAULT_TOKEN=$(consul kv get service/vault/root-token)" >> /home/ubuntu/.profile
 echo "export MYSQL_HOST=${MYSQL_HOST}" >> /home/ubuntu/.profile
 echo "export VAULT_ADDR=http://localhost:8200" >> /root/.profile
-echo "export VAULT_TOKEN=root" >> /root/.profile
+echo "export VAULT_TOKEN=$(consul kv get service/vault/root-token)" >> /root/.profile
 echo "export MYSQL_HOST=${MYSQL_HOST}" >> /root/.profile
 
 vault write sys/license text=${VAULT_LICENSE}

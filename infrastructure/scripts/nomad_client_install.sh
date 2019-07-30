@@ -91,13 +91,13 @@ sudo unzip nomad_0.9.3_linux_amd64.zip -d /usr/local/bin/
 
 # Server configuration
 export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200
-export VAULT_TOKEN=root
+export VAULT_TOKEN=$(consul kv get service/vault/root-token)
 
 echo "Setting up environment variables..."
 echo "export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200" >> /home/ubuntu/.profile
-echo "export VAULT_TOKEN=root" >> /home/ubuntu/.profile
+echo "export VAULT_TOKEN=$(consul kv get service/vault/root-token)" >> /home/ubuntu/.profile
 echo "export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200" >> /root/.profile
-echo "export VAULT_TOKEN=root" >> /root/.profile
+echo "export VAULT_TOKEN=$(consul kv get service/vault/root-token)" >> /root/.profile
 echo "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY}" >> /root/.profile
 echo "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_KEY}" >> /root/.profile
 echo "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY}" >> /root/.bashrc

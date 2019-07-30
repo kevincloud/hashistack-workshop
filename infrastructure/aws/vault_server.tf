@@ -13,6 +13,7 @@ data "template_file" "vault_setup" {
         MYSQL_DB = "${var.mysql_database}"
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
+        AWS_KMS_KEY_ID = "${var.aws_kms_key_id}"
         REGION = "${var.aws_region}"
         VAULT_URL = "${var.vault_dl_url}"
         VAULT_LICENSE = "${var.vault_license_key}"
