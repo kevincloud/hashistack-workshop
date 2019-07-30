@@ -85,6 +85,17 @@ sudo service systemd-resolved restart
 
 cd /root
 git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/kevincloud/hashistack-workshop.git
+sudo bash -c "cat >>/root/hashistack-workshop/.git/config" <<EOF
+[submodule "apis/account-broker"]
+        url = https://${GIT_USER}:${GIT_TOKEN}@github.com/joshuaNjordan85/account-broker.git
+        active = true
+[submodule "apis/minion"]
+        url = https://${GIT_USER}:${GIT_TOKEN}@github.com/joshuaNjordan85/minion.git
+        active = true
+EOF
+cd /root/hashistack-workshop
+git submodule update
+
 cd /root/hashistack-workshop/apis
 
 # load product data
@@ -94,7 +105,7 @@ python3 ./scripts/product_load.py
 aws s3 cp /root/hashistack-workshop/apis/productapi/images/ s3://${S3_BUCKET}/images/ --recursive --acl public-read
 
 # create product-app image
-cd ./productapi
+cd /root/hashistack-workshop/apis/productapi
 docker build -t product-app:product-app .
 aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
@@ -110,6 +121,15 @@ chmod a+x login.sh
 ./login.sh
 docker tag cart-app:cart-app ${REPO_URL_CART}:cart-app
 docker push ${REPO_URL_CART}:cart-app
+
+# create account-broker image
+cd /root/hashistack-workshop/apis/account-broker
+docker build -t account-broker:account-broker .
+aws ecr get-login --region ${REGION} --no-include-email > login.sh
+chmod a+x login.sh
+./login.sh
+docker tag account-broker:account-broker ${REPO_URL_ACCT}:account-broker
+docker push ${REPO_URL_ACCT}:account-broker
 
 # create customer-api jar
 cd /root/hashistack-workshop/apis/customerapi/CustomerApi
@@ -249,7 +269,7 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
         "Datacenters": ["${REGION}"],
         "TaskGroups": [{
             "Name": "cart-api-group",
-            "Count": 2,
+            "Count": 1,
             "Tasks": [{
                 "Name": "cart-api",
                 "Driver": "docker",
@@ -280,6 +300,54 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
                 },
                 "Services": [{
                     "Name": "cart-api",
+                    "PortLabel": "http"
+                }]
+            }]
+        }]
+    }
+}
+EOF
+
+sudo bash -c "cat >/root/jobs/account-broker-job.nomad" <<EOF
+{
+    "Job": {
+        "ID": "account-broker-job",
+        "Name": "account-broker",
+        "Type": "service",
+        "Datacenters": ["${REGION}"],
+        "TaskGroups": [{
+            "Name": "account-broker-group",
+            "Count": 1,
+            "Tasks": [{
+                "Name": "account-broker",
+                "Driver": "docker",
+                "Vault": {
+                    "Policies": ["access-creds"]
+                },
+                "Config": {
+                    "image": "https://${REPO_URL_ACCT}:account-broker",
+                    "port_map": [{
+                        "http": 5824
+                    }]
+                },
+                "Templates": [{
+                    "EmbeddedTmpl": "PORT = 5824",
+                    "DestPath": "secrets/file.env",
+                    "Envvars": true
+                }],
+                "Resources": {
+                    "Networks": [{
+                        "MBits": 1,
+                        "ReservedPorts": [
+                            {
+                                "Label": "http",
+                                "Value": 5824
+                            }
+                        ]
+                    }]
+                },
+                "Services": [{
+                    "Name": "account-broker",
                     "PortLabel": "http"
                 }]
             }]
@@ -343,6 +411,11 @@ curl \
 curl \
     --request POST \
     --data @/root/jobs/cart-api-job.nomad \
+    http://nomad-server.service.${REGION}.consul:4646/v1/jobs
+
+curl \
+    --request POST \
+    --data @/root/jobs/account-broker-job.nomad \
     http://nomad-server.service.${REGION}.consul:4646/v1/jobs
 
 curl \

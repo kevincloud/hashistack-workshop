@@ -10,6 +10,14 @@ resource "aws_ecr_repository" "ecr-online-store" {
     name = "online-store"
 }
 
+resource "aws_ecr_repository" "ecr-account-broker" {
+    name = "account-broker"
+}
+
+resource "aws_ecr_repository" "ecr-minion" {
+    name = "minion"
+}
+
 resource "aws_s3_bucket" "staticimg" {
     bucket = "hc-workshop-2.0-assets"
     acl = "public-read"
