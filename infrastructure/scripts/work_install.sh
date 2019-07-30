@@ -74,8 +74,6 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF
 
-export VAULT_TOKEN=$(consul kv get service/vault/root-token)
-
 sudo systemctl enable consul
 sudo systemctl start consul
 
@@ -84,6 +82,9 @@ sudo printf "DNS=127.0.0.1\nDomains=~consul" >> /etc/systemd/resolved.conf
 sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT --to-ports 8600
 sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
 sudo service systemd-resolved restart
+
+sleep 3
+export VAULT_TOKEN=$(consul kv get service/vault/root-token)
 
 cd /root
 git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/kevincloud/hashistack-workshop.git
@@ -238,7 +239,7 @@ sudo bash -c "cat >/root/jobs/customer-api-job.nomad" <<EOF
                     "RelativeDest": "local/"
                 }],
                 "Templates": [{
-                    "EmbeddedTmpl": "logging:\n  level: INFO\n  loggers:\n    com.javaperks.api: DEBUG\nserver:\n  applicationConnectors:\n  - type: http\n    port: 5822\n  adminConnectors:\n  - type: http\n    port: 9001\nvaultAddress: \"http://${VAULT_IP}:8200\"\nvaultToken: \"\${VAULT_TOKEN}\"\n",
+                    "EmbeddedTmpl": "logging:\n  level: INFO\n  loggers:\n    com.javaperks.api: DEBUG\nserver:\n  applicationConnectors:\n  - type: http\n    port: 5822\n  adminConnectors:\n  - type: http\n    port: 9001\nvaultAddress: \"http://${VAULT_IP}:8200\"\nvaultToken: \"$VAULT_TOKEN\"\n",
                     "DestPath": "local/config.yml"
                 }],
                 "Resources": {
