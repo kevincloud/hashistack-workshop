@@ -238,7 +238,7 @@ sudo bash -c "cat >/root/jobs/customer-api-job.nomad" <<EOF
                     "RelativeDest": "local/"
                 }],
                 "Templates": [{
-                    "EmbeddedTmpl": "logging:\n  level: INFO\n  loggers:\n    com.javaperks.api: DEBUG\nserver:\n  applicationConnectors:\n  - type: http\n    port: 5822\n  adminConnectors:\n  - type: http\n    port: 9001\nvaultAddress: \"http://${VAULT_IP}:8200\"\nvaultToken: \"$VAULT_TOKEN\"\n",
+                    "EmbeddedTmpl": "logging:\n  level: INFO\n  loggers:\n    com.javaperks.api: DEBUG\nserver:\n  applicationConnectors:\n  - type: http\n    port: 5822\n  adminConnectors:\n  - type: http\n    port: 9001\nvaultAddress: \"http://${VAULT_IP}:8200\"\nvaultToken: \"$${VAULT_TOKEN}\"\n",
                     "DestPath": "local/config.yml"
                 }],
                 "Resources": {

@@ -160,6 +160,12 @@ curl \
     --data '{"type": "kv", "options": { "version": "2" } }' \
     http://127.0.0.1:8200/v1/sys/mounts/usercreds
 
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"type": "kv", "options": { "version": "2" } }' \
+    http://127.0.0.1:8200/v1/sys/mounts/secret
+
 # add usernames and passwords
 
 curl \
