@@ -85,7 +85,6 @@ EOF
 
 sudo systemctl start vault
 sudo systemctl enable vault
-vault write sys/license text=${VAULT_LICENSE}
 
 echo "Setting up environment variables..."
 export VAULT_ADDR=http://localhost:8200
@@ -96,6 +95,8 @@ echo "export MYSQL_HOST=${MYSQL_HOST}" >> /home/ubuntu/.profile
 echo "export VAULT_ADDR=http://localhost:8200" >> /root/.profile
 echo "export VAULT_TOKEN=root" >> /root/.profile
 echo "export MYSQL_HOST=${MYSQL_HOST}" >> /root/.profile
+
+vault write sys/license text=${VAULT_LICENSE}
 
 sudo bash -c "cat >/etc/vault.d/nomad-policy.json" <<EOF
 {
