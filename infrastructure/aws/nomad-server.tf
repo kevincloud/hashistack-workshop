@@ -22,7 +22,7 @@ resource "aws_instance" "nomad-server" {
     iam_instance_profile = "${aws_iam_instance_profile.nomad-profile.id}"
     
     tags = {
-        Name = "kevinc-nomad-server"
+        Name = "${var.unit_prefix}-nomad-server"
         TTL = "-1"
         owner = "kcochran@hashicorp.com"
     }

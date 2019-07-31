@@ -4,26 +4,12 @@ class Account
 {
 	public $CustomerID = "";
 	public $RowID = "";
-	public $Company = "";
-	public $Salutation = "";
 	public $FirstName = "";
-	public $MiddleName = "";
 	public $LastName = "";
-	public $Suffix = "";
 	public $Email = "";
-	public $CustomerType = "C";
-	public $Taxable = true;
-	public $DiscountType = "N";
-	public $Discount = 0.0;
-	public $AlwaysTax = NULL;
-	public $ShipMode = "PURCHASER";
-	public $ShippingAccount = "";
-	public $UserType = "";
-	public $LastPage = "";
-	public $Terms = "";
-	public $TaxID = "";
-	public $Gender = "";
+	public $SSN = "";
 	public $Birthday = "";
+	public $LastPage = "";
 	public $LastMessage = "";
 	public $BillingAddress = NULL;
 	public $ShippingAddress = NULL;
@@ -31,7 +17,8 @@ class Account
 	private $UserID = 0;
 	
 	// ***INLINESQL***
-	// protected $_db;
+	private $AuthApi;
+	private $CustomerApi;
 	
 	/*
 	 *	Function: 	__construct
@@ -46,6 +33,11 @@ class Account
 	 */
 	public function __construct()
 	{
+		global $authapi;
+		global $customerapi;
+
+		$this->AuthApi = $authapi;
+		$this->CustomerApi = $customerapi;
 	}
 	
 	/*
@@ -63,34 +55,18 @@ class Account
 	{
 		if (!isBlank($custid))
 		{
-			// ***INLINESQL***
-			// $sql = "select custid, rguid, company, salutation, firstname, middlename, lastname, suffix, terms, gender, ".
-			// 	"	email, custtype, taxable, discounttype, discount, always_tax, shipmode, shipaccount, taxid, birthday ".
-			// 	"from pw_customer ".
-			// 	"where custid = ".smartQuote($custid);
-			// $row = $this->_db->get_row($sql, ARRAY_A);
-			// if ($row)
-			// {
-			// 	$this->CustomerID = $row["custid"];
-			// 	$this->RowID = mssql_guid_string($row["rguid"]);
-			// 	$this->Company = $row["company"];
-			// 	$this->Salutation = $row["salutation"];
-			// 	$this->FirstName = $row["firstname"];
-			// 	$this->MiddleName = $row["middlename"];
-			// 	$this->LastName = $row["lastname"];
-			// 	$this->Suffix = $row["suffix"];
-			// 	$this->Email = $row["email"];
-			// 	$this->CustomerType = $row["custtype"];
-			// 	$this->Taxable = $row["taxable"];
-			// 	$this->DiscountType = $row["discounttype"];
-			// 	$this->Discount = $row["discount"];
-			// 	$this->AlwaysTax = $row["always_tax"];
-			// 	$this->ShipMode = $row["shipmode"];
-			// 	$this->ShippingAccount = $row["shipaccount"];
-			// 	$this->TaxID = $row["taxid"];
-			// 	$this->Terms = $row["terms"];
-			// 	$this->Gender = $row["gender"];
-			// 	$this->Birthday = $row["birthday"];
+			$request = $this->CustomerApi."/".$custid;
+			$rr = new RestRunner();
+			$row = $rr->Get($request);
+			if ($row)
+			{
+				$this->CustomerID = $row->custno;
+				$this->RowID = $row->custid;
+				$this->FirstName = $row->firstname;
+				$this->LastName = $row->lastname;
+				$this->Email = $row->email;
+				$this->SSN = $row->ssn;
+				$this->Birthday = $row->dob
 				
 			// 	$this->BillingAddress = new Address($this->_db);
 			// 	$sql = "select id from pw_address where custid = ".smartQuote($this->CustomerID)." and active = 1 and addrtype = 'B'";
@@ -195,25 +171,19 @@ class Account
 		
 		$custid = "";
 		
-		// ***INLINESQL***
-		// $sql = "select custid, password from pw_user where email = ".smartQuote($user);
-		// $row = $this->_db->get_row($sql, ARRAY_A);
-		// if ($row)
-		// {
-		// 	if ($row["password"] == $pass)
-		// 	{
-		// 		$this->GetAccount($row["custid"]);
-		// 		$sql = "update pw_user set lastlogin = getdate() where custid = ".smartQuote($row["custid"]);
-		// 		$this->_db->query($sql);
-		// 		$sql = "update pw_customer_reset set dateused = getdate(), bypassed = 1 where custid = ".smartQuote($row["custid"])." and dateused is null";
-		// 		$this->_db->query($sql);
-		// 	}
-		// 	else
-		// 		throw new Exception("The username/password did not match");
-		// }
-		// else
-		// 	throw new Exception("The username/password did not match");
-		
+		$request = $this->AuthApi."/auth";
+		$rr = new RestRunner();
+		$itemuser = array('Key' => 'username', 'Value' => $user);
+		$itempass = array('Key' => 'password', 'Value' => $pass);
+		$a = array($itemuser, $itempass);
+		$row = $rr->Post($request);
+
+		if ($row->success == false) {
+			throw new Exception("The username/password did not match");
+		}
+
+		$this->GetAccount($row->customerno);
+
 		$_SESSION["__account__"] = $this;
 		if ($remember)
 			setcookie("__custid__", $_SESSION["__account__"]->CustomerID, time()+(60*60*24*365), "/", "cloudapp.com", false);
@@ -233,7 +203,7 @@ class Account
 	{
 		if (isset($_SESSION["__account__"]))
 			unset($_SESSION["__account__"]);
-		setcookie("__custid__", "", time()-(60*60*24*365), "/", "cloupadd.com", false);
+		setcookie("__custid__", "", time()-(60*60*24*365), "/", "java-perks.com", false);
 	}
 	
 	/*

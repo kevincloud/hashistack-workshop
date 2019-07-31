@@ -53,7 +53,7 @@ resource "aws_instance" "consul-server-1" {
     iam_instance_profile = "${aws_iam_instance_profile.consul-profile.id}"
     
     tags = {
-        Name = "kevinc-consul-server-1"
+        Name = "${var.unit_prefix}-consul-server-1"
         TTL = "-1"
         owner = "kcochran@hashicorp.com"
         "${var.consul_join_key}" = "${var.consul_join_value}"
@@ -70,7 +70,7 @@ resource "aws_instance" "consul-server-2" {
     iam_instance_profile = "${aws_iam_instance_profile.consul-profile.id}"
     
     tags = {
-        Name = "kevinc-consul-server-2"
+        Name = "${var.unit_prefix}-consul-server-2"
         TTL = "-1"
         owner = "kcochran@hashicorp.com"
         "${var.consul_join_key}" = "${var.consul_join_value}"
@@ -87,7 +87,7 @@ resource "aws_instance" "consul-server-3" {
     iam_instance_profile = "${aws_iam_instance_profile.consul-profile.id}"
     
     tags = {
-        Name = "kevinc-consul-server-3"
+        Name = "${var.unit_prefix}-consul-server-3"
         TTL = "-1"
         owner = "kcochran@hashicorp.com"
         "${var.consul_join_key}" = "${var.consul_join_value}"

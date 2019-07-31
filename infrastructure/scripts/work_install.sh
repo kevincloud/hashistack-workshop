@@ -107,6 +107,15 @@ python3 ./scripts/product_load.py
 # Upload images to S3
 aws s3 cp /root/hashistack-workshop/apis/productapi/images/ s3://${S3_BUCKET}/images/ --recursive --acl public-read
 
+# build authapi
+cd /root/hashistack-workshop/apis/authapi
+export PATH=$PATH:$(go env GOPATH)/bin
+export GOPATH=$(go env GOPATH)
+go get
+go build
+aws s3 cp /root/hashistack-workshop/apis/authapi/authapi s3://${S3_BUCKET}/bin/authapi
+
+
 # create product-app image
 cd /root/hashistack-workshop/apis/productapi
 docker build -t product-app:product-app .
@@ -144,6 +153,7 @@ aws s3 cp /root/hashistack-workshop/apis/customerapi/CustomerApi/target/Customer
 cd /root/hashistack-workshop/site
 sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
 <?php
+\$authapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/auth-api";
 \$productapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/product-api";
 \$customerapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/customer-api";
 \$cartapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/cart-api";
@@ -159,6 +169,62 @@ docker tag online-store:online-store ${REPO_URL_SITE}:online-store
 docker push ${REPO_URL_SITE}:online-store
 
 mkdir /root/jobs
+
+sudo bash -c "cat >/root/jobs/auth-api-job.nomad" <<EOF
+{
+    "Job": {
+        "ID": "auth-api-job",
+        "Name": "auth-api",
+        "Type": "service",
+        "Datacenters": ["${REGION}"],
+        "TaskGroups": [{
+            "Name": "auth-api-group",
+            "Tasks": [{
+                "Name": "auth-api",
+                "Driver": "exec",
+                "Count": 1,
+                "Update": {
+                    "Stagger": 10000000000,
+                    "MaxParallel": 1,
+                    "HealthCheck": "checks",
+                    "MinHealthyTime": 10000000000,
+                    "HealthyDeadline": 300000000000
+                },
+                "Vault": {
+                    "Policies": ["access-creds"]
+                },
+                "Config": {
+                    "command": "local/authapi"
+                },
+                "Artifacts": [{
+                    "GetterSource": "https://s3.amazonaws.com/${S3_BUCKET}/bin/authapi",
+                    "RelativeDest": "local/"
+                }],
+                "Templates": [{
+                    "EmbeddedTmpl": "VAULT_ADDR = \"http://${VAULT_IP}:8200\"\nVAULT_TOKEN = \"$VAULT_TOKEN\"",
+                    "DestPath": "secrets/file.env",
+                    "Envvars": true
+                }],
+                "Resources": {
+                    "Networks": [{
+                        "MBits": 1,
+                        "ReservedPorts": [
+                            {
+                                "Label": "http",
+                                "Value": 5825
+                            }
+                        ]
+                    }]
+                },
+                "Services": [{
+                    "Name": "auth-api",
+                    "PortLabel": "http"
+                }]
+            }]
+        }]
+    }
+}
+EOF
 
 sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
 {
@@ -405,6 +471,11 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
     }
 }
 EOF
+
+curl \
+    --request POST \
+    --data @/root/jobs/auth-api-job.nomad \
+    http://nomad-server.service.${REGION}.consul:4646/v1/jobs
 
 curl \
     --request POST \

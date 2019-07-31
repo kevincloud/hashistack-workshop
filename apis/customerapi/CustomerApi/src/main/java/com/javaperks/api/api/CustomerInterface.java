@@ -56,7 +56,7 @@ public class CustomerInterface
 
     @GET
     @Path("/{id}")
-    public Response getCustomerById(@PathParam("id") int id) {
+    public Response getCustomerById(@PathParam("id") String id) {
         CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
         return Response.ok(cdb.getCustomerById(id)).build();
     }

@@ -30,7 +30,7 @@ public class CustomerDb
         this.dbuser = username;
         this.dbpass = password;
 
-        connstr = "jdbc:mysql://" + this.dbserver + ":3306/" + this.database + "?useSSL=false";
+        connstr = "jdbc:mysql://" + this.dbserver + "/" + this.database + "?useSSL=false";
     }
 
     public List<Customer> getCustomers() {
@@ -83,13 +83,13 @@ public class CustomerDb
         return customers;
     }
 
-    public Customer getCustomerById(int id) {
+    public Customer getCustomerById(String id) {
         LOGGER.info("Get a customer by custid");
         Customer customer = null;
 
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
-            String sql = "select * from customer_main where custid = " + Integer.toString(id);
+            String sql = "select * from customer_main where custno = '" + id + "'";
             Statement s = cn.createStatement();
             ResultSet rs = s.executeQuery(sql);
 

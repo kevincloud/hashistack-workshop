@@ -38,7 +38,7 @@ resource "aws_instance" "nomad-client-1" {
     iam_instance_profile = "${aws_iam_instance_profile.nomad-profile.id}"
     
     tags = {
-        Name = "kevinc-nomad-client-1"
+        Name = "${var.unit_prefix}-nomad-client-1"
         TTL = "-1"
         owner = "kcochran@hashicorp.com"
     }
@@ -56,7 +56,7 @@ resource "aws_instance" "nomad-client-2" {
     iam_instance_profile = "${aws_iam_instance_profile.nomad-profile.id}"
     
     tags = {
-        Name = "kevinc-nomad-client-2"
+        Name = "${var.unit_prefix}-nomad-client-2"
         TTL = "-1"
         owner = "kcochran@hashicorp.com"
     }

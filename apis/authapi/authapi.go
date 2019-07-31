@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/kevincloud/go-vault/api"
+	"./api"
 )
 
 func main() {

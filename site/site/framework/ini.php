@@ -63,6 +63,13 @@ ob_implicit_flush(false);
 //////////////////////////////////////////////////////////////////////////////////
 
 $ch = curl_init();
+curl_setopt ($ch, CURLOPT_URL, $authapiurl);
+curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
+$consuloutput = json_decode(curl_exec($ch));
+curl_close($ch);
+$authapi = "http://" . $consuloutput[0]->Address . ":5825";
+
+$ch = curl_init();
 curl_setopt ($ch, CURLOPT_URL, $productapiurl);
 curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
 $consuloutput = json_decode(curl_exec($ch));
