@@ -63,7 +63,7 @@ resource "aws_security_group" "nomad-server-sg" {
 
     ingress {
         from_port = 5821
-        to_port = 5824
+        to_port = 5825
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }

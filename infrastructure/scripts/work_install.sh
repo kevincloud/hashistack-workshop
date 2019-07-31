@@ -4,7 +4,7 @@ echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-se
 export DEBIAN_FRONTEND=noninteractive
 apt-get update > /dev/null 2>&1
 apt-get -y upgrade > /dev/null 2>&1
-apt-get -y install unzip git jq python3 python3-pip docker.io python3-dev default-libmysqlclient-dev npm openjdk-8-jdk maven > /dev/null 2>&1
+apt-get -y install unzip git jq python3 python3-pip docker.io golang-go python3-dev default-libmysqlclient-dev npm openjdk-8-jdk maven > /dev/null 2>&1
 
 # create a sudo user
 #useradd -m builder
@@ -334,7 +334,7 @@ sudo bash -c "cat >/root/jobs/account-broker-job.nomad" <<EOF
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "PORT = 5824",
+                    "EmbeddedTmpl": "PORT = 5824\nVAULT_ADDR = \"http://${VAULT_IP}:8200\"\nVAULT_TOKEN = \"$VAULT_TOKEN\"",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],
