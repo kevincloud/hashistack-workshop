@@ -2,7 +2,6 @@ package com.javaperks.api.db;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.Integer;
 
 import java.sql.DriverManager;
 import java.sql.Statement;
