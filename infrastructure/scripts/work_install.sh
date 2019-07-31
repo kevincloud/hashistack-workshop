@@ -109,4 +109,5 @@ export CONSUL_IP="${CONSUL_IP}"
 export VAULT_IP="${VAULT_IP}"
 export VAULT_TOKEN="${VAULT_TOKEN}"
 
+chmod a+x /root/hashistack-workshop/infrastructure/scripts/build.sh
 /root/hashistack-workshop/infrastructure/scripts/build.sh
