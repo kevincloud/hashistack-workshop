@@ -22,7 +22,7 @@ export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 
 cd /root/hashistack-workshop/apis/authapi
 go get
-go build -o /root/hashistack-workshop/apis/authapi/authapi
+go build -v
 aws s3 cp /root/hashistack-workshop/apis/authapi/authapi s3://${S3_BUCKET}/bin/authapi
 
 
