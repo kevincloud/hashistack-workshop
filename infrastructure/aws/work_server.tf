@@ -3,7 +3,6 @@ data "template_file" "work_install" {
 
     vars = {
         VAULT_IP = "${aws_instance.vault-server.private_ip}"
-        VAULT_TOKEN = "root"
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
         REGION = "${var.aws_region}"

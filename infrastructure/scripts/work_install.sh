@@ -84,7 +84,6 @@ sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT
 sudo service systemd-resolved restart
 
 sleep 3
-export VAULT_TOKEN=$(consul kv get service/vault/root-token)
 
 cd /root
 git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/kevincloud/hashistack-workshop.git
@@ -107,7 +106,7 @@ export REPO_URL_ACCT="${REPO_URL_ACCT}"
 export REPO_URL_SITE="${REPO_URL_SITE}"
 export CONSUL_IP="${CONSUL_IP}"
 export VAULT_IP="${VAULT_IP}"
-export VAULT_TOKEN="${VAULT_TOKEN}"
+export VAULT_TOKEN=$(consul kv get service/vault/root-token)
 
 chmod a+x /root/hashistack-workshop/infrastructure/scripts/build.sh
 /root/hashistack-workshop/infrastructure/scripts/build.sh
