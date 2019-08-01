@@ -12,9 +12,15 @@ python3 ./scripts/product_load.py
 aws s3 cp /root/hashistack-workshop/apis/productapi/images/ s3://${S3_BUCKET}/images/ --recursive --acl public-read
 
 # build authapi
+curl -O https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz
+tar xvf go1.12.7.linux-amd64.tar.gz
+chown -R root:root ./go
+mv go /usr/local
+mkdir /root/go
+export GOPATH=/root/go
+export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+
 cd /root/hashistack-workshop/apis/authapi
-export PATH=$PATH:$(go env GOPATH)/bin
-export GOPATH=$(go env GOPATH)
 go get
 go build
 aws s3 cp /root/hashistack-workshop/apis/authapi/authapi s3://${S3_BUCKET}/bin/authapi
