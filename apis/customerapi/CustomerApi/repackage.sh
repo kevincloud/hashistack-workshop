@@ -18,5 +18,5 @@ aws s3 cp /root/hashistack-workshop/apis/customerapi/CustomerApi/target/Customer
 # Submit a Nomad job
 curl \
     --request POST \
-    --data @/root/jobs/product-api-job.nomad \
+    --data @/root/jobs/customer-api-job.nomad \
     http://nomad-server.service.us-east-1.consul:4646/v1/jobs
