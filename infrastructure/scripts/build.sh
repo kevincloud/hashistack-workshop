@@ -60,7 +60,6 @@ cd /root/hashistack-workshop/apis/customerapi/CustomerApi
 mvn package
 aws s3 cp /root/hashistack-workshop/apis/customerapi/CustomerApi/target/CustomerApi-0.1.0-SNAPSHOT.jar s3://${S3_BUCKET}/jars/CustomerApi-0.1.0-SNAPSHOT.jar
 
-
 # create online-site image
 cd /root/hashistack-workshop/site
 sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
