@@ -17,7 +17,9 @@ tar xvf go1.12.7.linux-amd64.tar.gz
 chown -R root:root ./go
 mv go /usr/local
 mkdir /root/go
+mkdir /root/go/.cache
 export GOPATH=/root/go
+export GOCACHE=/root/go/.cache
 export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 
 cd /root/hashistack-workshop/apis/authapi
