@@ -5,6 +5,13 @@
 ####################
 cd /root/hashistack-workshop/apis
 
+export MYSQL_HOST=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://${VAULT_IP}:8200/v1/secret/data/dbhost | jq -r .data.data.address)
+export MYSQL_USER=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://${VAULT_IP}:8200/v1/secret/data/dbhost | jq -r .data.data.password)
+export MYSQL_PASS=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://${VAULT_IP}:8200/v1/secret/data/dbhost | jq -r .data.data.username)
+
+# Create mysql database
+python3 ./scripts/create_db.py $MYSQL_HOST $MYSQL_USER $MYSQL_PASS
+
 # load product data
 python3 ./scripts/product_load.py
 

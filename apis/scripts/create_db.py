@@ -1,8 +1,13 @@
 import MySQLdb # pylint: disable=import-error
+import sys
 
-db = MySQLdb.connect(host = "terraform-20190614165456154400000001.cd2ntnfz8tii.us-east-1.rds.amazonaws.com",
-                     user = "root",
-                     password = "SuperFuzz1")
+dbname = sys.argv[1]
+username = sys.argv[2]
+password = sys.argv[3]
+
+db = MySQLdb.connect(host = dbname,
+                     user = username,
+                     password = password)
 
 cursor = db.cursor()
 
