@@ -28,9 +28,6 @@ public class CustomerInterface
         this.vaultaddr = vaultAddress;
         this.vaulttoken = vaultToken;
 
-        System.out.println("Vault Address:" + this.vaultaddr);
-        System.out.println("Vault Token:" + this.vaulttoken);
-
         try
         {
             vaultConfig = new VaultConfig()

@@ -60,88 +60,38 @@ class Account
 			$row = $rr->Get($request);
 			if ($row)
 			{
-				$this->CustomerID = $row->custno;
-				$this->RowID = $row->custid;
-				$this->FirstName = $row->firstname;
-				$this->LastName = $row->lastname;
+				$this->CustomerID = $row->custNo;
+				$this->RowID = $row->custId;
+				$this->FirstName = $row->firstName;
+				$this->LastName = $row->lastName;
 				$this->Email = $row->email;
 				$this->SSN = $row->ssn;
-				$this->Birthday = $row->dob
+				$this->Birthday = $row->dob;
 				
-			// 	$this->BillingAddress = new Address($this->_db);
-			// 	$sql = "select id from pw_address where custid = ".smartQuote($this->CustomerID)." and active = 1 and addrtype = 'B'";
-			// 	$row = $this->_db->get_row($sql, ARRAY_A);
-			// 	if ($row)
-			// 	{
-			// 		$this->BillingAddress->GetAddress($row["id"]);
-			// 		$this->BillingAddress->AddressType = "B";
-			// 	}
-			// 	else
-			// 	{
-			// 		$sql = "select top 1 i.addrid, i.bname, i.baddr1, i.baddr2, i.bcity, i.bstate, i.bzip, c.code, c.country, i.bcountry_numcode, i.bphone from cc_invoice as i inner join cc_countries as c on (c.numcode = i.bcountry_numcode) where i.custid is not null and i.custid = ".smartQuote($this->CustomerID)." and ISNULL(i.baddr1, '') <> '' order by i.invdate desc";
-			// 		$row = $this->_db->get_row($sql, ARRAY_A);
-			// 		if ($row)
-			// 		{
-			// 			$this->BillingAddress->AddressID = $row["addrid"];
-			// 			$this->BillingAddress->CustomerID = $this->CustomerID;
-			// 			$this->BillingAddress->AddressType = "B";
-			// 			$this->BillingAddress->Contact = $row["bname"];
-			// 			$this->BillingAddress->Address1 = $row["baddr1"];
-			// 			$this->BillingAddress->Address2 = $row["baddr2"];
-			// 			$this->BillingAddress->City = $row["bcity"];
-			// 			$this->BillingAddress->State = $row["bstate"];
-			// 			$this->BillingAddress->Zip = $row["bzip"];
-			// 			$this->BillingAddress->Country = $row["code"];
-			// 			$this->BillingAddress->CountryName = $row["country"];
-			// 			$this->BillingAddress->CountryCode = $row["bcountry_numcode"];
-			// 			$this->BillingAddress->Phone = $row["bphone"];
-			// 			$this->BillingAddress->Active = true;
-			// 		}
-			// 	}
+			 	$this->BillingAddress = new Address();
+				$this->BillingAddress->AddressID = $row->addresses[0]->addrId;
+				$this->BillingAddress->CustomerID = $this->CustomerID;
+				$this->BillingAddress->AddressType = "B";
+				$this->BillingAddress->Address1 = $row->addresses[0]->address1;
+				$this->BillingAddress->Address2 = $row->addresses[0]->address2;
+				$this->BillingAddress->City = $row->addresses[0]->city;
+				$this->BillingAddress->State = $row->addresses[0]->state;
+				$this->BillingAddress->Zip = $row->addresses[0]->zip;
+				$this->BillingAddress->Phone = $row->addresses[0]->phone;
 				
-			// 	$this->ShippingAddress = new Address($this->_db);
-			// 	$sql = "select id from pw_address where custid = ".smartQuote($this->CustomerID)." and active = 1 and addrtype = 'S'";
-			// 	$row = $this->_db->get_row($sql);
-			// 	if ($row)
-			// 	{
-			// 		$this->ShippingAddress->GetAddress($row->id);
-			// 		$this->ShippingAddress->AddressType = "S";
-			// 	}
-			// 	else
-			// 	{
-			// 		$sql = "select top 1 o.addrid, o.sname, o.saddr1, o.saddr2, o.scity, o.sstate, o.szip, ISNULL(x.code, y.code) as code, ISNULL(x.country, y.country) as country, ISNULL(x.numcode, y.numcode) as country_numcode, o.sphone from cc_orders as o left join cc_countries as x on (x.numcode = o.scountry_numcode) left join cc_countries as y on (y.code = o.scountry) where o.custid is not null and o.custid = ".smartQuote($this->CustomerID)." order by o.orderdate desc";
-			// 		$row = $this->_db->get_row($sql, ARRAY_A);
-			// 		if ($row)
-			// 		{
-			// 			$this->ShippingAddress->AddressID = $row["addrid"];
-			// 			$this->ShippingAddress->CustomerID = $this->CustomerID;
-			// 			$this->ShippingAddress->AddressType = "S";
-			// 			$this->ShippingAddress->Contact = $row["sname"];
-			// 			$this->ShippingAddress->Address1 = $row["saddr2"];
-			// 			$this->ShippingAddress->Address2 = $row["saddr1"];
-			// 			$this->ShippingAddress->City = $row["scity"];
-			// 			$this->ShippingAddress->State = $row["sstate"];
-			// 			$this->ShippingAddress->Zip = $row["szip"];
-			// 			$this->ShippingAddress->Country = $row["code"];
-			// 			$this->ShippingAddress->CountryName = $row["country"];
-			// 			$this->ShippingAddress->CountryCode = $row["country_numcode"];
-			// 			$this->ShippingAddress->Phone = $row["sphone"];
-			// 			$this->ShippingAddress->Active = true;
-			// 		}
-			// 	}
-			// }
-			// else
-			// 	throw new Exception("The customer account could not be located.");
-			
-			// $sql = "select id, type from pw_user where custid = ".smartQuote($custid);
-			// $row = $this->_db->get_row($sql, ARRAY_A);
-			// if ($row)
-			// {
-			// 	$this->UserType = $row["type"];
-			// 	$this->ID = $row["id"];
-			// }
-			// else
-			// 	throw new Exception("The user account could not be located.");
+				$this->ShippingAddress = new Address();
+				$this->ShippingAddress->AddressID = $row->addresses[0]->addrId;
+				$this->ShippingAddress->CustomerID = $this->CustomerID;
+				$this->ShippingAddress->AddressType = "S";
+				$this->ShippingAddress->Address1 = $row->addresses[0]->address1;
+				$this->ShippingAddress->Address2 = $row->addresses[0]->address2;
+				$this->ShippingAddress->City = $row->addresses[0]->city;
+				$this->ShippingAddress->State = $row->addresses[0]->state;
+				$this->ShippingAddress->Zip = $row->addresses[0]->zip;
+				$this->ShippingAddress->Phone = $row->addresses[0]->phone;
+			}
+			else
+				throw new Exception("The customer account could not be located.");
 		}
 		else
 			throw new Exception("The customer ID was empty.");
@@ -1396,27 +1346,12 @@ class Address
 	public $AddressID = 0;
 	public $CustomerID = "";
 	public $AddressType = "";
-	public $Contact = "";
-	public $Label = "";
 	public $Address1 = "";
 	public $Address2 = "";
 	public $City = "";
 	public $State = "";
 	public $Zip = "";
-	public $Country = "USA";
-	public $CountryName = "United States";
-	public $CountryCode = 840;
-	public $CountrySmall = "US";
 	public $Phone = "";
-	public $Active = true;
-	
-	// ***INLINESQL***
-	// protected $_db;
-	
-	// public function __construct($db)
-	// {
-	// 	$this->_db = $db;
-	// }
 	
 	public function __construct()
 	{
@@ -1433,7 +1368,6 @@ class Address
 			$out .= "			<div>".$this->Address2."</div>\n";
 		}
 		$out .= "			<div>".$this->City.", ".$this->State."&nbsp;&nbsp;".$this->Zip."</div>\n";
-		$out .= "			<div>".$this->Country."</div>\n";
 		
 		return $out;
 	}

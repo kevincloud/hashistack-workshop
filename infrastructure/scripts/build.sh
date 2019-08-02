@@ -5,9 +5,9 @@
 ####################
 cd /root/hashistack-workshop/apis
 
-export MYSQL_HOST=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://${VAULT_IP}:8200/v1/secret/data/dbhost | jq -r .data.data.address)
-export MYSQL_USER=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://${VAULT_IP}:8200/v1/secret/data/dbhost | jq -r .data.data.password)
-export MYSQL_PASS=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://${VAULT_IP}:8200/v1/secret/data/dbhost | jq -r .data.data.username)
+export MYSQL_HOST=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.address)
+export MYSQL_USER=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.password)
+export MYSQL_PASS=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.username)
 export CONSUL_NODE_ID=$(curl -s http://127.0.0.1:8500/v1/catalog/node/consul-client1 | jq -r .Node.ID)
 
 # Create mysql database
@@ -131,7 +131,7 @@ sudo bash -c "cat >/root/jobs/auth-api-job.nomad" <<EOF
                     "RelativeDest": "local/"
                 }],
                 "Templates": [{
-                    "EmbeddedTmpl": "VAULT_ADDR = \"http://${VAULT_IP}:8200\"\nVAULT_TOKEN = \"$VAULT_TOKEN\"",
+                    "EmbeddedTmpl": "VAULT_ADDR = \"http://vault-main.service.${REGION}.consul:8200\"\nVAULT_TOKEN = \"$VAULT_TOKEN\"",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],
@@ -235,7 +235,7 @@ sudo bash -c "cat >/root/jobs/customer-api-job.nomad" <<EOF
                     "RelativeDest": "local/"
                 }],
                 "Templates": [{
-                    "EmbeddedTmpl": "logging:\n  level: INFO\n  loggers:\n    com.javaperks.api: DEBUG\nserver:\n  applicationConnectors:\n  - type: http\n    port: 5822\n  adminConnectors:\n  - type: http\n    port: 9001\nvaultAddress: \"http://${VAULT_IP}:8200\"\nvaultToken: \"$VAULT_TOKEN\"\n",
+                    "EmbeddedTmpl": "logging:\n  level: INFO\n  loggers:\n    com.javaperks.api: DEBUG\nserver:\n  applicationConnectors:\n  - type: http\n    port: 5822\n  adminConnectors:\n  - type: http\n    port: 9001\nvaultAddress: \"http://vault-main.service.${REGION}.consul:8200\"\nvaultToken: \"$VAULT_TOKEN\"\n",
                     "DestPath": "local/config.yml"
                 }],
                 "Resources": {
@@ -330,7 +330,7 @@ sudo bash -c "cat >/root/jobs/account-broker-job.nomad" <<EOF
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "PORT = 5824\nVAULT_ADDR = \"http://${VAULT_IP}:8200\"\nVAULT_TOKEN = \"$VAULT_TOKEN\"",
+                    "EmbeddedTmpl": "PORT = 5824\nVAULT_ADDR = \"http://vault-main.service.${REGION}.consul:8200\"\nVAULT_TOKEN = \"$VAULT_TOKEN\"",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],

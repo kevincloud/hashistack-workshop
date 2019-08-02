@@ -4,7 +4,7 @@ echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-se
 export DEBIAN_FRONTEND=noninteractive
 apt-get update > /dev/null 2>&1
 apt-get -y upgrade > /dev/null 2>&1
-apt-get -y install unzip git jq python3 python3-pip docker.io python3-dev default-libmysqlclient-dev npm openjdk-8-jdk maven > /dev/null 2>&1
+apt-get -y install unzip git jq python3 python3-pip docker.io dnsmasq python3-dev default-libmysqlclient-dev npm openjdk-8-jdk maven > /dev/null 2>&1
 
 # create a sudo user
 #useradd -m builder
@@ -47,7 +47,8 @@ sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
     "data_dir": "/opt/consul",
     "node_name": "consul-${CLIENT_NAME}",
     "retry_join": ["${CONSUL_IP}"],
-    "server": false
+    "server": false,
+    "recursors": ["169.254.169.253"]
 }
 EOF
 
@@ -78,10 +79,22 @@ sudo systemctl enable consul
 sudo systemctl start consul
 
 echo "Configure Consul..."
-sudo printf "DNS=127.0.0.1\nDomains=~consul" >> /etc/systemd/resolved.conf
-sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT --to-ports 8600
-sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
-sudo service systemd-resolved restart
+systemctl disable systemd-resolved
+systemctl stop systemd-resolved
+ls -lh /etc/resolv.conf
+rm /etc/resolv.conf
+echo "nameserver 127.0.0.1" > /etc/resolv.conf
+netplan apply
+
+sudo bash -c "cat >>/etc/dnsmasq.conf" <<EOF
+server=/consul/127.0.0.1#8600
+server=169.254.169.253#53
+no-resolv
+log-queries
+EOF
+systemctl stop dnsmasq
+systemctl start dnsmasq
+
 
 sleep 3
 
@@ -105,7 +118,6 @@ export REPO_URL_CART="${REPO_URL_CART}"
 export REPO_URL_ACCT="${REPO_URL_ACCT}"
 export REPO_URL_SITE="${REPO_URL_SITE}"
 export CONSUL_IP="${CONSUL_IP}"
-export VAULT_IP="${VAULT_IP}"
 export VAULT_TOKEN=$(consul kv get service/vault/root-token)
 
 chmod a+x /root/hashistack-workshop/infrastructure/scripts/build.sh

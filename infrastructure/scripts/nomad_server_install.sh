@@ -47,7 +47,8 @@ sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
     "node_name": "consul-nomad-server",
     "retry_join": ["provider=aws tag_key=${CONSUL_JOIN_KEY} tag_value=${CONSUL_JOIN_VALUE}"],
     "server": false,
-    "ui": true
+    "ui": true,
+    "recursors": ["169.254.169.253"]
 }
 EOF
 
@@ -78,10 +79,21 @@ sudo systemctl enable consul
 sudo systemctl start consul
 
 echo "Configure Consul..."
-sudo printf "DNS=127.0.0.1\nDomains=~consul" >> /etc/systemd/resolved.conf
-sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT --to-ports 8600
-sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
-sudo service systemd-resolved restart
+systemctl disable systemd-resolved
+systemctl stop systemd-resolved
+ls -lh /etc/resolv.conf
+rm /etc/resolv.conf
+echo "nameserver 127.0.0.1" > /etc/resolv.conf
+netplan apply
+
+sudo bash -c "cat >>/etc/dnsmasq.conf" <<EOF
+server=/consul/127.0.0.1#8600
+server=169.254.169.253#53
+no-resolv
+log-queries
+EOF
+systemctl stop dnsmasq
+systemctl start dnsmasq
 
 echo "Installing Nomad..."
 wget https://releases.hashicorp.com/nomad/0.9.3/nomad_0.9.3_linux_amd64.zip

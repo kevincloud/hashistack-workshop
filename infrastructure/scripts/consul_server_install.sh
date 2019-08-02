@@ -42,7 +42,8 @@ sudo bash -c "cat >/etc/consul.d/consul-server.json" <<EOF
     "server": true,
     "bootstrap_expect": 3,
     "retry_join": ["provider=aws tag_key=${CONSUL_JOIN_KEY} tag_value=${CONSUL_JOIN_VALUE}"],
-    "ui": true
+    "ui": true,
+    "recursors": ["169.254.169.253"]
 }
 EOF
 
