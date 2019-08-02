@@ -121,6 +121,7 @@ data_dir  = "/opt/nomad"
 plugin_dir = "/opt/nomad/plugins"
 bind_addr = "0.0.0.0"
 datacenter = "${REGION}"
+enable_debug = true
 
 ports {
     http = 4646

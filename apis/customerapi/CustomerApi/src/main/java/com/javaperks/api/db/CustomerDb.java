@@ -2,6 +2,7 @@ package com.javaperks.api.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Integer;
 
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -101,7 +102,7 @@ public class CustomerDb
 
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
-            String sql = "select * from customer_addresses where custid = ";
+            String sql = "select * from customer_addresses where custid = " + Integer.toString(customer.getCustId());
             Statement s = cn.createStatement();
             ResultSet rs = s.executeQuery(sql);
             List<Address> list = new ArrayList<Address>();

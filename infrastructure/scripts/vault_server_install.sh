@@ -238,9 +238,8 @@ curl \
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
-    --data '{"data": { "address": "${MYSQL_HOST}", "database": "${MYSQL_DB}", "username": "${MYSQL_USER}", "password": "${MYSQL_PASS}" } }' \
+    --data '{"data": { "address": "customer-db.service.${REGION}.consul", "database": "${MYSQL_DB}", "username": "${MYSQL_USER}", "password": "${MYSQL_PASS}" } }' \
     http://127.0.0.1:8200/v1/secret/data/dbhost
-
 
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \

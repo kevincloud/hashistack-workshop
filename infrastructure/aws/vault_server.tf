@@ -7,7 +7,7 @@ data "template_file" "vault_setup" {
     template = "${file("${path.module}/../scripts/vault_server_install.sh")}"
 
     vars = {
-        MYSQL_HOST = "${aws_db_instance.vault-mysql.address}:${aws_db_instance.vault-mysql.port}"
+        MYSQL_HOST = "${aws_db_instance.vault-mysql.address}"
         MYSQL_USER = "${var.mysql_user}"
         MYSQL_PASS = "${var.mysql_pass}"
         MYSQL_DB = "${var.mysql_database}"

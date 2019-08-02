@@ -7,7 +7,7 @@ output "vault-server-ssh" {
 }
 
 output "mysql-host" {
-    value = "${aws_db_instance.vault-mysql.endpoint}"
+    value = "${aws_db_instance.vault-mysql.address}"
 }
 
 output "nomad-server" {
