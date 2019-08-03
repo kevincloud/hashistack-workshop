@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ${1,,} = "-purge" ]; then
+if [ "${1,,}" = "-purge" ]; then
     # Purge all images
     docker image prune -f
     docker image rm `docker images --filter=reference=online-store --format "{{.ID}}"` -f
