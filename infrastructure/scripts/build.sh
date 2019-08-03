@@ -88,6 +88,7 @@ sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<E
 \$customerapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/customer-api";
 \$cartapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/cart-api";
 \$assetbucket = "https://s3.amazonaws.com/${S3_BUCKET}/"
+\$region = "${REGION}"
 ?>
 EOF
 
