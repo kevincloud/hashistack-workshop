@@ -7,7 +7,7 @@ echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-se
 export DEBIAN_FRONTEND=noninteractive
 sudo apt-get -y update > /dev/null 2>&1
 sudo apt-get -y upgrade > /dev/null 2>&1
-sudo apt-get install -y unzip jq cowsay mysql-client > /dev/null 2>&1
+sudo apt-get install -y unzip dnsmasq jq mysql-client > /dev/null 2>&1
 
 mkdir -p /etc/vault.d
 mkdir -p /etc/consul.d

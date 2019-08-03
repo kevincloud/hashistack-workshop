@@ -8,7 +8,7 @@ sudo apt-get -y update > /dev/null 2>&1
 echo "Installing system updates..."
 sudo apt-get -y upgrade > /dev/null 2>&1
 echo "Installing additional packages..."
-sudo apt-get install -y unzip jq python3 python3-pip > /dev/null 2>&1
+sudo apt-get install -y unzip dnsmasq jq python3 python3-pip > /dev/null 2>&1
 echo "Installing Python packages..."
 pip3 install awscli
 

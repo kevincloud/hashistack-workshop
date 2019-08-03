@@ -6,7 +6,7 @@ echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-se
 export DEBIAN_FRONTEND=noninteractive
 sudo apt-get -y update > /dev/null 2>&1
 sudo apt-get -y upgrade > /dev/null 2>&1
-sudo apt-get install -y unzip jq python3 python3-pip docker.io golang openjdk-8-jre > /dev/null 2>&1
+sudo apt-get install -y unzip jq python3 dnsmasq python3-pip docker.io golang openjdk-8-jre > /dev/null 2>&1
 pip3 install awscli
 
 mkdir /etc/nomad.d
