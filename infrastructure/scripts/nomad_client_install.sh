@@ -120,6 +120,8 @@ EOF
 systemctl restart systemd-networkd
 systemctl stop dnsmasq
 systemctl start dnsmasq
+service consul stop
+service consul start
 
 echo "Installing Nomad..."
 wget https://releases.hashicorp.com/nomad/0.9.3/nomad_0.9.3_linux_amd64.zip
