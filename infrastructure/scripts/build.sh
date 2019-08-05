@@ -24,7 +24,7 @@ curl \
 
 # curl \
 #     --request PUT \
-#     --data "{ \"Datacenter\": \"us-east-1\", \"Node\": \"453681c0-1b6c-2912-2600-ed9b7a7e7b7c\", \"Address\":\"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Service\": { \"ID\": \"customer-db\", \"Service\": \"customer-db\", \"Address\": \"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Port\": 3306 } }" \
+#     --data "{ \"Datacenter\": \"us-east-1\", \"Node\": \"7cedc5dc-5235-b337-0d03-68ceda2f9e65\", \"Address\":\"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Service\": { \"ID\": \"customer-db\", \"Service\": \"customer-db\", \"Address\": \"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Port\": 3306 } }" \
 #     http://127.0.0.1:8500/v1/catalog/register
 
 # Upload images to S3
@@ -87,8 +87,8 @@ sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<E
 \$productapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/product-api";
 \$customerapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/customer-api";
 \$cartapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/cart-api";
-\$assetbucket = "https://s3.amazonaws.com/${S3_BUCKET}/"
-\$region = "${REGION}"
+\$assetbucket = "https://s3.amazonaws.com/${S3_BUCKET}/";
+\$region = "${REGION}";
 ?>
 EOF
 
