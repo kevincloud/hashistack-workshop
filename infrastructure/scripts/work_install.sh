@@ -119,6 +119,7 @@ export REPO_URL_ACCT="${REPO_URL_ACCT}"
 export REPO_URL_SITE="${REPO_URL_SITE}"
 export CONSUL_IP="${CONSUL_IP}"
 export VAULT_TOKEN=$(consul kv get service/vault/root-token)
+export MYSQL_HOST="${MYSQL_HOST}"
 
 chmod a+x /root/hashistack-workshop/infrastructure/scripts/build.sh
 /root/hashistack-workshop/infrastructure/scripts/build.sh
