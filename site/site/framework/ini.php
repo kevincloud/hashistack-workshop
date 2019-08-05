@@ -68,7 +68,7 @@ ob_implicit_flush(false);
 // $consuloutput = json_decode(curl_exec($ch));
 // curl_close($ch);
 // $authapi = "http://" . $consuloutput[0]->Address . ":5825";
-$authapi = "http://auth-api.service.".$region.".consul";
+$authapi = "http://auth-api.service.".$region.".consul:5825";
 
 // $ch = curl_init();
 // curl_setopt ($ch, CURLOPT_URL, $productapiurl);
@@ -76,7 +76,7 @@ $authapi = "http://auth-api.service.".$region.".consul";
 // $consuloutput = json_decode(curl_exec($ch));
 // curl_close($ch);
 // $productapi = "http://" . $consuloutput[0]->Address . ":5821";
-$productapi = "http://product-api.service.".$region.".consul";
+$productapi = "http://product-api.service.".$region.".consul:5821";
 
 // $ch = curl_init();
 // curl_setopt ($ch, CURLOPT_URL, $customerapiurl);
@@ -84,7 +84,7 @@ $productapi = "http://product-api.service.".$region.".consul";
 // $consuloutput = json_decode(curl_exec($ch));
 // curl_close($ch);
 // $customerapi = "http://" . $consuloutput[0]->Address . ":5822";
-$customerapi = "http://customer-api.service.".$region.".consul";
+$customerapi = "http://customer-api.service.".$region.".consul:5822";
 
 // $ch = curl_init();
 // curl_setopt ($ch, CURLOPT_URL, $cartapiurl);
@@ -92,7 +92,7 @@ $customerapi = "http://customer-api.service.".$region.".consul";
 // $consuloutput = json_decode(curl_exec($ch));
 // curl_close($ch);
 // $cartapi = "http://" . $consuloutput[0]->Address . ":5823";
-$cartapi = "http://cart-api.service.".$region.".consul";
+$cartapi = "http://cart-api.service.".$region.".consul:5823";
 
 //////////////////////////////////////////////////////////////////////////////////
 // UNIVERSAL FUNCTIONS INITIALIZATION

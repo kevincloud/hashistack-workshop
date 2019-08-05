@@ -373,6 +373,7 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
                 },
                 "Config": {
                     "image": "https://${REPO_URL_SITE}:online-store",
+                    "dns_servers": ["169.254.1.1"],
                     "port_map": [{
                         "http": 80
                     }]

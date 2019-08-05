@@ -50,6 +50,7 @@ sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
     "node_name": "consul-${CLIENT_NAME}",
     "retry_join": ["provider=aws tag_key=${CONSUL_JOIN_KEY} tag_value=${CONSUL_JOIN_VALUE}"],
     "server": false,
+    "client_addr": "169.254.1.1",
     "recursors": ["169.254.169.253"]
 }
 EOF
@@ -89,11 +90,34 @@ echo "nameserver 127.0.0.1" > /etc/resolv.conf
 netplan apply
 
 sudo bash -c "cat >>/etc/dnsmasq.conf" <<EOF
-server=/consul/127.0.0.1#8600
+server=/consul/169.254.1.1#8600
 server=169.254.169.253#53
+listen-address=127.0.0.1
+listen-address=169.254.1.1
 no-resolv
 log-queries
 EOF
+
+ip link add dummy0 type dummy
+ip link set dev dummy0 up
+ip addr add 169.254.1.1/32 dev dummy0
+ip link set dev dummy0 up
+
+sudo bash -c "cat >>//etc/systemd/network/dummy0.netdev" <<EOF
+[NetDev]
+Name=dummy0
+Kind=dummy
+EOF
+
+sudo bash -c "cat >>/etc/systemd/network/dummy0.network" <<EOF
+[Match]
+Name=dummy0
+
+[Network]
+Address=169.254.1.1/32
+EOF
+
+systemctl restart systemd-networkd
 systemctl stop dnsmasq
 systemctl start dnsmasq
 
