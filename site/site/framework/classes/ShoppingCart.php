@@ -941,340 +941,196 @@ class ShoppingCart
 	// 	return $out;
 	// }
 	
-	// public function BillingInfo($urltag="shop")
-	// {
-	// 	$out = "";
-	// 	$strsel = "";
-	// 	$initdisplayb = "";
-	// 	$initdisplays = "";
+	public function BillingInfo($urltag="shop")
+	{
+		$out = "";
+		$strsel = "";
+		$initdisplayb = "";
+		$initdisplays = "";
 		
-	// 	if ($this->BillingAddress == NULL)
-	// 		$this->BillingAddress = clone $_SESSION["__account__"]->BillingAddress;
-	// 	if ($this->ShippingAddress == NULL)
-	// 		$this->ShippingAddress = clone $_SESSION["__account__"]->ShippingAddress;
+		if ($this->BillingAddress == NULL)
+			$this->BillingAddress = clone $_SESSION["__account__"]->BillingAddress;
+		if ($this->ShippingAddress == NULL)
+			$this->ShippingAddress = clone $_SESSION["__account__"]->ShippingAddress;
 		
-	// 	if ($this->BillingAddress->Country == "USA" || $this->BillingAddress->Country == "AUS" || $this->BillingAddress->Country == "CAN" || $this->BillingAddress->Country == "")
-	// 		$initdisplayb = "list";
-	// 	else
-	// 		$initdisplayb = "text";
+		$out .= $this->HideSidebar();
+		$out .= "<div class=\"content\">\n";
+		$out .= $this->Breadcrumbs("bill");
+		$out .= "<form action=\"/".$urltag."/cart/continue\" method=\"post\">\n";
+		$out .= "	<div class=\"order-address\">\n";
+		$out .= "		<div class=\"order-address-heading\">BILLING ADDRESS</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">&nbsp;</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"checkbox\" name=\"cart_b_default\" id=\"cart_b_default\" value=\"1\" checked=\"checked\" /> <label for=\"cart_b_default\">Save these addresses</label></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">Contact Name:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_contact\" id=\"cart_b_contact\" value=\"".$this->BillingAddress->Contact."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">Address:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_address1\" id=\"cart_b_address1\" value=\"".$this->BillingAddress->Address1."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">&nbsp;</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_address2\" id=\"cart_b_address2\" value=\"".$this->BillingAddress->Address2."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">City:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_city\" id=\"cart_b_city\" value=\"".$this->BillingAddress->City."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\" id=\"label_b_istate\">\n";
+		$out .= "			<div class=\"address-label\">State:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_istate\" id=\"cart_b_istate\" value=\"".$this->BillingAddress->State."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">Zip/Postal Code:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_zip\" id=\"cart_b_zip\" value=\"".$this->BillingAddress->Zip."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">Phone:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_phone\" id=\"cart_b_phone\" value=\"".$this->BillingAddress->Phone."\" maxlength=\"25\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		\n";
+		$out .= "		\n";
+		$out .= "		\n";
+		$out .= "	</div>\n";
+		$out .= "	<div class=\"order-address\">\n";
+		$out .= "		<div class=\"order-address-heading\">SHIPPING ADDRESS</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">&nbsp;</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"checkbox\" name=\"cart_s_same\" id=\"cart_s_same\" value=\"1\" /> <label for=\"cart_s_same\">Same as Billing Address</label></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">Contact Name:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_contact\" id=\"cart_s_contact\" value=\"".$this->ShippingAddress->Contact."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">Address:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_address1\" id=\"cart_s_address1\" value=\"".$this->ShippingAddress->Address1."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">&nbsp;</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_address2\" id=\"cart_s_address2\" value=\"".$this->ShippingAddress->Address2."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">City:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_city\" id=\"cart_s_city\" value=\"".$this->ShippingAddress->City."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\" id=\"label_s_istate\">\n";
+		$out .= "			<div class=\"address-label\">State:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_istate\" id=\"cart_s_istate\" value=\"".$this->ShippingAddress->State."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">Zip/Postal Code:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_zip\" id=\"cart_s_zip\" value=\"".$this->ShippingAddress->Zip."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div class=\"address-label\">Phone:</div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_phone\" id=\"cart_s_phone\" value=\"".$this->ShippingAddress->Phone."\" maxlength=\"25\" /></div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		\n";
+		$out .= "		\n";
+		$out .= "		\n";
+		$out .= "	</div>\n";
+		$out .= "	<div class=\"order-signin-error\" id=\"signin-error\">";
+		if ($this->LastError != "")
+		{
+			$out .= "		".$this->LastError;
+			$this->LastError = "";
+		}
+		$out .= "	</div>\n";
+		$out .= "	<div class=\"clearfloat\"></div>\n";
+		$out .= "	<div class=\"order-continue\"><input class=\"green button\" name=\"cart_btn\" type=\"submit\" value=\"CONTINUE\" /></div>\n";
+		$out .= "	<input type=\"hidden\" name=\"command\" value=\"address\" />\n";
+		$out .= "</form>\n";
+		$out .= "</div>\n";
 		
-	// 	if ($this->ShippingAddress->Country == "USA" || $this->ShippingAddress->Country == "AUS" || $this->ShippingAddress->Country == "CAN" || $this->ShippingAddress->Country == "")
-	// 		$initdisplays = "list";
-	// 	else
-	// 		$initdisplays = "text";
-		
-	// 	$out .= $this->HideSidebar();
-	// 	$out .= "<div class=\"content\">\n";
-	// 	$out .= $this->Breadcrumbs("bill");
-	// 	$out .= "<form action=\"/".$urltag."/cart/continue\" method=\"post\">\n";
-	// 	$out .= "	<div class=\"order-address\">\n";
-	// 	$out .= "		<div class=\"order-address-heading\">BILLING ADDRESS</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">&nbsp;</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"checkbox\" name=\"cart_b_default\" id=\"cart_b_default\" value=\"1\" checked=\"checked\" /> <label for=\"cart_b_default\">Save these addresses</label></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Contact Name:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_contact\" id=\"cart_b_contact\" value=\"".$this->BillingAddress->Contact."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Address:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_address1\" id=\"cart_b_address1\" value=\"".$this->BillingAddress->Address1."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">&nbsp;</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_address2\" id=\"cart_b_address2\" value=\"".$this->BillingAddress->Address2."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Country:</div>\n";
-	// 	$out .= "			<div class=\"address-input\">";
-	// 	$out .= "				<select name=\"cart_b_country\" id=\"cart_b_country\" onchange=\"scGetStates(this.options[this.selectedIndex].value, 'B', '".$this->BillingAddress->State."');\" />\n";
-		
-	// 	// ***INLINESQL***
-	// 	// $sql = "select numcode, country from cc_countries where active = 1 and numcode > 0 order by country";
-	// 	// $rs = $this->_db->get_results($sql);
-	// 	// foreach ($rs as $row)
-	// 	// {
-	// 	// 	$strsel = "";
-	// 	// 	if ($row->numcode == $this->BillingAddress->CountryCode)
-	// 	// 		$strsel = " selected";
-	// 	// 	$out .= "					<option value=\"".$row->numcode."\"".$strsel.">".$row->country."</option>\n";
-	// 	// }
-		
-	// 	$out .= "				</select>\n";
-	// 	$out .= "			</div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">City:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_city\" id=\"cart_b_city\" value=\"".$this->BillingAddress->City."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\" id=\"label_b_state\"".($initdisplayb == "list" ? "" : " style=\"display:none;\"").">\n";
-	// 	$out .= "			<div class=\"address-label\">State:</div>\n";
-	// 	$out .= "			<div class=\"address-input\">";
-	// 	$out .= "				<select name=\"cart_b_state\" id=\"cart_b_state\" />\n";
-
-	// 	// ***INLINESQL***
-	// 	// $sql = "select code, state from pw_states where id > 0 and location = ".smartQuote($this->BillingAddress->Country)." order by state";
-	// 	// $rs = $this->_db->get_results($sql);
-	// 	// if (isset($rs))
-	// 	// {
-	// 	// 	foreach ($rs as $row)
-	// 	// 	{
-	// 	// 		$strsel = "";
-	// 	// 		if ($row->code == $this->BillingAddress->State)
-	// 	// 			$strsel = " selected";
-	// 	// 		$out .= "					<option value=\"".$row->code."\"".$strsel.">".$row->state."</option>\n";
-	// 	// 	}
-	// 	// }
-
-	// 	$out .= "				</select>\n";
-	// 	$out .= "			</div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\" id=\"label_b_istate\"".($initdisplayb == "text" ? "" : " style=\"display:none;\"").">\n";
-	// 	$out .= "			<div class=\"address-label\">State:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_istate\" id=\"cart_b_istate\" value=\"".$this->BillingAddress->State."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Zip/Postal Code:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_zip\" id=\"cart_b_zip\" value=\"".$this->BillingAddress->Zip."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Phone:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_phone\" id=\"cart_b_phone\" value=\"".$this->BillingAddress->Phone."\" maxlength=\"25\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		\n";
-	// 	$out .= "		\n";
-	// 	$out .= "		\n";
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<div class=\"order-address\">\n";
-	// 	$out .= "		<div class=\"order-address-heading\">SHIPPING ADDRESS</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">&nbsp;</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"checkbox\" name=\"cart_s_same\" id=\"cart_s_same\" value=\"1\" /> <label for=\"cart_s_same\">Same as Billing Address</label></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Contact Name:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_contact\" id=\"cart_s_contact\" value=\"".$this->ShippingAddress->Contact."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Address:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_address1\" id=\"cart_s_address1\" value=\"".$this->ShippingAddress->Address1."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">&nbsp;</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_address2\" id=\"cart_s_address2\" value=\"".$this->ShippingAddress->Address2."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Country:</div>\n";
-	// 	$out .= "			<div class=\"address-input\">";
-	// 	$out .= "				<select name=\"cart_s_country\" id=\"cart_s_country\" onchange=\"scGetStates(this.options[this.selectedIndex].value, 'S', '".$this->ShippingAddress->State."');\" />\n";
-		
-	// 	// ***INLINESQL***
-	// 	// $sql = "select numcode, country from cc_countries where active = 1 and numcode > 0 order by country";
-	// 	// $rs = $this->_db->get_results($sql);
-	// 	// foreach ($rs as $row)
-	// 	// {
-	// 	// 	$strsel = "";
-	// 	// 	if ($row->numcode == $this->ShippingAddress->CountryCode)
-	// 	// 		$strsel = " selected";
-	// 	// 	$out .= "					<option value=\"".$row->numcode."\"".$strsel.">".$row->country."</option>\n";
-	// 	// }
-		
-	// 	$out .= "				</select>\n";
-	// 	$out .= "			</div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">City:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_city\" id=\"cart_s_city\" value=\"".$this->ShippingAddress->City."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\" id=\"label_s_state\"".($initdisplays == "list" ? "" : " style=\"display:none;\"").">\n";
-	// 	$out .= "			<div class=\"address-label\">State:</div>\n";
-	// 	$out .= "			<div class=\"address-input\">";
-	// 	$out .= "				<select name=\"cart_s_state\" id=\"cart_s_state\" />\n";
-		
-	// 	$cnt = $this->ShippingAddress->Country;
-	// 	if (!isset($this->ShippingAddress->Country))
-	// 		$cnt = "USA";
-
-	// 	// ***INLINESQL***
-	// 	// $sql = "select code, state from pw_states where id > 0 and location = ".smartQuote($this->ShippingAddress->Country)." order by state";
-	// 	// $rs = $this->_db->get_results($sql);
-	// 	// if (isset($rs))
-	// 	// {
-	// 	// 	foreach ($rs as $row)
-	// 	// 	{
-	// 	// 		$strsel = "";
-	// 	// 		if ($row->code == $this->ShippingAddress->State)
-	// 	// 			$strsel = " selected";
-	// 	// 		$out .= "					<option value=\"".$row->code."\"".$strsel.">".$row->state."</option>\n";
-	// 	// 	}
-	// 	// }
-
-	// 	$out .= "				</select>\n";
-	// 	$out .= "			</div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\" id=\"label_s_istate\"".($initdisplays == "text" ? "" : " style=\"display:none;\"").">\n";
-	// 	$out .= "			<div class=\"address-label\">State:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_istate\" id=\"cart_s_istate\" value=\"".$this->ShippingAddress->State."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Zip/Postal Code:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_zip\" id=\"cart_s_zip\" value=\"".$this->ShippingAddress->Zip."\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div class=\"address-label\">Phone:</div>\n";
-	// 	$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_phone\" id=\"cart_s_phone\" value=\"".$this->ShippingAddress->Phone."\" maxlength=\"25\" /></div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		\n";
-	// 	$out .= "		\n";
-	// 	$out .= "		\n";
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<div class=\"order-signin-error\" id=\"signin-error\">";
-	// 	if ($this->LastError != "")
-	// 	{
-	// 		$out .= "		".$this->LastError;
-	// 		$this->LastError = "";
-	// 	}
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "	<div class=\"order-continue\"><input class=\"green button\" name=\"cart_btn\" type=\"submit\" value=\"CONTINUE\" /></div>\n";
-	// 	$out .= "	<input type=\"hidden\" name=\"command\" value=\"address\" />\n";
-	// 	$out .= "</form>\n";
-	// 	$out .= "</div>\n";
-		
-	// 	return $out;
-	// }
+		return $out;
+	}
 	
-	// public function GetStates($country=840, $state="")
-	// {
-	// 	if ($country == "")
-	// 		$country = 840;
+	public function CartLoginView($urltag="shop")
+	{		
+		$out = "";
 		
-	// 	if ($country == 840 || $country == 36 || $country == 124)
-	// 	{
-	// 		$cnt = "";
-			
-	// 		// ***INLINESQL***
-	// 		// $sql = "select code from cc_countries where numcode = ".$country;
-	// 		// $cnt = $this->_db->get_var($sql);
-			
-	// 		$out = "";
-	// 		$retval = array();
-			
-	// 		// ***INLINESQL***
-	// 		// $sql = "select code, state from pw_states where id > 0 and location = ".smartQuote($cnt)." and location is not null order by state";
-	// 		// $rs = $this->_db->get_results($sql);
-	// 		// foreach ($rs as $row)
-	// 		// {
-	// 		// 	$ta = array();
-	// 		// 	$strsel = false;
-	// 		// 	if ($row->code == $state)
-	// 		// 		$strsel = true;
-				
-	// 		// 	$ta["text"] = $row->state;
-	// 		// 	$ta["value"] = $row->code;
-	// 		// 	$ta["selected"] = $strsel;
-	// 		// 	$retval[] = $ta;
-	// 		// }
-			
-	// 		return $retval;
-	// 	}
-	// 	else
-	// 		return "";
-	// }
-	
-	// public function CartLoginView($urltag="shop")
-	// {
-	// 	$landing = $urltag == "special" ? true : false;
+		$out .= "	<div class=\"order-signin\" style=\"position: relative;\">\n";
+		$out .= "		<img src=\"/framework/img/close.png\" style=\"height:32px; width:32px; position:absolute; right:-12px; top:-12px; cursor:pointer;\" onclick=\"unpopWindow();\" />\n";
+		$out .= "		<div class=\"order-summary-heading\">YOUR ACCOUNT</div>\n";
+		$out .= "		<form action=\"/".$urltag."/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
+		$out .= "			<div class=\"customer-signin\">\n";
+		$out .= "				<div class=\"heading\">New Customers</div>\n";
+		$out .= "				<div class=\"address-line\">\n";
+		$out .= "					<div class=\"address-label\">E-mail Address:</div>\n";
+		$out .= "					<div class=\"address-input\"><input type=\"text\" id=\"cart_new_email\" name=\"cart_new_email\" value=\"\" maxlength=\"50\" /></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</div>\n";
+		$out .= "				<div class=\"address-line\">\n";
+		$out .= "					<div class=\"address-label\">First Name:</div>\n";
+		$out .= "					<div class=\"address-input\"><input type=\"text\" id=\"cart_new_firstname\" name=\"cart_new_firstname\" value=\"\" maxlength=\"50\" /></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</div>\n";
+		$out .= "				<div class=\"address-line\">\n";
+		$out .= "					<div class=\"address-label\">Last Name:</div>\n";
+		$out .= "					<div class=\"address-input\"><input type=\"text\" id=\"cart_new_lastname\" name=\"cart_new_lastname\" value=\"\" maxlength=\"50\" /></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</div>\n";
+		$out .= "				<div class=\"address-line\">\n";
+		$out .= "					<div class=\"address-label\">Password:</div>\n";
+		$out .= "					<div class=\"address-input\"><input type=\"password\" id=\"cart_new_password\" name=\"cart_new_password\" value=\"\" maxlength=\"32\" /></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</div>\n";
+		$out .= "				<div class=\"address-line\">\n";
+		$out .= "					<div class=\"address-label\">Confirm Password:</div>\n";
+		$out .= "					<div class=\"address-input\"><input type=\"password\" id=\"cart_new_passwordc\" name=\"cart_new_passwordc\" value=\"\" maxlength=\"32\" /></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</div>\n";
+		$out .= "				<div class=\"order-signin-controls\">\n";
+		$out .= "					<div class=\"order-summary-continue\"><button class=\"green button\" name=\"cart_btn\" id=\"checkout_newaccount\" onclick=\"scCheckNewAccount(false);return false;\" type=\"button\">New Account</button></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</div>\n";
+		$out .= "			</div>\n";
+		$out .= "		</form>\n";
+		$out .= "		<form action=\"/".$urltag."/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
+		$out .= "			<div class=\"customer-signin\">\n";
+		$out .= "				<div class=\"heading\">Returning Customers</div>\n";
+		$out .= "				<div class=\"address-line\">\n";
+		$out .= "					<div class=\"address-label\">E-mail Address:</div>\n";
+		$out .= "					<div class=\"address-input\"><input type=\"text\" id=\"cart_login_email\" name=\"cart_email\" value=\"\" maxlength=\"50\" /></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</div>\n";
+		$out .= "				<div class=\"address-line\">\n";
+		$out .= "					<div class=\"address-label\">Password:</div>\n";
+		$out .= "					<div class=\"address-input\"><input type=\"password\" id=\"cart_login_password\" name=\"cart_password\" value=\"\" maxlength=\"32\" /></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</div>\n";
+		$out .= "				<div class=\"order-signin-controls\">\n";
+		$out .= "					<div class=\"order-summary-continue\"><button class=\"green button\" name=\"cart_btn\" id=\"checkout_login\" onclick=\"scCheckLogin(false);return false;\" type=\"button\">Sign In</button></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</div>\n";
+		$out .= "			</div>\n";
+		$out .= "		</form>\n";
+		$out .= "		<div class=\"order-signin-error\" id=\"signin-error\"></div>\n";
+		$out .= "		<div class=\"clearfloat\"></div>\n";
+		$out .= "	</div>\n";
 		
-	// 	$out = "";
-		
-	// 	$out .= "	<div class=\"order-signin\" style=\"position: relative;\">\n";
-	// 	$out .= "		<img src=\"/framework/img/close.png\" style=\"height:32px; width:32px; position:absolute; right:-12px; top:-12px; cursor:pointer;\" onclick=\"unpopWindow();\" />\n";
-	// 	$out .= "		<div class=\"order-summary-heading\">YOUR ACCOUNT</div>\n";
-	// 	if (!$landing)
-	// 		$out .= "		<form action=\"/".$urltag."/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
-	// 	$out .= "			<div class=\"customer-signin\">\n";
-	// 	$out .= "				<div class=\"heading\">New Customers</div>\n";
-	// 	$out .= "				<div class=\"address-line\">\n";
-	// 	$out .= "					<div class=\"address-label\">E-mail Address:</div>\n";
-	// 	$out .= "					<div class=\"address-input\"><input type=\"text\" id=\"cart_new_email\" name=\"cart_new_email\" value=\"\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "				</div>\n";
-	// 	$out .= "				<div class=\"address-line\">\n";
-	// 	$out .= "					<div class=\"address-label\">First Name:</div>\n";
-	// 	$out .= "					<div class=\"address-input\"><input type=\"text\" id=\"cart_new_firstname\" name=\"cart_new_firstname\" value=\"\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "				</div>\n";
-	// 	$out .= "				<div class=\"address-line\">\n";
-	// 	$out .= "					<div class=\"address-label\">Last Name:</div>\n";
-	// 	$out .= "					<div class=\"address-input\"><input type=\"text\" id=\"cart_new_lastname\" name=\"cart_new_lastname\" value=\"\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "				</div>\n";
-	// 	$out .= "				<div class=\"address-line\">\n";
-	// 	$out .= "					<div class=\"address-label\">Password:</div>\n";
-	// 	$out .= "					<div class=\"address-input\"><input type=\"password\" id=\"cart_new_password\" name=\"cart_new_password\" value=\"\" maxlength=\"32\" /></div>\n";
-	// 	$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "				</div>\n";
-	// 	$out .= "				<div class=\"address-line\">\n";
-	// 	$out .= "					<div class=\"address-label\">Confirm Password:</div>\n";
-	// 	$out .= "					<div class=\"address-input\"><input type=\"password\" id=\"cart_new_passwordc\" name=\"cart_new_passwordc\" value=\"\" maxlength=\"32\" /></div>\n";
-	// 	$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "				</div>\n";
-	// 	$out .= "				<div class=\"order-signin-controls\">\n";
-	// 	$out .= "					<div class=\"order-summary-continue\"><button class=\"green button\" name=\"cart_btn\" id=\"checkout_newaccount\" onclick=\"scCheckNewAccount(".$landing.");return false;\" type=\"button\">New Account</button></div>\n";
-	// 	$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "				</div>\n";
-	// 	$out .= "			</div>\n";
-	// 	if (!$landing)
-	// 	$out .= "		</form>\n";
-	// 	if (!$landing)
-	// 	$out .= "		<form action=\"/".$urltag."/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
-	// 	$out .= "			<div class=\"customer-signin\">\n";
-	// 	$out .= "				<div class=\"heading\">Returning Customers</div>\n";
-	// 	$out .= "				<div class=\"address-line\">\n";
-	// 	$out .= "					<div class=\"address-label\">E-mail Address:</div>\n";
-	// 	$out .= "					<div class=\"address-input\"><input type=\"text\" id=\"cart_login_email\" name=\"cart_email\" value=\"\" maxlength=\"50\" /></div>\n";
-	// 	$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "				</div>\n";
-	// 	$out .= "				<div class=\"address-line\">\n";
-	// 	$out .= "					<div class=\"address-label\">Password:</div>\n";
-	// 	$out .= "					<div class=\"address-input\"><input type=\"password\" id=\"cart_login_password\" name=\"cart_password\" value=\"\" maxlength=\"32\" /></div>\n";
-	// 	$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "				</div>\n";
-	// 	$out .= "				<div class=\"order-signin-controls\">\n";
-	// 	$out .= "					<div class=\"order-summary-continue\"><button class=\"green button\" name=\"cart_btn\" id=\"checkout_login\" onclick=\"scCheckLogin(".$landing.");return false;\" type=\"button\">Sign In</button></div>\n";
-	// 	$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "				</div>\n";
-	// 	$out .= "			</div>\n";
-	// 	if (!$landing)
-	// 	$out .= "		</form>\n";
-	// 	$out .= "		<div class=\"order-signin-error\" id=\"signin-error\"></div>\n";
-	// 	$out .= "		<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "	</div>\n";
-		
-	// 	return $out;
-	// }
+		return $out;
+	}
 	
 	public function ReviewCart()
 	{

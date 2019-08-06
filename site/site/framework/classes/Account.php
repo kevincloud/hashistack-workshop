@@ -137,7 +137,7 @@ class Account
 
 		$_SESSION["__account__"] = $this;
 		if ($remember)
-			setcookie("__custid__", $_SESSION["__account__"]->CustomerID, time()+(60*60*24*365), "/", "cloudapp.com", false);
+			setcookie("__custid__", $_SESSION["__account__"]->CustomerID, time()+(60*60*24*365), "/", "java-perks.com", false);
 	}
 	
 	/*
@@ -1187,7 +1187,7 @@ class Account
 		$retval["Error"] = "";
 		$retval["Body"] = "";
 		$body = "";
-		$url = "www.cloudapp.com";
+		$url = "www.java-perks.com";
 		$custid = "";
 		$uid = "";
 		
@@ -1284,12 +1284,12 @@ class Account
 		require_once("../plugins/swift/lib/swift_required.php");
 		
 		$message = Swift_Message::newInstance();
-		$message->setSubject("cloudapp.com: Reset Password");
-		$message->setFrom(array("no_reply@cloudapp.com" => "Java Stop"));
+		$message->setSubject("java-perks.com: Reset Password");
+		$message->setFrom(array("no_reply@java-perks.com" => "Java Stop"));
 		$message->setTo(array($email));
 		$message->setBody($body, "text/html");
 		
-		$transport = Swift_SmtpTransport::newInstance("barracuda.cloudapp.com", 25);
+		$transport = Swift_SmtpTransport::newInstance("barracuda.java-perks.com", 25);
 		//$transport->setUsername("noc");
 		//$transport->setPassword("All4l0ve");
 		
