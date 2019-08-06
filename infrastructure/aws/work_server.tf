@@ -10,6 +10,7 @@ data "template_file" "work_install" {
         REPO_URL_CART = "${aws_ecr_repository.ecr-cart-app.repository_url}"
         REPO_URL_SITE = "${aws_ecr_repository.ecr-online-store.repository_url}"
         REPO_URL_ACCT = "${aws_ecr_repository.ecr-account-broker.repository_url}"
+        MYSQL_HOST = "${aws_db_instance.vault-mysql.address}"
         S3_BUCKET = "${aws_s3_bucket.staticimg.id}"
         GIT_USER = "${var.git_user}"
         GIT_TOKEN = "${var.git_token}"

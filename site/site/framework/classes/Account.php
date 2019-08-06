@@ -14,7 +14,7 @@ class Account
 	public $BillingAddress = NULL;
 	public $ShippingAddress = NULL;
 	
-	private $UserID = 0;
+	private $UserID = "";
 	
 	// ***INLINESQL***
 	private $AuthApi;
@@ -55,11 +55,12 @@ class Account
 	{
 		if (!isBlank($custid))
 		{
-			$request = $this->CustomerApi."/".$custid;
+			$request = $this->CustomerApi."/customers/".$custid;
 			$rr = new RestRunner();
 			$row = $rr->Get($request);
 			if ($row)
 			{
+				$this->UserID = $row->custNo;
 				$this->CustomerID = $row->custNo;
 				$this->RowID = $row->custId;
 				$this->FirstName = $row->firstName;
@@ -126,7 +127,7 @@ class Account
 		$itemuser = array('Key' => 'username', 'Value' => $user);
 		$itempass = array('Key' => 'password', 'Value' => $pass);
 		$a = array($itemuser, $itempass);
-		$row = $rr->Post($request);
+		$row = $rr->Post($request, $a);
 
 		if ($row->success == false) {
 			throw new Exception("The username/password did not match");

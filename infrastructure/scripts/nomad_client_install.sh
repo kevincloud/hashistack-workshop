@@ -50,7 +50,9 @@ sudo bash -c "cat >/etc/consul.d/consul.json" <<EOF
     "node_name": "consul-${CLIENT_NAME}",
     "retry_join": ["provider=aws tag_key=${CONSUL_JOIN_KEY} tag_value=${CONSUL_JOIN_VALUE}"],
     "server": false,
-    "client_addr": "169.254.1.1",
+    "addresses": {
+        "dns": "169.254.1.1"
+    },
     "recursors": ["169.254.169.253"]
 }
 EOF

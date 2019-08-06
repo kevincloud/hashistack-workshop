@@ -5,7 +5,7 @@
 ####################
 cd /root/hashistack-workshop/apis
 
-export MYSQL_HOST=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.address)
+# export MYSQL_HOST=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.address)
 export MYSQL_USER=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.password)
 export MYSQL_PASS=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.username)
 export CONSUL_NODE_ID=$(curl -s http://127.0.0.1:8500/v1/catalog/node/consul-client1 | jq -r .Node.ID)
@@ -24,7 +24,7 @@ curl \
 
 # curl \
 #     --request PUT \
-#     --data "{ \"Datacenter\": \"us-east-1\", \"Node\": \"7cedc5dc-5235-b337-0d03-68ceda2f9e65\", \"Address\":\"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Service\": { \"ID\": \"customer-db\", \"Service\": \"customer-db\", \"Address\": \"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Port\": 3306 } }" \
+#     --data "{ \"Datacenter\": \"us-east-1\", \"Node\": \"508ac12c-37d3-bb11-a17a-ca324fdb24c6\", \"Address\":\"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Service\": { \"ID\": \"customer-db\", \"Service\": \"customer-db\", \"Address\": \"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Port\": 3306 } }" \
 #     http://127.0.0.1:8500/v1/catalog/register
 
 # Upload images to S3
