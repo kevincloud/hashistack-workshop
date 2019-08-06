@@ -20,6 +20,8 @@ class ShoppingCart
 		global $cartapi;
 
 		$this->CartApi = $cartapi."/cart";
+		$this->ShippingAddress = new Address();
+		$this->BillingAddress = new Address();
 	}
 		
 	public function Count()
@@ -903,7 +905,7 @@ class ShoppingCart
 		$out .= "		</div>\n";
 		$out .= "		<div class=\"address-line\" id=\"label_b_istate\">\n";
 		$out .= "			<div class=\"address-label\">State:</div>\n";
-		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_istate\" id=\"cart_b_istate\" value=\"".$this->BillingAddress->State."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_state\" id=\"cart_b_state\" value=\"".$this->BillingAddress->State."\" maxlength=\"50\" /></div>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
 		$out .= "		</div>\n";
 		$out .= "		<div class=\"address-line\">\n";
@@ -954,7 +956,7 @@ class ShoppingCart
 		$out .= "		</div>\n";
 		$out .= "		<div class=\"address-line\" id=\"label_s_istate\">\n";
 		$out .= "			<div class=\"address-label\">State:</div>\n";
-		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_istate\" id=\"cart_s_istate\" value=\"".$this->ShippingAddress->State."\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_state\" id=\"cart_s_state\" value=\"".$this->ShippingAddress->State."\" maxlength=\"50\" /></div>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
 		$out .= "		</div>\n";
 		$out .= "		<div class=\"address-line\">\n";
