@@ -240,3 +240,30 @@ exports.empty_cart = function(req, res) {
         }
     });
 };
+
+exports.clean_cart = function(req, res) {
+    var sessionid = req.params.sessionId;
+
+    ddb.delete({
+        TableName: table,
+        Key: {
+            'SessionId': sessionid
+        },
+        ConditionExpression: 'Quantity <= :qty',
+        ExpressionAttributeValues: { ":qty": 0 }
+    }, function(err, data) {
+        if (err) {
+            res.send({
+                success: true,
+                message: err
+            });
+            console.log("Error", err);
+        } else {
+            res.send({
+                success: true,
+                message: 'Cart is now empty'
+            });
+            console.log("Success", data);
+        }
+    });
+};

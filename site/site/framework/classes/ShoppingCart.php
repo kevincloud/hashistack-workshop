@@ -37,14 +37,26 @@ class ShoppingCart
 		return $cnt;
 	}
 	
-	// public function CleanCart()
-	// {
-	// 	// foreach ($this->Items as $key => &$item)
-	// 	// {
-	// 	// 	if ($item->Quantity == 0)
-	// 	// 		unset($this->Items[$key]);
-	// 	// }
-	// }
+	public function CleanCart()
+	{
+		// remove all deleted items
+	}
+
+	public function Contains()
+	{
+		$c = 0;
+		$r = new RestRunner();
+		$itempid = array('Key' => 'productId', 'Value' => $pid);
+		$itemsid = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($itempid, $itemsid);
+
+		$result = $r->Get($this->CartApi, $a);
+		foreach ($result->items as $item) {
+			$c += 1;
+		}
+
+		return ($c > 0) ? true : false;
+	}
 	
 	public function AddItem($pid, $qty)
 	{
@@ -169,33 +181,33 @@ class ShoppingCart
 		return $out;
 	}
 	
-	// public function StartOver()
-	// {
-	// 	$this->ShippingAddress = NULL;
-	// 	$this->BillingAddress = NULL;
-	// 	$this->Checkout = false;
-	// 	$this->LastError = "";
-	// 	$this->ShippingService = "CUSTOM";
-	// 	$this->ShippingAmount = 0.0;
-	// 	$this->SubtotalAmount = 0.0;
-	// 	$this->TaxAmount = 0.0;
-	// 	$this->TotalAmount = 0.0;
-	// 	$this->Order = NULL;
-	// 	$this->Comments = "";
-	// }
+	public function StartOver()
+	{
+		$this->ShippingAddress = NULL;
+		$this->BillingAddress = NULL;
+		$this->Checkout = false;
+		$this->LastError = "";
+		$this->ShippingService = "CUSTOM";
+		$this->ShippingAmount = 0.0;
+		$this->SubtotalAmount = 0.0;
+		$this->TaxAmount = 0.0;
+		$this->TotalAmount = 0.0;
+		$this->Order = NULL;
+		$this->Comments = "";
+	}
 	
-	// public function PleaseWait()
-	// {
-	// 	$out = "";
+	public function PleaseWait()
+	{
+		$out = "";
 		
-	// 	$out .= "	<div class=\"order-signin\" style=\"position: relative;\">\n";
-	// 	$out .= "		<div class=\"order-summary-heading\">PROCESSING</div>\n";
-	// 	$out .= "		<div style=\"padding:15px;font-size:16px;\"><img src=\"/framework/img/wait24trans.gif\" style=\"vertical-align:middle; border:0px; width:24px; height:24px;\"> Please wait while your order is being processed...</div>\n";
-	// 	$out .= "		<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "	</div>\n";
+		$out .= "	<div class=\"order-signin\" style=\"position: relative;\">\n";
+		$out .= "		<div class=\"order-summary-heading\">PROCESSING</div>\n";
+		$out .= "		<div style=\"padding:15px;font-size:16px;\"><img src=\"/framework/img/wait24trans.gif\" style=\"vertical-align:middle; border:0px; width:24px; height:24px;\"> Please wait while your order is being processed...</div>\n";
+		$out .= "		<div class=\"clearfloat\"></div>\n";
+		$out .= "	</div>\n";
 		
-	// 	return $out;
-	// }
+		return $out;
+	}
 	
 	// public function PlaceOrder($landing=false)
 	// {
@@ -494,18 +506,18 @@ class ShoppingCart
 		
 	// 	$transport = Swift_SmtpTransport::newInstance("email.java-perks.com", 25);
 	// 	//$transport->setUsername("noc");
-	// 	//$transport->setPassword("All4l0ve");
+	// 	//$transport->setPassword("");
 		
 	// 	$mailer = Swift_Mailer::newInstance($transport);
 	// 	$result = $mailer->send($message);
 	// }
 	
-	// public function RunTransaction($test=false, $result="")
-	// {
-	// 	$retval = "APPROVED";
+	public function RunTransaction($test=false, $result="")
+	{
+		$retval = "APPROVED";
 		
-	// 	return $retval;
-	// }
+		return $retval;
+	}
 	
 	// public function ConfirmPayment($urltag="shop")
 	// {
@@ -517,8 +529,6 @@ class ShoppingCart
 	// 	$this->SubtotalAmount = 0.0;
 	// 	$this->TaxAmount = 0.0;
 	// 	$this->TotalAmount = 0.0;
-		
-	// 	if ($this->IsESDOnly()) $this->ShippingAmount = 0.0;
 		
 	// 	$out .= $this->HideSidebar();
 	// 	$out .= "<div class=\"content\">\n";
@@ -533,13 +543,6 @@ class ShoppingCart
 	// 	$out .= "		<div style=\"padding-left:10px;\">\n";
 	// 	$out .= "			<div>".$_SESSION["__account__"]->Email."</div>\n";
 	// 	$out .= "		</div>\n";
-	// 	if (!isBlank($this->PromoCode))
-	// 	{
-	// 		$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">Promotional Code</div>\n";
-	// 		$out .= "		<div style=\"padding-left:10px;\">\n";
-	// 		$out .= "			<div>".$this->PromoCode."</div>\n";
-	// 		$out .= "		</div>\n";
-	// 	}
 	// 	$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">Special Instructions</div>\n";
 	// 	$out .= "		<div>\n";
 	// 	$out .= "			<div style=\"font-size:10px;\">250 characters or less</div>\n";
@@ -559,63 +562,6 @@ class ShoppingCart
 	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
 	// 	$out .= "		</div>\n";
 		
-	// 	if ($landing)
-	// 	{
-	// 		foreach ($this->LandingItems as $item)
-	// 		{
-	// 			$p = new Product();
-	// 			$p->GetProduct($item->PID);
-	// 			$p->CalculateValues();
-	// 			$out .= "		<div class=\"order-summary-items".($num == 1 ? "-first" : "")."\">\n";
-	// 			$out .= "			<p class=\"product\" style=\"width:300px;\">\n";
-	// 			$out .= "				<img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" />\n";
-	// 			$out .= "				<strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."<br>Ships in 2 to 3 business days\n";
-	// 			$out .= "			</p>\n";
-	// 			$out .= "			<p class=\"format\">".$p->Format."</p>\n";
-	// 			$out .= "			<p class=\"qty\">".$item->Quantity."</p>\n";
-	// 			if ($p->CalculatedDiscount > 0)
-	// 			{
-	// 				$out .= "			<p class=\"price\">";
-	// 				$out .= "				<strong>$".money_format("%.2n", round($p->CalculatedPrice, 2))."</strong><br>\n";
-	// 				$out .= "				<span class=\"savings\">Save ".round($p->CalculatedDiscount)."%</span>\n";
-	// 				$out .= "			</p>\n";
-	// 				$out .= "			<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->CalculatedPrice * $item->Quantity, 2))."</strong></p>\n";
-	// 				$savings += round($p->Price - $p->CalculatedPrice, 2) * $item->Quantity;
-	// 				$this->SubtotalAmount += round($p->CalculatedPrice * $item->Quantity, 2); 
-	// 			}
-	// 			else
-	// 			{
-	// 				$out .= "			<p class=\"price\"><strong>$".money_format("%.2n", round($p->Price, 2))."</strong></p>\n";
-	// 				$out .= "			<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->Price * $item->Quantity, 2))."</strong></p>\n";
-	// 				$this->SubtotalAmount += round($p->Price * $item->Quantity, 2); 
-	// 			}
-	// 			$out .= "			</p>\n";
-	// 			$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 			$out .= "		</div>\n";
-	// 			$num++;
-	// 		}
-	// 		foreach ($this->LandingFreeItems as $itemx)
-	// 		{
-	// 			$p = new Product();
-	// 			$p->GetProduct($itemx->PID);
-	// 			$out .= "		<div class=\"order-summary-items".($num == 1 ? "-first" : "")."\" style=\"background-color:#fff9ee;\">\n";
-	// 			$out .= "			<p class=\"product\" style=\"width:300px;\">\n";
-	// 			$out .= "				<img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" />\n";
-	// 			$out .= "				<strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."<br>Ships in 2 to 3 business days\n";
-	// 			$out .= "			</p>\n";
-	// 			$out .= "			<p class=\"format\">".$p->Format."</p>\n";
-	// 			$out .= "			<p class=\"qty\">".$itemx->Quantity."</p>\n";
-	// 			$out .= "			<p class=\"price\"><strong>FREE</strong></p>\n";
-	// 			$out .= "			<p class=\"itemtotal\"><strong>$0.00</strong></p>\n";
-	// 			$out .= "			</p>\n";
-	// 			$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 			$out .= "		</div>\n";
-	// 			$num++;
-	// 		}
-	// 		$out .= "	</div>\n";
-	// 	}
-	// 	else
-	// 	{
 	// 		foreach ($this->Items as &$item)
 	// 		{
 	// 			$p = new Product();
@@ -650,7 +596,6 @@ class ShoppingCart
 	// 			$num++;
 	// 		}
 	// 		$out .= "	</div>\n";
-	// 	}
 		
 	// 	$taxrate = $this->GetTaxRate();
 	// 	$this->TaxAmount = ($this->SubtotalAmount + $this->ShippingAmount) * $taxrate;
@@ -859,87 +804,54 @@ class ShoppingCart
 		return 0.065;
 	}
 	
-	// public function ShippingMethod($urltag="shop")
-	// {
-	// 	$landing = ($urltag == "special" ? true : false);
-	// 	$out = "";
-	// 	$multiplier = 1.2;
-	// 	$totalweight = $this->GetCartWeight($landing);
-	// 	$boxes = floor($totalweight / 25);
-	// 	$lastbox = $boxes > 0 ? floor(fmod($totalweight, 25)) : ceil(fmod($totalweight, 25));
-	// 	$lastbox++;
-	// 	$strsel = "";
-	// 	$num = 0;
-	// 	$fullcountry = "";
+	public function ShippingMethod($urltag="shop")
+	{
+		$landing = ($urltag == "special" ? true : false);
+		$out = "";
+		$multiplier = 1.2;
+		$totalweight = $this->GetCartWeight($landing);
+		$boxes = floor($totalweight / 25);
+		$lastbox = $boxes > 0 ? floor(fmod($totalweight, 25)) : ceil(fmod($totalweight, 25));
+		$lastbox++;
+		$strsel = "";
+		$num = 0;
+		$fullcountry = "";
 		
-	// 	unset($this->ShipMethodList);
+		unset($this->ShipMethodList);
 		
-	// 	$out .= $this->HideSidebar();
-	// 	$out .= "<div class=\"content\">\n";
-	// 	$out .= $this->Breadcrumbs("ship");
-	// 	$out .= "<form action=\"/".$urltag."/cart/continue\" method=\"post\">\n";
-	// 	$out .= "	<div class=\"order-summary\">\n";
-	// 	$out .= "		<div class=\"order-summary-heading\">SHIPPING METHOD</div>\n";
-	// 	$out .= "		<div>&nbsp;</div>\n";
-	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	$out .= "			<div style=\"float:left; width: 200px;border-bottom: 1px solid #999999; font-weight:bold;\">Shipping Method</div>\n";
-	// 	$out .= "			<div style=\"float:left; width: 200px;border-bottom: 1px solid #999999; font-weight:bold;\">Estimated Arrival Time</div>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
+		$out .= $this->HideSidebar();
+		$out .= "<div class=\"content\">\n";
+		$out .= $this->Breadcrumbs("ship");
+		$out .= "<form action=\"/".$urltag."/cart/continue\" method=\"post\">\n";
+		$out .= "	<div class=\"order-summary\">\n";
+		$out .= "		<div class=\"order-summary-heading\">SHIPPING METHOD</div>\n";
+		$out .= "		<div>&nbsp;</div>\n";
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div style=\"float:left; width: 200px;border-bottom: 1px solid #999999; font-weight:bold;\">Shipping Method</div>\n";
+		$out .= "			<div style=\"float:left; width: 200px;border-bottom: 1px solid #999999; font-weight:bold;\">Estimated Arrival Time</div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
 		
-	// 	// USPS SERVICES
-		
-	// 	// ***INLINESQL***
-	// 	// $sql = "select country from cc_countries where code = ".smartQuote($this->ShippingAddress->Country);
-	// 	// $fullcountry = $this->_db->get_var($sql);
-		
-		
-	// 	// if (count($usps->Rates) > 0)
-	// 	// {
-	// 	// 	$num++;
-	// 	// 	$this->ShipMethodList[$num] = array("USPS1P", money_format("%.2n", round($usps->Rates[0]->Rate * $multiplier, 2)));
+		$this->ShipMethodList[$num] = array("FREE", money_format("%.2n", 0));
 			
-	// 	// 	$out .= "		<div class=\"address-line\">\n";
-	// 	// 	$out .= "			<div style=\"float:left; width: 20px;border-bottom: 1px solid #999999; height:45px;\"><input type=\"radio\" name=\"cart_ship_method\" id=\"cart_method_".$num."\" value=\"".$num."\"".($this->ShippingService == "USPS1P" ? " checked=\"checked\"" : "")." /></div>\n";
-	// 	// 	$out .= "			<div style=\"float:left; width: 230px;border-bottom: 1px solid #999999; height:45px;\"><label for=\"cart_method_".$num."\"><strong>Standard</strong><br />Shipping Cost: $".money_format("%.2n", round($usps->Rates[0]->Rate * $multiplier, 2))."</label></div>\n";
-	// 	// 	$out .= "			<div style=\"float:left; width: 200px;border-bottom: 1px solid #999999; height:45px;\">5 to 7 business days</div>\n";
-	// 	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	// 	$out .= "		</div>\n";
-	// 	// 	$out .= "		<div class=\"clearfloat\"></div>\n";
-	// 	// }
-
+		$out .= "		<div class=\"address-line\">\n";
+		$out .= "			<div style=\"float:left; width: 20px;border-bottom: 1px solid #999999; height:45px;\"><input type=\"radio\" name=\"cart_ship_method\" id=\"cart_method_".$num."\" value=\"".$num."\" checked=\"checked\" /></div>\n";
+		$out .= "			<div style=\"float:left; width: 230px;border-bottom: 1px solid #999999; height:45px;\"><label for=\"cart_method_".$num."\"><strong>Standard</strong><br />Shipping Cost: FREE</label></div>\n";
+		$out .= "			<div style=\"float:left; width: 200px;border-bottom: 1px solid #999999; height:45px;\">5 to 7 business days</div>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"clearfloat\"></div>\n";	
+		$out .= "	</div>\n";
+		$out .= "	<div class=\"order-continue\"><input class=\"green button\" name=\"cart_btn\" type=\"submit\" value=\"CONTINUE\" /></div>\n";
+		$out .= "	<input type=\"hidden\" name=\"command\" value=\"shipping\" />\n";
+		$out .= "</form>\n";
+		$out .= "</div>\n";
 		
-	// 	// if ($this->ShippingAddress->CountrySmall == "US")
-	// 	// {
-	// 	// 	$usps->Service = ServiceUSPS::MediaMail;
-	// 	// 	$usps->Send();
-			
-	// 	// 	if (count($usps->Rates) > 0)
-	// 	// 	{
-	// 	// 		$num++;
-	// 	// 		$this->ShipMethodList[$num] = array("USPSMMDC", money_format("%.2n", round($usps->Rates[0]->Rate * $multiplier, 2)));
-				
-	// 	// 		$out .= "		<div class=\"address-line\">\n";
-	// 	// 		$out .= "			<div style=\"float:left; width: 20px;border-bottom: 1px solid #999999; height:45px;\"><input type=\"radio\" name=\"cart_ship_method\" id=\"cart_method_".$num."\" value=\"".$num."\"".($this->ShippingService == "USPSMMDC" ? " checked=\"checked\"" : "")." /></div>\n";
-	// 	// 		$out .= "			<div style=\"float:left; width: 230px;border-bottom: 1px solid #999999; height:45px;\"><label for=\"cart_method_".$num."\"><strong>Media Mail</strong><br />Shipping Cost: $".money_format("%.2n", round($usps->Rates[0]->Rate * $multiplier, 2))."</label></div>\n";
-	// 	// 		$out .= "			<div style=\"float:left; width: 200px;border-bottom: 1px solid #999999; height:45px;\">7 to 10 business days</div>\n";
-	// 	// 		$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	// 		$out .= "		</div>\n";
-	// 	// 		$out .= "		<div class=\"clearfloat\"></div>\n";
-	// 	// 	}
-	// 	// }
+		if (count($this->ShipMethodList) == 0)
+			$out = "";
 		
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<div class=\"order-continue\"><input class=\"green button\" name=\"cart_btn\" type=\"submit\" value=\"CONTINUE\" /></div>\n";
-	// 	$out .= "	<input type=\"hidden\" name=\"command\" value=\"shipping\" />\n";
-	// 	$out .= "</form>\n";
-	// 	$out .= "</div>\n";
-		
-	// 	if (count($this->ShipMethodList) == 0)
-	// 		$out = "";
-		
-	// 	return $out;
-	// }
+		return $out;
+	}
 	
 	public function BillingInfo($urltag="shop")
 	{

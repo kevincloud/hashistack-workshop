@@ -6,7 +6,8 @@ module.exports = function(app) {
     app.route('/cart')
         .post(cartfunc.add_to_cart)
         .get(cartfunc.list_cart_items)
-        .delete(cartfunc.empty_cart);
+        .delete(cartfunc.empty_cart)
+        .put(cartfunc.clean_cart);
     
     app.route('/cart/:productId')
         .get(cartfunc.get_cart_item)

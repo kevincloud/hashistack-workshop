@@ -64,33 +64,33 @@ class CartHandler extends BasePage
 	// 	echo "<div class=\"content\">".$order->DisplayOrder()."</div>";
 	// }
 	
-	// private function ProcessCart()
-	// {
-	// 	if (!isset($this->PageVariables["command"]))
-	// 	{
-	// 		echo "<div class=\"content\">Sorry. This isn't yet implemented.</div>";
-	// 		return;
-	// 	}
+	private function ProcessCart()
+	{
+		if (!isset($this->PageVariables["command"]))
+		{
+			echo "<div class=\"content\">Sorry. This isn't yet implemented.</div>";
+			return;
+		}
 		
-	// 	switch ($this->PageVariables["command"])
-	// 	{
-	// 		case "placeorder":
-	// 			$this->PlaceOrder();
-	// 			break;
-	// 		case "shipping":
-	// 			$this->SaveShipping();
-	// 			break;
-	// 		case "address";
-	// 			$this->SaveAddress();
-	// 			break;
-	// 		case "review":
-	// 			$this->UpdateCart();
-	// 			break;
-	// 		default:
-	// 			echo "<div class=\"content\">Sorry. This isn't yet implemented.</div>";
-	// 			break;
-	// 	}
-	// }
+		switch ($this->PageVariables["command"])
+		{
+			case "placeorder":
+				$this->PlaceOrder();
+				break;
+			case "shipping":
+				$this->SaveShipping();
+				break;
+			case "address";
+				$this->SaveAddress();
+				break;
+			case "review":
+				$this->UpdateCart();
+				break;
+			default:
+				echo "<div class=\"content\">Sorry. This isn't yet implemented.</div>";
+				break;
+		}
+	}
 	
 	// private function PlaceOrder()
 	// {
@@ -175,121 +175,104 @@ class CartHandler extends BasePage
 	// 	}
 	// }
 	
-	// private function SaveShipping()
-	// {
-	// 	if (isset($this->Cart))
-	// 	{
-	// 		$this->Cart->ShippingService = $this->Cart->ShipMethodList[intval($this->PageVariables["cart_ship_method"])][0];
-	// 		$this->Cart->ShippingAmount = floatval($this->Cart->ShipMethodList[intval($this->PageVariables["cart_ship_method"])][1]);
-	// 		$this->Cart->Checkout = true;
+	private function SaveShipping()
+	{
+		if (isset($this->Cart))
+		{
+			$this->Cart->ShippingService = $this->Cart->ShipMethodList[intval($this->PageVariables["cart_ship_method"])][0];
+			$this->Cart->ShippingAmount = floatval($this->Cart->ShipMethodList[intval($this->PageVariables["cart_ship_method"])][1]);
+			$this->Cart->Checkout = true;
 			
-	// 		$this->Redirect("/".$this->_urltag."/cart/confirm");
-	// 	}
-	// 	else
-	// 		$this->Redirect("/shop/cart/view");
-	// }
+			$this->Redirect("/".$this->_urltag."/cart/confirm");
+		}
+		else
+			$this->Redirect("/shop/cart/view");
+	}
 	
-	// private function SaveAddress()
-	// {
-	// 	if (isset($this->Cart))
-	// 	{
-	// 		$this->Cart->BillingAddress->Contact = trim($this->PageVariables["cart_b_contact"]);
-	// 		$this->Cart->BillingAddress->Address1 = trim($this->PageVariables["cart_b_address1"]);
-	// 		$this->Cart->BillingAddress->Address2 = trim($this->PageVariables["cart_b_address2"]);
-	// 		$this->Cart->BillingAddress->CountryCode = trim($this->PageVariables["cart_b_country"]);
-	// 		$this->Cart->BillingAddress->City = trim($this->PageVariables["cart_b_city"]);
-	// 		$this->Cart->BillingAddress->State = ($this->Cart->BillingAddress->CountryCode == 840 || $this->Cart->BillingAddress->CountryCode == 36 || $this->Cart->BillingAddress->CountryCode == 124) ? trim($this->PageVariables["cart_b_state"]) : trim($this->PageVariables["cart_b_istate"]);
-	// 		$this->Cart->BillingAddress->Zip = trim($this->PageVariables["cart_b_zip"]);
-	// 		$this->Cart->BillingAddress->Country = $this->_db->get_var("select code from cc_countries where numcode = ".smartQuote($this->PageVariables["cart_b_country"]));
-	// 		$this->Cart->BillingAddress->CountrySmall = $this->_db->get_var("select smallcode from cc_countries where numcode = ".smartQuote($this->PageVariables["cart_b_country"]));
-	// 		$this->Cart->BillingAddress->Phone = trim($this->PageVariables["cart_b_phone"]);
+	private function SaveAddress()
+	{
+		if (isset($this->Cart))
+		{
+			// $this->Cart->BillingAddress->Contact = trim($this->PageVariables["cart_b_contact"]);
+			$this->Cart->BillingAddress->Address1 = trim($this->PageVariables["cart_b_address1"]);
+			$this->Cart->BillingAddress->Address2 = trim($this->PageVariables["cart_b_address2"]);
+			$this->Cart->BillingAddress->City = trim($this->PageVariables["cart_b_city"]);
+			$this->Cart->BillingAddress->State = trim($this->PageVariables["cart_b_state"]);
+			$this->Cart->BillingAddress->Zip = trim($this->PageVariables["cart_b_zip"]);
+			$this->Cart->BillingAddress->Phone = trim($this->PageVariables["cart_b_phone"]);
 	
-	// 		$this->Cart->ShippingAddress->Contact = trim($this->PageVariables["cart_s_contact"]);
-	// 		$this->Cart->ShippingAddress->Address1 = trim($this->PageVariables["cart_s_address1"]);
-	// 		$this->Cart->ShippingAddress->Address2 = trim($this->PageVariables["cart_s_address2"]);
-	// 		$this->Cart->ShippingAddress->CountryCode = trim($this->PageVariables["cart_s_country"]);
-	// 		$this->Cart->ShippingAddress->City = trim($this->PageVariables["cart_s_city"]);
-	// 		$this->Cart->ShippingAddress->State = ($this->Cart->ShippingAddress->CountryCode == 840 || $this->Cart->ShippingAddress->CountryCode == 36 || $this->Cart->ShippingAddress->CountryCode == 124) ? trim($this->PageVariables["cart_s_state"]) : trim($this->PageVariables["cart_s_istate"]);
-	// 		$this->Cart->ShippingAddress->Zip = trim($this->PageVariables["cart_s_zip"]);
-	// 		$this->Cart->ShippingAddress->Country = $this->_db->get_var("select code from cc_countries where numcode = ".smartQuote($this->PageVariables["cart_s_country"]));
-	// 		$this->Cart->ShippingAddress->CountrySmall = $this->_db->get_var("select smallcode from cc_countries where numcode = ".smartQuote($this->PageVariables["cart_s_country"]));
-	// 		$this->Cart->ShippingAddress->Phone = trim($this->PageVariables["cart_s_phone"]);
+			// $this->Cart->ShippingAddress->Contact = trim($this->PageVariables["cart_s_contact"]);
+			$this->Cart->ShippingAddress->Address1 = trim($this->PageVariables["cart_s_address1"]);
+			$this->Cart->ShippingAddress->Address2 = trim($this->PageVariables["cart_s_address2"]);
+			$this->Cart->ShippingAddress->City = trim($this->PageVariables["cart_s_city"]);
+			$this->Cart->ShippingAddress->State = trim($this->PageVariables["cart_s_state"]);
+			$this->Cart->ShippingAddress->Zip = trim($this->PageVariables["cart_s_zip"]);
+			$this->Cart->ShippingAddress->Phone = trim($this->PageVariables["cart_s_phone"]);
 			
-	// 		$this->Cart->Checkout = true;
-	// 		if (isset($this->PageVariables["cart_b_default"]))
-	// 			$this->Cart->ShippingAddress->SaveAddresses = $this->PageVariables["cart_b_default"] == "1" ? true : false;
-	// 		else
-	// 			$this->Cart->ShippingAddress->SaveAddresses = false;
-	// 		$this->Cart->LastError = "";
+			$this->Cart->ShippingAddress->SaveAddresses = false;
 			
-	// 		if (trim($this->PageVariables["cart_s_phone"]) == "") $this->Cart->LastError = "Shipping Address Error: The billing phone number is missing";
-	// 		if (trim($this->PageVariables["cart_s_zip"]) == "") $this->Cart->LastError = "Shipping Address Error: The zip/postal code is missing";
-	// 		if (trim($this->PageVariables["cart_s_city"]) == "") $this->Cart->LastError = "Shipping Address Error: The city name is missing";
-	// 		if (trim($this->PageVariables["cart_s_address1"]) == "") $this->Cart->LastError = "Shipping Address Error: The street address is missing";
-	// 		if (trim($this->PageVariables["cart_s_contact"]) == "") $this->Cart->LastError = "Shipping Address Error: The contact name is missing";
-	// 		if ($this->Cart->ShippingAddress->State == "") $this->Cart->LastError = "Shipping Address Error: The state is missing";
+			if (trim($this->PageVariables["cart_s_phone"]) == "") $this->Cart->LastError = "Shipping Address Error: The billing phone number is missing";
+			if (trim($this->PageVariables["cart_s_zip"]) == "") $this->Cart->LastError = "Shipping Address Error: The zip/postal code is missing";
+			if (trim($this->PageVariables["cart_s_city"]) == "") $this->Cart->LastError = "Shipping Address Error: The city name is missing";
+			if (trim($this->PageVariables["cart_s_address1"]) == "") $this->Cart->LastError = "Shipping Address Error: The street address is missing";
+			// if (trim($this->PageVariables["cart_s_contact"]) == "") $this->Cart->LastError = "Shipping Address Error: The contact name is missing";
+			if (trim($this->PageVariables["cart_s_state"]) == "") $this->Cart->LastError = "Shipping Address Error: The state is missing";
 			
-	// 		if (trim($this->PageVariables["cart_b_phone"]) == "") $this->Cart->LastError = "Billing Address Error: The billing phone number is missing";
-	// 		if (trim($this->PageVariables["cart_b_zip"]) == "") $this->Cart->LastError = "Billing Address Error: The zip/postal code is missing";
-	// 		if (trim($this->PageVariables["cart_b_city"]) == "") $this->Cart->LastError = "Billing Address Error: The city name is missing";
-	// 		if (trim($this->PageVariables["cart_b_address1"]) == "") $this->Cart->LastError = "Billing Address Error: The street address is missing";
-	// 		if ($this->Cart->BillingAddress->State == "") $this->Cart->LastError = "Billing Address Error: The state is missing";
+			if (trim($this->PageVariables["cart_b_phone"]) == "") $this->Cart->LastError = "Billing Address Error: The billing phone number is missing";
+			if (trim($this->PageVariables["cart_b_zip"]) == "") $this->Cart->LastError = "Billing Address Error: The zip/postal code is missing";
+			if (trim($this->PageVariables["cart_b_city"]) == "") $this->Cart->LastError = "Billing Address Error: The city name is missing";
+			if (trim($this->PageVariables["cart_b_address1"]) == "") $this->Cart->LastError = "Billing Address Error: The street address is missing";
+			if (trim($this->PageVariables["cart_b_state"]) == "") $this->Cart->LastError = "Billing Address Error: The state is missing";
 			
-	// 		if ($this->Cart->LastError != "")
-	// 			$this->Redirect("/".$this->_urltag."/cart/billing");
-	// 		else
-	// 		{
-	// 			if ($this->Cart->IsESDOnly())
-	// 				$this->Redirect("/".$this->_urltag."/cart/confirm");
-	// 			else
-	// 				$this->Redirect("/".$this->_urltag."/cart/shipping");
-	// 		}
-	// 	}
-	// 	else
-	// 		$this->Redirect("/shop/cart/view");
-	// }
+			if ($this->Cart->LastError != "")
+				$this->Redirect("/".$this->_urltag."/cart/billing");
+			else
+			{
+				if ($this->Cart->IsESDOnly())
+					$this->Redirect("/".$this->_urltag."/cart/confirm");
+				else
+					$this->Redirect("/".$this->_urltag."/cart/shipping");
+			}
+		}
+		else
+			$this->Redirect("/shop/cart/view");
+	}
 	
-	// private function UpdateCart()
-	// {
-	// 	if (!isset($this->PageVariables["cart_item"]))
-	// 	{
-	// 		throw new Exception('There was an error updating the shopping cart. [Error 1002]');
-	// 	}
+	private function UpdateCart()
+	{
+		if (!isset($this->PageVariables["cart_item"]))
+		{
+			throw new Exception('There was an error updating the shopping cart. [Error 1002]');
+		}
 		
-	// 	if (!isset($this->PageVariables["cart_promocode"]))
-	// 	{
-	// 		throw new Exception('There was an error updating the shopping cart. [Error 1003]');
-	// 	}
+		foreach ($this->Cart->Items as &$item)
+		{
+			$this->Cart->AddItem($item->PID, $this->PageVariables["cart_item"][$item->PID]);
+		}
+		$this->Cart->CleanCart();
 		
-	// 	foreach ($this->Cart->Items as &$item)
-	// 	{
-	// 		$item->Quantity = $this->PageVariables["cart_item"][$item->PID];
-	// 	}
-	// 	$this->Cart->PromoCode = strtoupper($this->PageVariables["cart_promocode"]);
-	// 	$this->Cart->CleanCart();
+		$cart = false;
+		if (isset($this->PageVariables["cart_process"]) && $this->PageVariables["cart_process"] == "checkout") $cart = true;
 		
-	// 	$cart = false;
-	// 	if (isset($this->PageVariables["cart_process"]) && $this->PageVariables["cart_process"] == "checkout") $cart = true;
-		
-	// 	if ($cart)
-	// 		$this->Redirect("/".$this->_urltag."/cart/billing");
-	// 	else
-	// 	{
-	// 		if (isset($this->PageVariables["cart_pid"]))
-	// 		{
-	// 			if ($this->Cart->Contains($this->PageVariables["cart_pid"]))
-	// 			{
-	// 				$p = new Product($this->_db);
-	// 				$p->GetProduct($this->PageVariables["cart_pid"]);
-	// 				$this->Redirect("/shop/cart/add/".$p->PID."/".$p->Identifier);
-	// 			}
-	// 			else
-	// 				$this->Redirect("/shop/cart/view");
-	// 		}
-	// 		else
-	// 			$this->Redirect("/shop/cart/view");
-	// 	}
-	// }
+		if ($cart)
+			$this->Redirect("/".$this->_urltag."/cart/billing");
+		else
+		{
+			if (isset($this->PageVariables["cart_pid"]))
+			{
+				if ($this->Cart->Contains($this->PageVariables["cart_pid"]))
+				{
+					$p = new Product($this->_db);
+					$p->GetProduct($this->PageVariables["cart_pid"]);
+					$this->Redirect("/shop/cart/add/".$p->PID."/".$p->Identifier);
+				}
+				else
+					$this->Redirect("/shop/cart/view");
+			}
+			else
+				$this->Redirect("/shop/cart/view");
+		}
+	}
 	
 	// private function ShowPayment()
 	// {

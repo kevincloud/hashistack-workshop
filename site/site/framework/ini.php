@@ -15,6 +15,7 @@
 ini_set('display_errors', 'On');
 ini_set('display_startup_errors', 'On');
 error_reporting(E_ALL);
+$region = "us-east-1";
 
 // ***INLINESQL***
 // include_once("plugins/ezsql/ez_sql_core.php");
@@ -35,7 +36,9 @@ include_once("classes/Account.php");
 include_once("classes/Order.php");
 include_once("classes/Invoice.php");
 include_once("classes/ShoppingCart.php");
-include_once("config.php");
+
+if(file_exists('config.php'))
+    include_once("config.php");
 
 // Set the default time zone
 date_default_timezone_set('America/New_York');
@@ -62,36 +65,9 @@ ob_implicit_flush(false);
 // API INITIALIZATION
 //////////////////////////////////////////////////////////////////////////////////
 
-// $ch = curl_init();
-// curl_setopt ($ch, CURLOPT_URL, $authapiurl);
-// curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-// $consuloutput = json_decode(curl_exec($ch));
-// curl_close($ch);
-// $authapi = "http://" . $consuloutput[0]->Address . ":5825";
 $authapi = "http://auth-api.service.".$region.".consul:5825";
-
-// $ch = curl_init();
-// curl_setopt ($ch, CURLOPT_URL, $productapiurl);
-// curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-// $consuloutput = json_decode(curl_exec($ch));
-// curl_close($ch);
-// $productapi = "http://" . $consuloutput[0]->Address . ":5821";
 $productapi = "http://product-api.service.".$region.".consul:5821";
-
-// $ch = curl_init();
-// curl_setopt ($ch, CURLOPT_URL, $customerapiurl);
-// curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-// $consuloutput = json_decode(curl_exec($ch));
-// curl_close($ch);
-// $customerapi = "http://" . $consuloutput[0]->Address . ":5822";
 $customerapi = "http://customer-api.service.".$region.".consul:5822";
-
-// $ch = curl_init();
-// curl_setopt ($ch, CURLOPT_URL, $cartapiurl);
-// curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-// $consuloutput = json_decode(curl_exec($ch));
-// curl_close($ch);
-// $cartapi = "http://" . $consuloutput[0]->Address . ":5823";
 $cartapi = "http://cart-api.service.".$region.".consul:5823";
 
 //////////////////////////////////////////////////////////////////////////////////
