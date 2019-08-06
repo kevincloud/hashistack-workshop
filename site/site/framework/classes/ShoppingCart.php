@@ -20,8 +20,6 @@ class ShoppingCart
 		global $cartapi;
 
 		$this->CartApi = $cartapi."/cart";
-		$this->ShippingAddress = new Address();
-		$this->BillingAddress = new Address();
 	}
 		
 	public function Count()
@@ -861,11 +859,13 @@ class ShoppingCart
 		$strsel = "";
 		$initdisplayb = "";
 		$initdisplays = "";
-		
+
+		$acct = $_SESSION["__account__"];
+
 		if ($this->BillingAddress == NULL)
-			$this->BillingAddress = clone $_SESSION["__account__"]->BillingAddress;
+			$this->BillingAddress = clone $acct->BillingAddress;
 		if ($this->ShippingAddress == NULL)
-			$this->ShippingAddress = clone $_SESSION["__account__"]->ShippingAddress;
+			$this->ShippingAddress = clone $acct->ShippingAddress;
 		
 		$out .= $this->HideSidebar();
 		$out .= "<div class=\"content\">\n";

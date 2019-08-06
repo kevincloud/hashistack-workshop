@@ -225,10 +225,7 @@ class CartHandler extends BasePage
 			if (trim($this->PageVariables["cart_b_state"]) == "") $this->Cart->LastError = "Billing Address Error: The state is missing";
 			
 			if ($this->Cart->LastError != "")
-			{
-				echo "<pre>".$this->Cart->LastError."</pre>";
 				$this->Redirect("/".$this->_urltag."/cart/billing");
-			}
 			else
 				$this->Redirect("/".$this->_urltag."/cart/shipping");
 		}

@@ -6,6 +6,7 @@ RewriteRule ^products/categories/(.*)$ /list.php?action=browser&category=$1 [L,Q
 RewriteRule ^products/(.*)/(.*)$ /product.php?pid=$1 [L,QSA]
 RewriteRule ^images/(.*)/(.*)$ /framework/image.php?pid=$1 [L,QSA]
 RewriteRule ^images/(.*)$ /framework/image.php?pid=$1 [L,QSA]
+RewriteRule ^shop/cart/images/(.*)\.jpg$ /framework/image.php?pid=$1 [L,QSA]
 RewriteRule ^shop/cart/add$ /manage_cart.php?action=add [L,QSA]
 RewriteRule ^shop/cart/add/(.*)/(.*)$ /manage_cart.php?action=added&pid=$1 [L,QSA]
 RewriteRule ^shop/cart/add/(.*)$ /manage_cart.php?action=add&cart_pid=$1&cart_qty=1 [L,QSA]
