@@ -183,11 +183,6 @@ class CartHandler extends BasePage
 			$this->Cart->ShippingAmount = floatval($this->Cart->ShipMethodList[intval($this->PageVariables["cart_ship_method"])][1]);
 			$this->Cart->Checkout = true;
 
-			echo "<pre>";
-			print_r($this->Cart);
-			echo "</pre>";
-			exit();
-
 			$this->Redirect("/".$this->_urltag."/cart/confirm");
 		}
 		else

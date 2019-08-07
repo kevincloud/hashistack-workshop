@@ -13,10 +13,10 @@ class Account
 	public $LastMessage = "";
 	public $BillingAddress = NULL;
 	public $ShippingAddress = NULL;
+	public $CreditCard = NULL;
 	
 	private $UserID = "";
 	
-	// ***INLINESQL***
 	private $AuthApi;
 	private $CustomerApi;
 	
@@ -768,15 +768,6 @@ class Account
 		if (!$address->AddressID) $address->AddressID = 0;
 		if ($address->CustomerID == '') $address->CustomerID = $this->CustomerID;
 		
-		// ***INLINESQL***
-		// $sql = "select code, country from cc_countries where numcode = ".smartQuote($country);
-		// $row = $this->_db->get_row($sql);
-		// if (count($row) > 0)
-		// {
-		// 	$address->Country = $row->code;
-		// 	$address->CountryName = $row->country;
-		// }
-		
 		$address->Contact = $contact;
 		$address->Address1 = $address1;
 		$address->Address2 = $address2;
@@ -1362,7 +1353,7 @@ class Address
 	{
 		$out = "";
 		
-		$out .= "			<div>".$this->Contact."</div>\n";
+		// $out .= "			<div>".$this->Contact."</div>\n";
 		$out .= "			<div>".$this->Address1."</div>\n";
 		if (!isBlank($this->Address2))
 		{

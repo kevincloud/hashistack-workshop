@@ -12,6 +12,7 @@ class ShoppingCart
 	public $TotalAmount = 0.0;
 	public $Order = NULL;
 	public $Comments = "";
+	public $PayType = "NEW";
 	
 	private $CartApi = "";
 
@@ -569,7 +570,6 @@ class ShoppingCart
 			$out .= "				<img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" />\n";
 			$out .= "				<strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."<br>Ships in 2 to 3 business days\n";
 			$out .= "			</p>\n";
-			$out .= "			<p class=\"format\">".$p->Format."</p>\n";
 			$out .= "			<p class=\"qty\">".$item->Quantity."</p>\n";
 			$out .= "			<p class=\"price\"><strong>$".money_format("%.2n", round($p->Price, 2))."</strong></p>\n";
 			$out .= "			<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->Price * $item->Quantity, 2))."</strong></p>\n";
@@ -646,6 +646,7 @@ class ShoppingCart
 		// }
 
 		// hard code terms for now
+		$this->CreditCard = new CreditCard();
 		$_SESSION["__account__"]->Terms = "NET30";
 		if (!isBlank($_SESSION["__account__"]->Terms))
 		{
@@ -669,7 +670,7 @@ class ShoppingCart
 			}
 			$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
 			$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == $_SESSION["__account__"]->Terms ? " checked=\"checked\"" : "")." id=\"pay_type_".strtolower($_SESSION["__account__"]->Terms)."\" name=\"pay_type\" value=\"".$_SESSION["__account__"]->Terms."\" style=\"vertical-align:middle;\" /></div>\n";
-			$out .= "					<div style=\"float:left;vertical-align:middle;\">".$lbl." (".$_SESSION["__account__"]->Terms.")</div>\n";
+			$out .= "					<div style=\"float:left;vertical-align:middle;\"><strong>".$lbl." (".$_SESSION["__account__"]->Terms.")</strong></div>\n";
 			$out .= "					<div class=\"clearfloat\"></div>\n";
 			$out .= "				</li>\n";
 		}
@@ -683,61 +684,61 @@ class ShoppingCart
 		$out .= "		<div style=\"float:right;margin-right:10px;width:360px;\">\n";
 		$out .= "			<div class=\"address-line\">\n";
 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Name on Credit Card: </div>\n";
-		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"35\" name=\"pay_new_cardname\" id=\"pay_new_cardname\" value=\"".$this->CardName."\" style=\"width:195px;\" /></div>\n";
+		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"35\" name=\"pay_new_cardname\" id=\"pay_new_cardname\" value=\"".$this->CreditCard->CardName."\" style=\"width:195px;\" /></div>\n";
 		$out .= "				<div class=\"clearfloat\"></div>\n";
 		$out .= "			</div>\n";
 		$out .= "			<div class=\"address-line\">\n";
 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Card Types: </div>\n";
 		$out .= "				<div class=\"address-input\" style=\"width:200px;\">";
-		$out .= "					<img src=\"/framework/img/VS_cards".($this->CardType != "" && $this->CardType != "VS" ? "_gray" : "").".png\" id=\"pay_cardtype_VS\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
-		$out .= "					<img src=\"/framework/img/MC_cards".($this->CardType != "" && $this->CardType != "MC" ? "_gray" : "").".png\" id=\"pay_cardtype_MC\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
-		$out .= "					<img src=\"/framework/img/AX_cards".($this->CardType != "" && $this->CardType != "AX" ? "_gray" : "").".png\" id=\"pay_cardtype_AX\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
-		$out .= "					<img src=\"/framework/img/DI_cards".($this->CardType != "" && $this->CardType != "DI" ? "_gray" : "").".png\" id=\"pay_cardtype_DI\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
+		$out .= "					<img src=\"/framework/img/VS_cards".($this->CreditCard->CardType != "" && $this->CreditCard->CardType != "VS" ? "_gray" : "").".png\" id=\"pay_cardtype_VS\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
+		$out .= "					<img src=\"/framework/img/MC_cards".($this->CreditCard->CardType != "" && $this->CreditCard->CardType != "MC" ? "_gray" : "").".png\" id=\"pay_cardtype_MC\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
+		$out .= "					<img src=\"/framework/img/AX_cards".($this->CreditCard->CardType != "" && $this->CreditCard->CardType != "AX" ? "_gray" : "").".png\" id=\"pay_cardtype_AX\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
+		$out .= "					<img src=\"/framework/img/DI_cards".($this->CreditCard->CardType != "" && $this->CreditCard->CardType != "DI" ? "_gray" : "").".png\" id=\"pay_cardtype_DI\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
 		$out .= "				</div>\n";
 		$out .= "				<div class=\"clearfloat\"></div>\n";
 		$out .= "			</div>\n";
 		$out .= "			<div class=\"address-line\">\n";
 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Card Number: </div>\n";
-		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"16\" name=\"pay_new_cardnum\" id=\"pay_new_cardnum\" value=\"".$this->CardNumber."\" onkeypress=\"return ccNumbersOnly(this, event);\" style=\"width:195px;\" /></div>\n";
+		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"16\" name=\"pay_new_cardnum\" id=\"pay_new_cardnum\" value=\"".$this->CreditCard->CardNumber."\" onkeypress=\"return ccNumbersOnly(this, event);\" style=\"width:195px;\" /></div>\n";
 		$out .= "				<div class=\"clearfloat\"></div>\n";
 		$out .= "			</div>\n";
 		$out .= "			<div class=\"address-line\">\n";
 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">CVV Number: </div>\n";
-		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"4\" name=\"pay_new_cvvnum\" id=\"pay_new_cvvnum\" value=\"".$this->CardCVV."\" onkeypress=\"return ccNumbersOnly(this, event);\" style=\"width:60px;\" /></div>\n";
+		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"4\" name=\"pay_new_cvvnum\" id=\"pay_new_cvvnum\" value=\"".$this->CreditCard->CVV."\" onkeypress=\"return ccNumbersOnly(this, event);\" style=\"width:60px;\" /></div>\n";
 		$out .= "				<div class=\"clearfloat\"></div>\n";
 		$out .= "			</div>\n";
 		$out .= "			<div class=\"address-line\">\n";
 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Expiration: </div>\n";
 		$out .= "				<div class=\"address-input\" style=\"width:200px;\">";
 		$out .= "					<select name=\"pay_new_expmonth\" id=\"pay_new_expmonth\" style=\"width:110px;\" />\n";
-		$out .= "						<option value=\"1\"".($this->CardExpMonth === 1 ? " selected" : "").">January</option>\n";
-		$out .= "						<option value=\"2\"".($this->CardExpMonth === 2 ? " selected" : "").">February</option>\n";
-		$out .= "						<option value=\"3\"".($this->CardExpMonth === 3 ? " selected" : "").">March</option>\n";
-		$out .= "						<option value=\"4\"".($this->CardExpMonth === 4 ? " selected" : "").">April</option>\n";
-		$out .= "						<option value=\"5\"".($this->CardExpMonth === 5 ? " selected" : "").">May</option>\n";
-		$out .= "						<option value=\"6\"".($this->CardExpMonth === 6 ? " selected" : "").">June</option>\n";
-		$out .= "						<option value=\"7\"".($this->CardExpMonth === 7 ? " selected" : "").">July</option>\n";
-		$out .= "						<option value=\"8\"".($this->CardExpMonth === 8 ? " selected" : "").">August</option>\n";
-		$out .= "						<option value=\"9\"".($this->CardExpMonth === 9 ? " selected" : "").">September</option>\n";
-		$out .= "						<option value=\"10\"".($this->CardExpMonth === 10 ? " selected" : "").">October</option>\n";
-		$out .= "						<option value=\"11\"".($this->CardExpMonth === 11 ? " selected" : "").">November</option>\n";
-		$out .= "						<option value=\"12\"".($this->CardExpMonth === 12 ? " selected" : "").">December</option>\n";
+		$out .= "						<option value=\"1\"".($this->CreditCard->ExpirationMonth === 1 ? " selected" : "").">January</option>\n";
+		$out .= "						<option value=\"2\"".($this->CreditCard->ExpirationMonth === 2 ? " selected" : "").">February</option>\n";
+		$out .= "						<option value=\"3\"".($this->CreditCard->ExpirationMonth === 3 ? " selected" : "").">March</option>\n";
+		$out .= "						<option value=\"4\"".($this->CreditCard->ExpirationMonth === 4 ? " selected" : "").">April</option>\n";
+		$out .= "						<option value=\"5\"".($this->CreditCard->ExpirationMonth === 5 ? " selected" : "").">May</option>\n";
+		$out .= "						<option value=\"6\"".($this->CreditCard->ExpirationMonth === 6 ? " selected" : "").">June</option>\n";
+		$out .= "						<option value=\"7\"".($this->CreditCard->ExpirationMonth === 7 ? " selected" : "").">July</option>\n";
+		$out .= "						<option value=\"8\"".($this->CreditCard->ExpirationMonth === 8 ? " selected" : "").">August</option>\n";
+		$out .= "						<option value=\"9\"".($this->CreditCard->ExpirationMonth === 9 ? " selected" : "").">September</option>\n";
+		$out .= "						<option value=\"10\"".($this->CreditCard->ExpirationMonth === 10 ? " selected" : "").">October</option>\n";
+		$out .= "						<option value=\"11\"".($this->CreditCard->ExpirationMonth === 11 ? " selected" : "").">November</option>\n";
+		$out .= "						<option value=\"12\"".($this->CreditCard->ExpirationMonth === 12 ? " selected" : "").">December</option>\n";
 		$out .= "					</select>\n";
 		$out .= "					<select name=\"pay_new_expyear\" id=\"pay_new_expyear\" style=\"width:75px;\" />\n";
 		for ($i = 0; $i < 10; $i++)
 		{
-			$out .= "						<option value=\"".(intval(date("Y")) + $i)."\"".($this->CardExpYear == (intval(date("Y")) + $i) ? " selected" : "").">".(intval(date("Y")) + $i)."</option>\n";
+			$out .= "						<option value=\"".(intval(date("Y")) + $i)."\"".($this->CreditCard->ExpirationYear == (intval(date("Y")) + $i) ? " selected" : "").">".(intval(date("Y")) + $i)."</option>\n";
 		}
 		$out .= "					</select>\n";
 		$out .= "				</div>\n";
-		$out .= "				<input type=\"hidden\" name=\"pay_new_cardtype\" id=\"pay_new_cardtype\" value=\"".$this->CardType."\" />\n";
+		$out .= "				<input type=\"hidden\" name=\"pay_new_cardtype\" id=\"pay_new_cardtype\" value=\"".$this->CreditCard->CardType."\" />\n";
 		$out .= "				<div class=\"clearfloat\"></div>\n";
 		$out .= "			</div>\n";
-		$out .= "			<div class=\"address-line\">\n";
-		$out .= "				<div class=\"address-label\" style=\"width:144px;\">&nbsp;</div>\n";
-		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"checkbox\"".($this->SaveCard ? " checked=\"checked\"" : "")." id=\"pay_new_save\" name=\"pay_new_save\" value=\"1\" /><label for=\"pay_new_save\"> Save for future purchases</label></div>";
-		$out .= "				<div class=\"clearfloat\"></div>\n";
-		$out .= "			</div>\n";
+		// $out .= "			<div class=\"address-line\">\n";
+		// $out .= "				<div class=\"address-label\" style=\"width:144px;\">&nbsp;</div>\n";
+		// $out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"checkbox\"".($this->SaveCard ? " checked=\"checked\"" : "")." id=\"pay_new_save\" name=\"pay_new_save\" value=\"1\" /><label for=\"pay_new_save\"> Save for future purchases</label></div>";
+		// $out .= "				<div class=\"clearfloat\"></div>\n";
+		// $out .= "			</div>\n";
 		$out .= "			<div class=\"order-summary-total\">&nbsp;</div>\n";
 		$out .= "		</div>\n";
 		$out .= "	</div>\n";
@@ -795,7 +796,7 @@ class ShoppingCart
 		$out .= "			<div style=\"float:left; width: 200px;border-bottom: 1px solid #999999; height:45px;\">5 to 7 business days</div>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
 		$out .= "		</div>\n";
-		$out .= "		<div class=\"clearfloat\"></div>\n";	
+		$out .= "		<div class=\"clearfloat\"></div>\n";
 		$out .= "	</div>\n";
 		$out .= "	<div class=\"order-continue\"><input class=\"green button\" name=\"cart_btn\" type=\"submit\" value=\"CONTINUE\" /></div>\n";
 		$out .= "	<input type=\"hidden\" name=\"command\" value=\"shipping\" />\n";
@@ -1287,7 +1288,7 @@ class ShoppingCart
 		$out .= "		<div class=\"just-added-banner\">You just added this item to your cart.</div>\n";
 		$out .= "		<div class=\"product-thumbnail\">\n";
 		//$out .= "			<a href=\"".$p->Permalink()."\"><img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" /></a>\n";
-		$out .= "			<a href=\"\"><img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" /></a>\n";
+		$out .= "			<a href=\"\"><img src=\"/images/".$p->PID."\" alt=\"".$p->ProductName."\" border=\"0\" /></a>\n";
 		$out .= "		</div>\n";
 		$out .= "		<div class=\"product-details\">\n";
 		$out .= "			<ul>\n";
