@@ -2,6 +2,9 @@ package com.javaperks.api.db;
 
 import java.util.Date;
 import java.util.List;
+// import javax.validation.constraints.NotNull;
+// import org.hibernate.validator.constraints.Length;
+// import org.hibernate.validator.constraints.NotBlank;
 
 public class Customer
 {

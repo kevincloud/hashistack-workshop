@@ -2,6 +2,7 @@ package com.javaperks.api.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 import java.lang.Integer;
 
 import java.sql.DriverManager;
@@ -83,6 +84,26 @@ public class CustomerDb
         return customers;
     }
 
+    public Status updateCustomer(Customer customer) {
+        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
+        {
+            String sql = "update customer_main set " +
+                "firstname = '" + customer.getFirstName().replace("'", "''") + "', " +
+                "lastname = '" + customer.getFirstName().replace("'", "''") + "', " +
+                "email = '" + customer.getFirstName().replace("'", "''") + "', " +
+                "dob = '" + customer.getFirstName().replace("'", "''") + "', " +
+                "ssn = '" + customer.getFirstName().replace("'", "''") + "', " +
+            "where custno = '" + Integer.toString(customer.getCustId()) + "'";
+            Statement s = cn.createStatement();
+            s.executeUpdate(sql);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        Status status = new Status(true, "Success!");
+        return status;
+    }
+
     public Customer getCustomerById(String id) {
         LOGGER.info("Get a customer by custid");
         Customer customer = null;
@@ -129,5 +150,34 @@ public class CustomerDb
         }
 
         return customer;
+    }
+
+    public List<Payment> getPaymentsByCustomerId(String custId) {
+        LOGGER.info("Get all customers");
+        List<Payment> payments = new ArrayList<Payment>();
+
+        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
+        {
+            String sql = "select * from customer_payment where custid = " + custId;
+            Statement s = cn.createStatement();
+            ResultSet rs = s.executeQuery(sql);
+
+            while(rs.next()) {
+                payments.add(new Payment(
+                    rs.getInt("payid"), 
+                    rs.getInt("custid"), 
+                    rs.getString("cardname"), 
+                    rs.getString("cardnumber"), 
+                    rs.getString("cardtype"), 
+                    rs.getString("cvv"), 
+                    rs.getString("expmonth"), 
+                    rs.getString("expyear"))
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return payments;
     }
 }

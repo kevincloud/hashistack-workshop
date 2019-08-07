@@ -9,6 +9,7 @@ data "template_file" "nomad-server-setup" {
         CONSUL_LICENSE = "${var.consul_license_key}"
         CONSUL_JOIN_KEY = "${var.consul_join_key}"
         CONSUL_JOIN_VALUE = "${var.consul_join_value}"
+        NOMAD_URL = "${var.nomad_dl_url}"
     }
 }
 

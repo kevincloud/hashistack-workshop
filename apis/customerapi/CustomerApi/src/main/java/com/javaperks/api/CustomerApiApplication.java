@@ -33,7 +33,7 @@ public class CustomerApiApplication extends Application<CustomerApiConfiguration
     public void run(CustomerApiConfiguration c, Environment e) throws Exception {
         LOGGER.info("Registering API Resources");
 
-        final CustomerInterface ci = new CustomerInterface(c.getVaultAddress(), c.getVaultToken());
+        final CustomerInterface ci = new CustomerInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
 
         e.jersey().register(ci);
     }

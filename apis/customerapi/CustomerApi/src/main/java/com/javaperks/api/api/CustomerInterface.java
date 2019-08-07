@@ -1,6 +1,9 @@
 package com.javaperks.api.api;
 
+// import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -21,10 +24,12 @@ public class CustomerInterface
     private String username;
     private String password;
     private String database;
+    private final Validator validator;
 
-    public CustomerInterface(String vaultAddress, String vaultToken) throws Exception {
+    public CustomerInterface(Validator validator, String vaultAddress, String vaultToken) throws Exception {
         VaultConfig vaultConfig;
 
+        this.validator = validator;
         this.vaultaddr = vaultAddress;
         this.vaulttoken = vaultToken;
 
@@ -59,5 +64,19 @@ public class CustomerInterface
     public Response getCustomerById(@PathParam("id") String id) {
         CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
         return Response.ok(cdb.getCustomerById(id)).build();
+    }
+
+    @GET
+    @Path("/payments/{id}")
+    public Response getPaymentsByCustomerId(@PathParam("id") String id) {
+        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(cdb.getPaymentsByCustomerId(id)).build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    public Response updateCustomer(Customer customer) {
+        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(cdb.updateCustomer(customer)).build();
     }
 }

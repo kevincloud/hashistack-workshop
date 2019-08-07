@@ -126,8 +126,8 @@ service consul stop
 service consul start
 
 echo "Installing Nomad..."
-wget https://releases.hashicorp.com/nomad/0.9.3/nomad_0.9.3_linux_amd64.zip
-sudo unzip nomad_0.9.3_linux_amd64.zip -d /usr/local/bin/
+curl -sfLo "nomad.zip" "${NOMAD_URL}"
+sudo unzip nomad.zip -d /usr/local/bin/
 
 # Server configuration
 export VAULT_ADDR=http://vault-main.service.${REGION}.consul:8200
