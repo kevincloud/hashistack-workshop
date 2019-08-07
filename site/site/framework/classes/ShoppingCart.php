@@ -73,11 +73,6 @@ class ShoppingCart
 		$result = $r->Post($this->CartApi, $a);
 	}
 	
-	public function InCheckout()
-	{
-		$_SESSION["__cart__"]->Checkout = true;
-	}
-	
 	// public function UpdateItem($pid, $qty)
 	// {
 	// 	// foreach ($this->Items as &$item)

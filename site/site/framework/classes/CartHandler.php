@@ -181,8 +181,13 @@ class CartHandler extends BasePage
 		{
 			$this->Cart->ShippingService = $this->Cart->ShipMethodList[intval($this->PageVariables["cart_ship_method"])][0];
 			$this->Cart->ShippingAmount = floatval($this->Cart->ShipMethodList[intval($this->PageVariables["cart_ship_method"])][1]);
-			$this->Cart->InCheckout();
-			
+			$this->Cart->Checkout = true;
+
+			echo "<pre>";
+			print_r($this->Cart);
+			echo "</pre>";
+			exit();
+
 			$this->Redirect("/".$this->_urltag."/cart/confirm");
 		}
 		else
@@ -193,6 +198,7 @@ class CartHandler extends BasePage
 	{
 		if (isset($this->Cart))
 		{
+			$this->Cart->Checkout = true;
 			// $this->Cart->BillingAddress->Contact = trim($this->PageVariables["cart_b_contact"]);
 			$this->Cart->BillingAddress->Address1 = trim($this->PageVariables["cart_b_address1"]);
 			$this->Cart->BillingAddress->Address2 = trim($this->PageVariables["cart_b_address2"]);
@@ -271,7 +277,7 @@ class CartHandler extends BasePage
 	
 	private function ShowPayment()
 	{
-		if (!$this->Cart->InCheckout())
+		if (!$this->Cart->Checkout)
 			$this->Redirect("/shop/cart/view");
 		else
 			echo $this->Cart->ConfirmPayment($this->_urltag);
@@ -279,7 +285,7 @@ class CartHandler extends BasePage
 	
 	private function ShowShipping()
 	{
-		if (!$this->Cart->InCheckout())
+		if (!$this->Cart->Checkout)
 			$this->Redirect("/shop/cart/view");
 		else
 		{
@@ -300,7 +306,7 @@ class CartHandler extends BasePage
 			echo $this->Cart->BillingInfo($this->_urltag);
 		else
 		{
-			$this->Cart->InCheckout();
+			$this->Cart->Checkout = true;
 			$this->Redirect("/profile/login");
 		}
 	}
