@@ -73,6 +73,10 @@ class ShoppingCart
 		$result = $r->Post($this->CartApi, $a);
 	}
 	
+	public function InCheckout()
+	{
+		$this->Checkout = true;
+	}
 	
 	// public function UpdateItem($pid, $qty)
 	// {

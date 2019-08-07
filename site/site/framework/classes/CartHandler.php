@@ -181,7 +181,7 @@ class CartHandler extends BasePage
 		{
 			$this->Cart->ShippingService = $this->Cart->ShipMethodList[intval($this->PageVariables["cart_ship_method"])][0];
 			$this->Cart->ShippingAmount = floatval($this->Cart->ShipMethodList[intval($this->PageVariables["cart_ship_method"])][1]);
-			$this->Cart->Checkout = true;
+			$this->Cart->InCheckout();
 			
 			$this->Redirect("/".$this->_urltag."/cart/confirm");
 		}
@@ -300,7 +300,7 @@ class CartHandler extends BasePage
 			echo $this->Cart->BillingInfo($this->_urltag);
 		else
 		{
-			$this->Cart->Checkout = true;
+			$this->Cart->InCheckout();
 			$this->Redirect("/profile/login");
 		}
 	}
@@ -349,7 +349,7 @@ class CartHandler extends BasePage
 		$this->Cart->SubtotalAmount = 0;
 		$this->Cart->TaxAmount = 0;
 		$this->Cart->TotalAmount = 0;
-		$this->Cart->ShippingService = "USPS1P";
+		$this->Cart->ShippingService = "FREE";
 		
 		if ($this->Cart->Count() > 0)
 		{
@@ -357,7 +357,7 @@ class CartHandler extends BasePage
 			$this->Cart->SubtotalAmount = 0;
 			$this->Cart->TaxAmount = 0;
 			$this->Cart->TotalAmount = 0;
-			$this->Cart->ShippingService = "USPS1P";
+			$this->Cart->ShippingService = "FREE";
 			echo $this->Cart->ReviewCart();
 		}
 		else
