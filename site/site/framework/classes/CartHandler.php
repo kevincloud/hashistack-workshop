@@ -271,7 +271,7 @@ class CartHandler extends BasePage
 	
 	private function ShowPayment()
 	{
-		if (!$this->Cart->Checkout)
+		if (!$this->Cart->InCheckout())
 			$this->Redirect("/shop/cart/view");
 		else
 			echo $this->Cart->ConfirmPayment($this->_urltag);
@@ -279,7 +279,7 @@ class CartHandler extends BasePage
 	
 	private function ShowShipping()
 	{
-		if (!$this->Cart->Checkout)
+		if (!$this->Cart->InCheckout())
 			$this->Redirect("/shop/cart/view");
 		else
 		{

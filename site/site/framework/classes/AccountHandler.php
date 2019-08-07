@@ -276,7 +276,7 @@ class AccountHandler extends BasePage
 		}
 		else
 		{
-			if ($this->Cart->Checkout)
+			if ($this->Cart->InCheckout())
 				$this->Redirect("/shop/cart/billing");
 			else
 				$this->Redirect(isBlank($this->Account->LastPage) ? "/" : $this->Account->LastPage);
@@ -331,7 +331,7 @@ class AccountHandler extends BasePage
 		}
 		else
 		{
-			if ($this->Cart->Checkout)
+			if ($this->Cart->InCheckout())
 				$this->Redirect("/shop/cart/billing");
 			else
 				$this->Redirect(isBlank($this->Account->LastPage) ? "/" : $this->Account->LastPage);

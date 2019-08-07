@@ -75,7 +75,7 @@ class ShoppingCart
 	
 	public function InCheckout()
 	{
-		$this->Checkout = true;
+		$_SESSION["__cart__"]->Checkout = true;
 	}
 	
 	// public function UpdateItem($pid, $qty)
