@@ -35,6 +35,7 @@ x = cursor.execute(sql)
 sql = """create table if not exists customer_addresses(
     addrid int auto_increment,
     custid int not null,
+    contact varchar(255) not null,
     address1 varchar(150) not null,
     address2 varchar(150),
     city varchar(150) not null,
@@ -50,6 +51,43 @@ sql = """create table if not exists customer_addresses(
 ) engine=innodb
 """
 x = cursor.execute(sql)
+
+sql = """create table if not exists customer_payment(
+    payid int auto_increment,
+    custid int not null,
+    cardname varchar(255) not null,
+    cardnumber varchar(30) not null,
+    cardtype varchar(2),
+    cvv varchar(5) not null,
+    expmonth varchar(2) not null,
+    expyear varchar(4) not null,
+    primary key(payid),
+    index idx_pay_custid (custid)
+) engine=innodb
+"""
+x = cursor.execute(sql)
+
+sql = """create table if not exists customer_invoice(
+    invid int auto_increment,
+    custid int not null,
+    invdate datetime not null,
+    orderid varchar(20),
+    amount decimal,
+    tax decimal,
+    shipping decimal,
+    total decimal,
+    datepaid datetime,
+    contact varchar(255) not null,
+    address1 varchar(150) not null,
+    address2 varchar(150),
+    city varchar(150) not null,
+    state varchar(2) not null,
+    zip varchar(20) not null,
+    phone varchar(35),
+    primary key(invid),
+    index idx_inv_custid (custid)
+) engine=innodb
+"""
 
 ##################################
 # Add Customer 1 - Janice Thompson
@@ -82,6 +120,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -90,12 +129,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'Janice Thompson', "
         "'3611 Farland Street', "
         "'Brockton', "
         "'MA', "
         "'02401', "
         "'774-240-5996', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Janice Thompson', "
+        "'3611 Farland Street', "
+        "'Brockton', "
+        "'MA', "
+        "'02401', "
+        "'774-240-5996', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Janice Thompson', "
+        "'378282246310005', "
+        "'AX', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
@@ -130,6 +210,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -138,12 +219,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'James Wilson', "
         "'1437 Capitol Avenue', "
         "'Paragon', "
         "'IN', "
         "'46166', "
         "'765-537-0152', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'James Wilson', "
+        "'1437 Capitol Avenue', "
+        "'Paragon', "
+        "'IN', "
+        "'46166', "
+        "'765-537-0152', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'James Wilson', "
+        "'371449635398431', "
+        "'AX', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
@@ -178,6 +300,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -186,12 +309,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'Tommy Ballinger', "
         "'2143 Wescam Court', "
         "'Reno', "
         "'NV', "
         "'89502', "
         "'775-856-9045', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Tommy Ballinger', "
+        "'2143 Wescam Court', "
+        "'Reno', "
+        "'NV', "
+        "'89502', "
+        "'775-856-9045', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Tommy Ballinger', "
+        "'378734493671000', "
+        "'AX', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
@@ -226,6 +390,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -234,12 +399,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'Mary McCann', "
         "'4512 Layman Avenue', "
         "'Robbins', "
         "'NC', "
         "'27325', "
         "'910-948-3965', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Mary McCann', "
+        "'4512 Layman Avenue', "
+        "'Robbins', "
+        "'NC', "
+        "'27325', "
+        "'910-948-3965', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Mary McCann', "
+        "'6011111111111117', "
+        "'DS', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
@@ -274,6 +480,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -282,12 +489,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'Chris Peterson', "
         "'2329 Joanne Lane', "
         "'Newburyport', "
         "'MA', "
         "'01950', "
         "'978-499-7306', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Chris Peterson', "
+        "'2329 Joanne Lane', "
+        "'Newburyport', "
+        "'MA', "
+        "'01950', "
+        "'978-499-7306', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Chris Peterson', "
+        "'6011000990139424', "
+        "'DS', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
@@ -322,6 +570,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -330,12 +579,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'Jennifer Jones', "
         "'589 Hidden Valley Road', "
         "'Lancaster', "
         "'PA', "
         "'17670', "
         "'717-224-9902', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Jennifer Jones', "
+        "'589 Hidden Valley Road', "
+        "'Lancaster', "
+        "'PA', "
+        "'17670', "
+        "'717-224-9902', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Jennifer Jones', "
+        "'5555555555554444', "
+        "'MC', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
@@ -370,6 +660,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -378,12 +669,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'Clint Mason', "
         "'3641 Alexander Drive', "
         "'Denton', "
         "'TX', "
         "'76201', "
         "'940-349-9386', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Clint Mason', "
+        "'3641 Alexander Drive', "
+        "'Denton', "
+        "'TX', "
+        "'76201', "
+        "'940-349-9386', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Clint Mason', "
+        "'5105105105105100', "
+        "'MC', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
@@ -418,6 +750,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -426,12 +759,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'Matt Grey', "
         "'1320 Tree Top Lane', "
         "'Wayne', "
         "'PA', "
         "'19087', "
         "'610-225-6567', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Matt Grey', "
+        "'1320 Tree Top Lane', "
+        "'Wayne', "
+        "'PA', "
+        "'19087', "
+        "'610-225-6567', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Matt Grey', "
+        "'4111111111111111', "
+        "'VI', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
@@ -466,6 +840,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -474,12 +849,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'Howard Turner', "
         "'1179 Lynn Street', "
         "'Woburn', "
         "'MA', "
         "'01801', "
         "'617-251-5420', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Howard Turner', "
+        "'1179 Lynn Street', "
+        "'Woburn', "
+        "'MA', "
+        "'01801', "
+        "'617-251-5420', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Howard Turner', "
+        "'4012888888881881', "
+        "'VI', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
@@ -514,6 +930,7 @@ nextid = rset[0][0]
 
 sql = ("insert into customer_addresses("
         "custid, "
+        "contact, "
         "address1, "
         "city, "
         "state, "
@@ -522,12 +939,53 @@ sql = ("insert into customer_addresses("
         "addrtype"
     ") values ("
         "" + str(nextid) + ", "
+        "'Larry Olsen', "
         "'2850 Still Street', "
         "'Oregon', "
         "'OH', "
         "'43616', "
         "'419-698-9890', "
         "'B'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_addresses("
+        "custid, "
+        "contact, "
+        "address1, "
+        "city, "
+        "state, "
+        "zip, "
+        "phone, "
+        "addrtype"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Larry Olsen', "
+        "'2850 Still Street', "
+        "'Oregon', "
+        "'OH', "
+        "'43616', "
+        "'419-698-9890', "
+        "'S'"
+    ")")
+x = cursor.execute(sql)
+
+sql = ("insert into customer_payment("
+        "custid, "
+        "cardname, "
+        "cardnumber, "
+        "cardtype, "
+        "cvv, "
+        "expmonth, "
+        "expyear"
+    ") values ("
+        "" + str(nextid) + ", "
+        "'Larry Olsen', "
+        "'4111111111111111', "
+        "'VI', "
+        "'344', "
+        "'08', "
+        "'2024'"
     ")")
 x = cursor.execute(sql)
 
