@@ -22,9 +22,9 @@ class CartHandler extends BasePage
 			case "continue":
 				$this->ProcessCart();
 				break;
-			// case "confirm":
-			// 	$this->ShowPayment();
-			// 	break;
+			case "confirm":
+				$this->ShowPayment();
+				break;
 			case "shipping":
 				$this->ShowShipping();
 				break;
@@ -269,13 +269,13 @@ class CartHandler extends BasePage
 		}
 	}
 	
-	// private function ShowPayment()
-	// {
-	// 	if (!$this->Cart->Checkout)
-	// 		$this->Redirect("/shop/cart/view");
-	// 	else
-	// 		echo $this->Cart->ConfirmPayment($this->_urltag);
-	// }
+	private function ShowPayment()
+	{
+		if (!$this->Cart->Checkout)
+			$this->Redirect("/shop/cart/view");
+		else
+			echo $this->Cart->ConfirmPayment($this->_urltag);
+	}
 	
 	private function ShowShipping()
 	{

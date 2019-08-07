@@ -15,6 +15,7 @@ RewriteRule ^shop/cart/remove/(.*)$ /manage_cart.php?action=remove&pid=$1 [L,QSA
 RewriteRule ^shop/cart/continue$ /manage_cart.php?action=continue [L,QSA]
 RewriteRule ^shop/cart/shipping$ /manage_cart.php?action=shipping [L,QSA]
 RewriteRule ^shop/cart/billing$ /manage_cart.php?action=billing [L,QSA]
+RewriteRule ^shop/cart/confirm$ /manage_cart.php?action=confirm [L,QSA]
 RewriteRule ^profile/login$ /user.php?action=login [L,QSA]
 RewriteRule ^profile/logout$ /user.php?action=logout [L,QSA]
 RewriteRule ^profile/view$ /user.php [L,QSA]

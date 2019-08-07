@@ -519,285 +519,249 @@ class ShoppingCart
 		return $retval;
 	}
 	
-	// public function ConfirmPayment($urltag="shop")
-	// {
-	// 	$out = "";
-	// 	$num = 1;
-	// 	$taxrate = 0.0;
-	// 	$savings = 0.0;
-	// 	$landing = $urltag == "special" ? true : false;
-	// 	$this->SubtotalAmount = 0.0;
-	// 	$this->TaxAmount = 0.0;
-	// 	$this->TotalAmount = 0.0;
+	public function ConfirmPayment($urltag="shop")
+	{
+		$out = "";
+		$num = 1;
+		$taxrate = 0.0;
+		$savings = 0.0;
+		$this->SubtotalAmount = 0.0;
+		$this->TaxAmount = 0.0;
+		$this->TotalAmount = 0.0;
 		
-	// 	$out .= $this->HideSidebar();
-	// 	$out .= "<div class=\"content\">\n";
-	// 	$out .= $this->Breadcrumbs("pay");
-	// 	$out .= "<form action=\"/".$urltag."/cart/continue\" method=\"post\" id=\"form_place_order\">\n";
-	// 	$out .= "	<div class=\"order-summary\" style=\"float:left;width:250px;margin-right:20px;padding:10px;\">\n";
-	// 	$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">Billing Address</div>\n";
-	// 	$out .= "		<div style=\"padding-left:10px;\">".$this->BillingAddress->DisplayFormatted()."</div>\n";
-	// 	$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">Shipping Address</div>\n";
-	// 	$out .= "		<div style=\"padding-left:10px;\">".$this->ShippingAddress->DisplayFormatted()."</div>\n";
-	// 	$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">E-mail Address</div>\n";
-	// 	$out .= "		<div style=\"padding-left:10px;\">\n";
-	// 	$out .= "			<div>".$_SESSION["__account__"]->Email."</div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">Special Instructions</div>\n";
-	// 	$out .= "		<div>\n";
-	// 	$out .= "			<div style=\"font-size:10px;\">250 characters or less</div>\n";
-	// 	$out .= "			<div><textarea name=\"pay_instructions\" id=\"pay_instructions\" maxlength=\"250\" style=\"width:100%;height:100px;\" >".$this->SpecialNotes."</textarea></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "	</div>\n";
+		$out .= $this->HideSidebar();
+		$out .= "<div class=\"content\">\n";
+		$out .= $this->Breadcrumbs("pay");
+		$out .= "<form action=\"/".$urltag."/cart/continue\" method=\"post\" id=\"form_place_order\">\n";
+		$out .= "	<div class=\"order-summary\" style=\"float:left;width:250px;margin-right:20px;padding:10px;\">\n";
+		$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">Billing Address</div>\n";
+		$out .= "		<div style=\"padding-left:10px;\">".$this->BillingAddress->DisplayFormatted()."</div>\n";
+		$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">Shipping Address</div>\n";
+		$out .= "		<div style=\"padding-left:10px;\">".$this->ShippingAddress->DisplayFormatted()."</div>\n";
+		$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">E-mail Address</div>\n";
+		$out .= "		<div style=\"padding-left:10px;\">\n";
+		$out .= "			<div>".$_SESSION["__account__"]->Email."</div>\n";
+		$out .= "		</div>\n";
+		$out .= "	</div>\n";
 		
 		
-	// 	$out .= "	<div class=\"order-summary\" style=\"float:right;width:680px;\">\n";
-	// 	$out .= "		<div class=\"order-summary-heading\">ORDER SUMMARY</div>\n";
-	// 	$out .= "		<div class=\"order-summary-titles\">";
-	// 	$out .= "			<p class=\"product\" style=\"width:300px;\">Product</p>\n";
-	// 	$out .= "			<p class=\"format\">Format</p>\n";
-	// 	$out .= "			<p class=\"qty\">Qty</p>\n";
-	// 	$out .= "			<p class=\"price\">Price</p>\n";
-	// 	$out .= "			<p class=\"itemtotal\">Item Total</p>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
+		$out .= "	<div class=\"order-summary\" style=\"float:right;width:680px;\">\n";
+		$out .= "		<div class=\"order-summary-heading\">ORDER SUMMARY</div>\n";
+		$out .= "		<div class=\"order-summary-titles\">";
+		$out .= "			<p class=\"product\" style=\"width:300px;\">Product</p>\n";
+		$out .= "			<p class=\"format\">Format</p>\n";
+		$out .= "			<p class=\"qty\">Qty</p>\n";
+		$out .= "			<p class=\"price\">Price</p>\n";
+		$out .= "			<p class=\"itemtotal\">Item Total</p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
 		
-	// 		foreach ($this->Items as &$item)
-	// 		{
-	// 			$p = new Product();
-	// 			$p->GetProduct($item->PID);
-	// 			$p->CalculateValues();
-	// 			$out .= "		<div class=\"order-summary-items".($num == 1 ? "-first" : "")."\">\n";
-	// 			$out .= "			<p class=\"product\" style=\"width:300px;\">\n";
-	// 			$out .= "				<img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" />\n";
-	// 			$out .= "				<strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."<br>Ships in 2 to 3 business days\n";
-	// 			$out .= "			</p>\n";
-	// 			$out .= "			<p class=\"format\">".$p->Format."</p>\n";
-	// 			$out .= "			<p class=\"qty\">".$item->Quantity."</p>\n";
-	// 			if ($p->CalculatedDiscount > 0)
-	// 			{
-	// 				$out .= "			<p class=\"price\">";
-	// 				$out .= "				<strong>$".money_format("%.2n", round($p->CalculatedPrice, 2))."</strong><br>\n";
-	// 				$out .= "				<span class=\"savings\">Save ".round($p->CalculatedDiscount)."%</span>\n";
-	// 				$out .= "			</p>\n";
-	// 				$out .= "			<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->CalculatedPrice * $item->Quantity, 2))."</strong></p>\n";
-	// 				$savings += round($p->Price - $p->CalculatedPrice, 2) * $item->Quantity;
-	// 				$this->SubtotalAmount += round($p->CalculatedPrice * $item->Quantity, 2); 
-	// 			}
-	// 			else
-	// 			{
-	// 				$out .= "			<p class=\"price\"><strong>$".money_format("%.2n", round($p->Price, 2))."</strong></p>\n";
-	// 				$out .= "			<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->Price * $item->Quantity, 2))."</strong></p>\n";
-	// 				$this->SubtotalAmount += round($p->Price * $item->Quantity, 2); 
-	// 			}
-	// 			$out .= "			</p>\n";
-	// 			$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 			$out .= "		</div>\n";
-	// 			$num++;
-	// 		}
-	// 		$out .= "	</div>\n";
-		
-	// 	$taxrate = $this->GetTaxRate();
-	// 	$this->TaxAmount = ($this->SubtotalAmount + $this->ShippingAmount) * $taxrate;
-	// 	$this->TotalAmount = $this->SubtotalAmount + $this->ShippingAmount + $this->TaxAmount;
-		
-		
-	// 	$out .= "	<div class=\"order-summary\" style=\"float:right;width:680px;position:relative;\">\n";
-	// 	$out .= "		<div class=\"order-summary-heading\">ORDER TOTAL</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
-	// 	if (!$landing)
-	// 		$out .= "		<p class=\"summary\" style=\"width:300px;padding-left:20px;font-weight:bold; font-size:16px;text-align:left;position:absolute; top:56px;\"><a href=\"/shop/cart/view\">Change Order...</a></p>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">\n";
-	// 	$out .= "			<p class=\"summary\" style=\"width:564px;\">Order Subtotal: </p>\n";
-	// 	$out .= "			<p class=\"totals\">$".money_format("%.2n", round($this->SubtotalAmount, 2))."</p>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	if (!$this->IsESDOnly())
-	// 	{
-	// 		$out .= "		<div class=\"order-summary-total\">\n";
-	// 		$out .= "			<p class=\"summary\" style=\"width:564px;\">Shipping: </p>\n";
-	// 		$out .= "			<p class=\"totals\">$".money_format("%.2n", round($this->ShippingAmount, 2))."</p>\n";
-	// 		$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "		</div>\n";
-	// 	}
-	// 	$out .= "		<div class=\"order-summary-total\">\n";
-	// 	$out .= "			<p class=\"summary\" style=\"width:564px;\">Estimated Tax: </p>\n";
-	// 	$out .= "			<p class=\"totals\">".($this->TaxAmount <= 0 ? "---" : "$".money_format("%.2n", round($this->TaxAmount, 2)))."</p>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">\n";
-	// 	$out .= "			<p class=\"summary\" style=\"width:564px;\"><strong>Estimated Total: </strong></p>\n";
-	// 	$out .= "			<p class=\"totals\"><strong>$".money_format("%.2n", round($this->TotalAmount, 2))."</strong></p>\n";
-	// 	$out .= "			<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "		</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
-	// 	$out .= "	</div>\n";
-		
-	// 	$out .= "	<div class=\"order-summary\" style=\"float:right;width:680px;position:relative;\">\n";
-	// 	$out .= "		<div class=\"order-summary-heading\">PAYMENT</div>\n";
-	// 	$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
-	// 	if ($this->TotalAmount <= 0)
-	// 	{
-	// 		$out .= "		<div style=\"float:left;margin-left:10px; width:290px;\">\n";
-	// 		$out .= "			<ul>\n";
-	// 		$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
-	// 		$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\" checked=\"checked\" id=\"pay_type_none\" name=\"pay_type\" value=\"NONE\" style=\"vertical-align:middle;\" /></div>\n";
-	// 		$out .= "					<div style=\"float:left;vertical-align:middle;\"><strong>No payment due</strong></div>\n";
-	// 		$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "				</li>\n";
-	// 		$out .= "			</ul>\n";
-	// 		$out .= "		</div>\n";
-	// 	}
-	// 	else
-	// 	{
-	// 		$out .= "		<div style=\"float:left;margin-left:10px; width:290px;\">\n";
-	// 		$out .= "			<ul>\n";
-	// 		$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
-	// 		$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == "NEW" ? " checked=\"checked\"" : "")." id=\"pay_type_new\" name=\"pay_type\" value=\"NEW\" style=\"vertical-align:middle;\" /></div>\n";
-	// 		$out .= "					<div style=\"float:left;vertical-align:middle;\"><strong>Enter Credit Card Information</strong></div>\n";
-	// 		$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "				</li>\n";
+		$r = new RestRunner();
+		$sessionid = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($sessionid);
 
-	// 		// ***INLINESQL***
-	// 		// $sql = "select * from cc_moulah where custid = ".smartQuote($_SESSION["__account__"]->CustomerID)." and isnull(custid, '') <> '' and active = 1 and case when convert(smallint, expyr) > YEAR(getdate()) then 1 when convert(smallint, expyr) = YEAR(getdate()) and convert(tinyint, expmo) >= month(getdate()) then 1 else 0 end = 1 order by id";
-	// 		// $rs = $this->_db->get_results($sql);
-	// 		// if (count($rs) > 0)
-	// 		// {
-	// 		// 	foreach ($rs as &$row)
-	// 		// 	{
-	// 		// 		$cc = new CreditCard();
-	// 		// 		$cc->CardID = $row->id;
-	// 		// 		$cc->RowID = strtoupper(str_replace(array("{", "}", "-"), "", mssql_guid_string($row->rguid)));
-	// 		// 		$cc->CardType = $row->cardtype;
-	// 		// 		$cc->CardName = $row->cardname;
-	// 		// 		$cc->CardNumber = $cc->DecodeNumber($row->cardnum);
-	// 		// 		$cc->ExpirationMonth = intval($row->expmo);
-	// 		// 		$cc->ExpirationYear = intval($row->expyr);
-	// 		// 		$cc->CVV = $row->cvv;
-					
-	// 		// 		$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
-	// 		// 		$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == $cc->RowID ? " checked=\"checked\"" : "")." id=\"pay_type_".$cc->RowID."\" name=\"pay_type\" value=\"".$cc->RowID."\" style=\"vertical-align:middle;\" /></div>\n";
-	// 		// 		$out .= "					<div style=\"float:left;vertical-align:middle;\">".$cc->DisplayFormatted()."</div>\n";
-	// 		// 		$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 		// 		$out .= "				</li>\n";
-	// 		// 	}
-	// 		// }
-	// 		if (!isBlank($_SESSION["__account__"]->Terms))
-	// 		{
-	// 			$itm = "";
-	// 			$lbl = "";
+		$result = $r->Get($this->CartApi, $a);
+		foreach ($result->items as $item)
+		{
+			$p = new Product();
+			$p->GetProduct($item->ProductId);
+			$out .= "		<div class=\"order-summary-items".($num == 1 ? "-first" : "")."\">\n";
+			$out .= "			<p class=\"product\" style=\"width:300px;\">\n";
+			$out .= "				<img src=\"".$p->ImageURL()."\" alt=\"".$p->ProductName."\" border=\"0\" />\n";
+			$out .= "				<strong>".$p->ProductName."</strong><br>by ".$p->Manufacturer."<br>Ships in 2 to 3 business days\n";
+			$out .= "			</p>\n";
+			$out .= "			<p class=\"format\">".$p->Format."</p>\n";
+			$out .= "			<p class=\"qty\">".$item->Quantity."</p>\n";
+			$out .= "			<p class=\"price\"><strong>$".money_format("%.2n", round($p->Price, 2))."</strong></p>\n";
+			$out .= "			<p class=\"itemtotal\"><strong>$".money_format("%.2n", round($p->Price * $item->Quantity, 2))."</strong></p>\n";
+			$this->SubtotalAmount += round($p->Price * $item->Quantity, 2); 
+			$out .= "			</p>\n";
+			$out .= "			<div class=\"clearfloat\"></div>\n";
+			$out .= "		</div>\n";
+			$num++;
+		}
+		$out .= "	</div>\n";
+		
+		$taxrate = $this->GetTaxRate();
+		$this->TaxAmount = ($this->SubtotalAmount + $this->ShippingAmount) * $taxrate;
+		$this->TotalAmount = $this->SubtotalAmount + $this->ShippingAmount + $this->TaxAmount;
+		
+		
+		$out .= "	<div class=\"order-summary\" style=\"float:right;width:680px;position:relative;\">\n";
+		$out .= "		<div class=\"order-summary-heading\">ORDER TOTAL</div>\n";
+		$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
+		$out .= "		<p class=\"summary\" style=\"width:300px;padding-left:20px;font-weight:bold; font-size:16px;text-align:left;position:absolute; top:56px;\"><a href=\"/shop/cart/view\">Change Order...</a></p>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<p class=\"summary\" style=\"width:564px;\">Order Subtotal: </p>\n";
+		$out .= "			<p class=\"totals\">$".money_format("%.2n", round($this->SubtotalAmount, 2))."</p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<p class=\"summary\" style=\"width:564px;\">Estimated Tax: </p>\n";
+		$out .= "			<p class=\"totals\">".($this->TaxAmount <= 0 ? "---" : "$".money_format("%.2n", round($this->TaxAmount, 2)))."</p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
+		$out .= "		<div class=\"order-summary-total\">\n";
+		$out .= "			<p class=\"summary\" style=\"width:564px;\"><strong>Estimated Total: </strong></p>\n";
+		$out .= "			<p class=\"totals\"><strong>$".money_format("%.2n", round($this->TotalAmount, 2))."</strong></p>\n";
+		$out .= "			<div class=\"clearfloat\"></div>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
+		$out .= "	</div>\n";
+		
+		$out .= "	<div class=\"order-summary\" style=\"float:right;width:680px;position:relative;\">\n";
+		$out .= "		<div class=\"order-summary-heading\">PAYMENT</div>\n";
+		$out .= "		<div class=\"order-summary-total\">&nbsp;</div>\n";
+		$out .= "		<div style=\"float:left;margin-left:10px; width:290px;\">\n";
+		$out .= "			<ul>\n";
+		$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
+		$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == "NEW" ? " checked=\"checked\"" : "")." id=\"pay_type_new\" name=\"pay_type\" value=\"NEW\" style=\"vertical-align:middle;\" /></div>\n";
+		$out .= "					<div style=\"float:left;vertical-align:middle;\"><strong>Enter Credit Card Information</strong></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</li>\n";
+
+		// ***INLINESQL***
+		// $sql = "select * from cc_moulah where custid = ".smartQuote($_SESSION["__account__"]->CustomerID)." and isnull(custid, '') <> '' and active = 1 and case when convert(smallint, expyr) > YEAR(getdate()) then 1 when convert(smallint, expyr) = YEAR(getdate()) and convert(tinyint, expmo) >= month(getdate()) then 1 else 0 end = 1 order by id";
+		// $rs = $this->_db->get_results($sql);
+		// if (count($rs) > 0)
+		// {
+		// 	foreach ($rs as &$row)
+		// 	{
+		// 		$cc = new CreditCard();
+		// 		$cc->CardID = $row->id;
+		// 		$cc->RowID = strtoupper(str_replace(array("{", "}", "-"), "", mssql_guid_string($row->rguid)));
+		// 		$cc->CardType = $row->cardtype;
+		// 		$cc->CardName = $row->cardname;
+		// 		$cc->CardNumber = $cc->DecodeNumber($row->cardnum);
+		// 		$cc->ExpirationMonth = intval($row->expmo);
+		// 		$cc->ExpirationYear = intval($row->expyr);
+		// 		$cc->CVV = $row->cvv;
 				
-	// 			switch($_SESSION["__account__"]->Terms)
-	// 			{
-	// 				case "NET30":
-	// 					$lbl = "30-Day Billing";
-	// 					break;
-	// 				case "NET45":
-	// 					$lbl = "45-Day Billing";
-	// 					break;
-	// 				case "NET60":
-	// 					$lbl = "90-Day Billing";
-	// 					break;
-	// 				case "NET90":
-	// 					$lbl = "90-Day Billing";
-	// 					break;
-	// 			}
-	// 			$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
-	// 			$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == $_SESSION["__account__"]->Terms ? " checked=\"checked\"" : "")." id=\"pay_type_".strtolower($_SESSION["__account__"]->Terms)."\" name=\"pay_type\" value=\"".$_SESSION["__account__"]->Terms."\" style=\"vertical-align:middle;\" /></div>\n";
-	// 			$out .= "					<div style=\"float:left;vertical-align:middle;\">".$lbl." (".$_SESSION["__account__"]->Terms.")</div>\n";
-	// 			$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 			$out .= "				</li>\n";
-	// 		}
-	// 		$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
-	// 		$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == "CHECK" ? " checked=\"checked\"" : "")." id=\"pay_type_check\" name=\"pay_type\" value=\"CHECK\" style=\"vertical-align:middle;\" /></div>\n";
-	// 		$out .= "					<div style=\"float:left;vertical-align:middle;\"><strong>Mail a Check or Money Order</strong></div>\n";
-	// 		$out .= "					<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "				</li>\n";
-	// 		$out .= "			</ul>\n";
-	// 		$out .= "		</div>\n";
-	// 		$out .= "		<div style=\"float:right;margin-right:10px;width:360px;\">\n";
-	// 		$out .= "			<div class=\"address-line\">\n";
-	// 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Name on Credit Card: </div>\n";
-	// 		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"35\" name=\"pay_new_cardname\" id=\"pay_new_cardname\" value=\"".$this->CardName."\" style=\"width:195px;\" /></div>\n";
-	// 		$out .= "				<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "			</div>\n";
-	// 		$out .= "			<div class=\"address-line\">\n";
-	// 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Card Types: </div>\n";
-	// 		$out .= "				<div class=\"address-input\" style=\"width:200px;\">";
-	// 		$out .= "					<img src=\"/framework/img/VS_cards".($this->CardType != "" && $this->CardType != "VS" ? "_gray" : "").".png\" id=\"pay_cardtype_VS\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
-	// 		$out .= "					<img src=\"/framework/img/MC_cards".($this->CardType != "" && $this->CardType != "MC" ? "_gray" : "").".png\" id=\"pay_cardtype_MC\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
-	// 		$out .= "					<img src=\"/framework/img/AX_cards".($this->CardType != "" && $this->CardType != "AX" ? "_gray" : "").".png\" id=\"pay_cardtype_AX\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
-	// 		$out .= "					<img src=\"/framework/img/DI_cards".($this->CardType != "" && $this->CardType != "DI" ? "_gray" : "").".png\" id=\"pay_cardtype_DI\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
-	// 		$out .= "				</div>\n";
-	// 		$out .= "				<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "			</div>\n";
-	// 		$out .= "			<div class=\"address-line\">\n";
-	// 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Card Number: </div>\n";
-	// 		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"16\" name=\"pay_new_cardnum\" id=\"pay_new_cardnum\" value=\"".$this->CardNumber."\" onkeypress=\"return ccNumbersOnly(this, event);\" style=\"width:195px;\" /></div>\n";
-	// 		$out .= "				<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "			</div>\n";
-	// 		$out .= "			<div class=\"address-line\">\n";
-	// 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">CVV Number: </div>\n";
-	// 		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"4\" name=\"pay_new_cvvnum\" id=\"pay_new_cvvnum\" value=\"".$this->CardCVV."\" onkeypress=\"return ccNumbersOnly(this, event);\" style=\"width:60px;\" /></div>\n";
-	// 		$out .= "				<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "			</div>\n";
-	// 		$out .= "			<div class=\"address-line\">\n";
-	// 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Expiration: </div>\n";
-	// 		$out .= "				<div class=\"address-input\" style=\"width:200px;\">";
-	// 		$out .= "					<select name=\"pay_new_expmonth\" id=\"pay_new_expmonth\" style=\"width:110px;\" />\n";
-	// 		$out .= "						<option value=\"1\"".($this->CardExpMonth === 1 ? " selected" : "").">January</option>\n";
-	// 		$out .= "						<option value=\"2\"".($this->CardExpMonth === 2 ? " selected" : "").">February</option>\n";
-	// 		$out .= "						<option value=\"3\"".($this->CardExpMonth === 3 ? " selected" : "").">March</option>\n";
-	// 		$out .= "						<option value=\"4\"".($this->CardExpMonth === 4 ? " selected" : "").">April</option>\n";
-	// 		$out .= "						<option value=\"5\"".($this->CardExpMonth === 5 ? " selected" : "").">May</option>\n";
-	// 		$out .= "						<option value=\"6\"".($this->CardExpMonth === 6 ? " selected" : "").">June</option>\n";
-	// 		$out .= "						<option value=\"7\"".($this->CardExpMonth === 7 ? " selected" : "").">July</option>\n";
-	// 		$out .= "						<option value=\"8\"".($this->CardExpMonth === 8 ? " selected" : "").">August</option>\n";
-	// 		$out .= "						<option value=\"9\"".($this->CardExpMonth === 9 ? " selected" : "").">September</option>\n";
-	// 		$out .= "						<option value=\"10\"".($this->CardExpMonth === 10 ? " selected" : "").">October</option>\n";
-	// 		$out .= "						<option value=\"11\"".($this->CardExpMonth === 11 ? " selected" : "").">November</option>\n";
-	// 		$out .= "						<option value=\"12\"".($this->CardExpMonth === 12 ? " selected" : "").">December</option>\n";
-	// 		$out .= "					</select>\n";
-	// 		$out .= "					<select name=\"pay_new_expyear\" id=\"pay_new_expyear\" style=\"width:75px;\" />\n";
-	// 		for ($i = 0; $i < 10; $i++)
-	// 		{
-	// 			$out .= "						<option value=\"".(intval(date("Y")) + $i)."\"".($this->CardExpYear == (intval(date("Y")) + $i) ? " selected" : "").">".(intval(date("Y")) + $i)."</option>\n";
-	// 		}
-	// 		$out .= "					</select>\n";
-	// 		$out .= "				</div>\n";
-	// 		$out .= "				<input type=\"hidden\" name=\"pay_new_cardtype\" id=\"pay_new_cardtype\" value=\"".$this->CardType."\" />\n";
-	// 		$out .= "				<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "			</div>\n";
-	// 		$out .= "			<div class=\"address-line\">\n";
-	// 		$out .= "				<div class=\"address-label\" style=\"width:144px;\">&nbsp;</div>\n";
-	// 		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"checkbox\"".($this->SaveCard ? " checked=\"checked\"" : "")." id=\"pay_new_save\" name=\"pay_new_save\" value=\"1\" /><label for=\"pay_new_save\"> Save for future purchases</label></div>";
-	// 		$out .= "				<div class=\"clearfloat\"></div>\n";
-	// 		$out .= "			</div>\n";
-	// 		$out .= "			<div class=\"order-summary-total\">&nbsp;</div>\n";
-	// 		$out .= "		</div>\n";
-	// 	}
-	// 	$out .= "	</div>\n";
+		// 		$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
+		// 		$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == $cc->RowID ? " checked=\"checked\"" : "")." id=\"pay_type_".$cc->RowID."\" name=\"pay_type\" value=\"".$cc->RowID."\" style=\"vertical-align:middle;\" /></div>\n";
+		// 		$out .= "					<div style=\"float:left;vertical-align:middle;\">".$cc->DisplayFormatted()."</div>\n";
+		// 		$out .= "					<div class=\"clearfloat\"></div>\n";
+		// 		$out .= "				</li>\n";
+		// 	}
+		// }
+
+		// hard code terms for now
+		$_SESSION["__account__"]->Terms = "NET30";
+		if (!isBlank($_SESSION["__account__"]->Terms))
+		{
+			$itm = "";
+			$lbl = "";
+			
+			switch($_SESSION["__account__"]->Terms)
+			{
+				case "NET30":
+					$lbl = "30-Day Billing";
+					break;
+				case "NET45":
+					$lbl = "45-Day Billing";
+					break;
+				case "NET60":
+					$lbl = "90-Day Billing";
+					break;
+				case "NET90":
+					$lbl = "90-Day Billing";
+					break;
+			}
+			$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
+			$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == $_SESSION["__account__"]->Terms ? " checked=\"checked\"" : "")." id=\"pay_type_".strtolower($_SESSION["__account__"]->Terms)."\" name=\"pay_type\" value=\"".$_SESSION["__account__"]->Terms."\" style=\"vertical-align:middle;\" /></div>\n";
+			$out .= "					<div style=\"float:left;vertical-align:middle;\">".$lbl." (".$_SESSION["__account__"]->Terms.")</div>\n";
+			$out .= "					<div class=\"clearfloat\"></div>\n";
+			$out .= "				</li>\n";
+		}
+		$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
+		$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == "CHECK" ? " checked=\"checked\"" : "")." id=\"pay_type_check\" name=\"pay_type\" value=\"CHECK\" style=\"vertical-align:middle;\" /></div>\n";
+		$out .= "					<div style=\"float:left;vertical-align:middle;\"><strong>Mail a Check or Money Order</strong></div>\n";
+		$out .= "					<div class=\"clearfloat\"></div>\n";
+		$out .= "				</li>\n";
+		$out .= "			</ul>\n";
+		$out .= "		</div>\n";
+		$out .= "		<div style=\"float:right;margin-right:10px;width:360px;\">\n";
+		$out .= "			<div class=\"address-line\">\n";
+		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Name on Credit Card: </div>\n";
+		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"35\" name=\"pay_new_cardname\" id=\"pay_new_cardname\" value=\"".$this->CardName."\" style=\"width:195px;\" /></div>\n";
+		$out .= "				<div class=\"clearfloat\"></div>\n";
+		$out .= "			</div>\n";
+		$out .= "			<div class=\"address-line\">\n";
+		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Card Types: </div>\n";
+		$out .= "				<div class=\"address-input\" style=\"width:200px;\">";
+		$out .= "					<img src=\"/framework/img/VS_cards".($this->CardType != "" && $this->CardType != "VS" ? "_gray" : "").".png\" id=\"pay_cardtype_VS\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
+		$out .= "					<img src=\"/framework/img/MC_cards".($this->CardType != "" && $this->CardType != "MC" ? "_gray" : "").".png\" id=\"pay_cardtype_MC\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
+		$out .= "					<img src=\"/framework/img/AX_cards".($this->CardType != "" && $this->CardType != "AX" ? "_gray" : "").".png\" id=\"pay_cardtype_AX\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
+		$out .= "					<img src=\"/framework/img/DI_cards".($this->CardType != "" && $this->CardType != "DI" ? "_gray" : "").".png\" id=\"pay_cardtype_DI\" style=\"width:45px;float:left;margin-right:5px;\" />\n";
+		$out .= "				</div>\n";
+		$out .= "				<div class=\"clearfloat\"></div>\n";
+		$out .= "			</div>\n";
+		$out .= "			<div class=\"address-line\">\n";
+		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Card Number: </div>\n";
+		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"16\" name=\"pay_new_cardnum\" id=\"pay_new_cardnum\" value=\"".$this->CardNumber."\" onkeypress=\"return ccNumbersOnly(this, event);\" style=\"width:195px;\" /></div>\n";
+		$out .= "				<div class=\"clearfloat\"></div>\n";
+		$out .= "			</div>\n";
+		$out .= "			<div class=\"address-line\">\n";
+		$out .= "				<div class=\"address-label\" style=\"width:144px;\">CVV Number: </div>\n";
+		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"text\" maxlength=\"4\" name=\"pay_new_cvvnum\" id=\"pay_new_cvvnum\" value=\"".$this->CardCVV."\" onkeypress=\"return ccNumbersOnly(this, event);\" style=\"width:60px;\" /></div>\n";
+		$out .= "				<div class=\"clearfloat\"></div>\n";
+		$out .= "			</div>\n";
+		$out .= "			<div class=\"address-line\">\n";
+		$out .= "				<div class=\"address-label\" style=\"width:144px;\">Expiration: </div>\n";
+		$out .= "				<div class=\"address-input\" style=\"width:200px;\">";
+		$out .= "					<select name=\"pay_new_expmonth\" id=\"pay_new_expmonth\" style=\"width:110px;\" />\n";
+		$out .= "						<option value=\"1\"".($this->CardExpMonth === 1 ? " selected" : "").">January</option>\n";
+		$out .= "						<option value=\"2\"".($this->CardExpMonth === 2 ? " selected" : "").">February</option>\n";
+		$out .= "						<option value=\"3\"".($this->CardExpMonth === 3 ? " selected" : "").">March</option>\n";
+		$out .= "						<option value=\"4\"".($this->CardExpMonth === 4 ? " selected" : "").">April</option>\n";
+		$out .= "						<option value=\"5\"".($this->CardExpMonth === 5 ? " selected" : "").">May</option>\n";
+		$out .= "						<option value=\"6\"".($this->CardExpMonth === 6 ? " selected" : "").">June</option>\n";
+		$out .= "						<option value=\"7\"".($this->CardExpMonth === 7 ? " selected" : "").">July</option>\n";
+		$out .= "						<option value=\"8\"".($this->CardExpMonth === 8 ? " selected" : "").">August</option>\n";
+		$out .= "						<option value=\"9\"".($this->CardExpMonth === 9 ? " selected" : "").">September</option>\n";
+		$out .= "						<option value=\"10\"".($this->CardExpMonth === 10 ? " selected" : "").">October</option>\n";
+		$out .= "						<option value=\"11\"".($this->CardExpMonth === 11 ? " selected" : "").">November</option>\n";
+		$out .= "						<option value=\"12\"".($this->CardExpMonth === 12 ? " selected" : "").">December</option>\n";
+		$out .= "					</select>\n";
+		$out .= "					<select name=\"pay_new_expyear\" id=\"pay_new_expyear\" style=\"width:75px;\" />\n";
+		for ($i = 0; $i < 10; $i++)
+		{
+			$out .= "						<option value=\"".(intval(date("Y")) + $i)."\"".($this->CardExpYear == (intval(date("Y")) + $i) ? " selected" : "").">".(intval(date("Y")) + $i)."</option>\n";
+		}
+		$out .= "					</select>\n";
+		$out .= "				</div>\n";
+		$out .= "				<input type=\"hidden\" name=\"pay_new_cardtype\" id=\"pay_new_cardtype\" value=\"".$this->CardType."\" />\n";
+		$out .= "				<div class=\"clearfloat\"></div>\n";
+		$out .= "			</div>\n";
+		$out .= "			<div class=\"address-line\">\n";
+		$out .= "				<div class=\"address-label\" style=\"width:144px;\">&nbsp;</div>\n";
+		$out .= "				<div class=\"address-input\" style=\"width:200px;\"><input type=\"checkbox\"".($this->SaveCard ? " checked=\"checked\"" : "")." id=\"pay_new_save\" name=\"pay_new_save\" value=\"1\" /><label for=\"pay_new_save\"> Save for future purchases</label></div>";
+		$out .= "				<div class=\"clearfloat\"></div>\n";
+		$out .= "			</div>\n";
+		$out .= "			<div class=\"order-summary-total\">&nbsp;</div>\n";
+		$out .= "		</div>\n";
+		$out .= "	</div>\n";
 		
 		
-	// 	$out .= "	<div class=\"order-signin-error\" style=\"float:right;width:680px;margin-bottom:10px;\" id=\"signin-error\">";
-	// 	if (!isBlank($this->LastError))
-	// 	{
-	// 		$out .= "		".$this->LastError."\n";
-	// 		$this->LastError = "";
-	// 	}
-	// 	$out .= "	</div>";
-	// 	$out .= "	<div class=\"clearfloat\"></div>\n";
-	// 	$out .= "	<div class=\"order-continue\">\n";
-	// 	$out .= "		<div style=\"font-size:12px;font-weight:normal;margin-bottom:10px;\"><input type=\"checkbox\" id=\"cart_agree\" name=\"cart_agree\" value=\"1\" /> <a href=\"/about/terms-and-conditions\" target=\"_blank\">I agree to terms and conditions</a></div>\n";
-	// 	$out .= "		<div><input class=\"green button\" name=\"cart_btn\" type=\"submit\" onclick=\"scCheckPlaceOrder();return false;\" value=\"PLACE ORDER\" /></div>\n";
-	// 	$out .= "	</div>\n";
-	// 	$out .= "	<input type=\"hidden\" name=\"command\" value=\"placeorder\" />\n";
-	// 	$out .= "</form>\n";
-	// 	$out .= "</div>\n";
+		$out .= "	<div class=\"order-signin-error\" style=\"float:right;width:680px;margin-bottom:10px;\" id=\"signin-error\">";
+		if (!isBlank($this->LastError))
+		{
+			$out .= "		".$this->LastError."\n";
+			$this->LastError = "";
+		}
+		$out .= "	</div>";
+		$out .= "	<div class=\"clearfloat\"></div>\n";
+		$out .= "	<div class=\"order-continue\">\n";
+		$out .= "		<div style=\"font-size:12px;font-weight:normal;margin-bottom:10px;\"><input type=\"checkbox\" id=\"cart_agree\" name=\"cart_agree\" value=\"1\" /> <a href=\"/about/terms-and-conditions\" target=\"_blank\">I agree to terms and conditions</a></div>\n";
+		$out .= "		<div><input class=\"green button\" name=\"cart_btn\" type=\"submit\" onclick=\"scCheckPlaceOrder();return false;\" value=\"PLACE ORDER\" /></div>\n";
+		$out .= "	</div>\n";
+		$out .= "	<input type=\"hidden\" name=\"command\" value=\"placeorder\" />\n";
+		$out .= "</form>\n";
+		$out .= "</div>\n";
 		
-	// 	return $out;
-	// }
+		return $out;
+	}
 	
 	public function GetTaxRate()
 	{
@@ -806,16 +770,8 @@ class ShoppingCart
 	
 	public function ShippingMethod($urltag="shop")
 	{
-		$landing = ($urltag == "special" ? true : false);
 		$out = "";
-		$multiplier = 1.2;
-		$totalweight = $this->GetCartWeight($landing);
-		$boxes = floor($totalweight / 25);
-		$lastbox = $boxes > 0 ? floor(fmod($totalweight, 25)) : ceil(fmod($totalweight, 25));
-		$lastbox++;
-		$strsel = "";
 		$num = 0;
-		$fullcountry = "";
 		
 		unset($this->ShipMethodList);
 		
