@@ -35,7 +35,7 @@ resource "aws_instance" "working-env" {
 
     depends_on = [
         "aws_instance.vault-server",
-        "aws_dynamodb_table.customer-data-table",
+        "aws_dynamodb_table.customer-order-table",
         "aws_dynamodb_table.product-data-table",
         "aws_instance.nomad-client-1",
         "aws_instance.nomad-client-2"

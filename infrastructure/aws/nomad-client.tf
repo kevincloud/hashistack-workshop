@@ -26,6 +26,7 @@ data "template_file" "nomad-client-setup-2" {
         CONSUL_JOIN_KEY = "${var.consul_join_key}"
         CONSUL_JOIN_VALUE = "${var.consul_join_value}"
         CLIENT_NAME = "client2"
+        NOMAD_URL = "${var.nomad_dl_url}"
     }
 }
 
