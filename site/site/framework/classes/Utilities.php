@@ -32,6 +32,7 @@ class Utilities
 
 	public static function DecryptValue($transitkey, $ciphertext)
 	{
+		global $vaulturl;
 		$r = new RestRunner();
 
 		$r->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
