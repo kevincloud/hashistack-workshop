@@ -63,6 +63,7 @@ public class CustomerDb
                     Address a = new Address(
                         rs.getInt("addrid"),
                         rs.getInt("custid"),
+                        rs.getString("contact"),
                         rs.getString("address1"),
                         rs.getString("address2"),
                         rs.getString("city"),
