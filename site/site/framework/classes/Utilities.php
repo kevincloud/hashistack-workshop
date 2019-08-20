@@ -22,10 +22,11 @@ class Utilities
 
 	public static function GetVaultSecret($secretpath)
 	{
+		global $vaulturl;
 		$r = new RestRunner();
 
 		$r->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
-		$result = $r->Get($this->VaultUrl."/".$secretpath);
+		$result = $r->Get($vaulturl."/".$secretpath);
 		return $result->data->data;
 	}
 
@@ -35,7 +36,7 @@ class Utilities
 
 		$r->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
 		$result = $r->Post(
-			$this->VaultUrl."/v1/transit/decrypt/".$transitkey, 
+			$vaulturl."/v1/transit/decrypt/".$transitkey, 
 			"{ \"ciphertext\": \"".$ciphertext."\" }");
 		return base64_decode($result->data->plaintext);
 	}
