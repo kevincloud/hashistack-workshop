@@ -8,7 +8,7 @@ username = sys.argv[2]
 password = sys.argv[3]
 roottoken = sys.argv[4]
 region = sys.argv[5]
-vault = hvac.Client(url="vault-main.service."+region+".consul", token=roottoken)
+vault = hvac.Client(url="http://vault-main.service."+region+".consul:8200", token=roottoken)
 
 db = MySQLdb.connect(host = dbname,
                      user = username,
