@@ -10,11 +10,22 @@ export MYSQL_USER=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vaul
 export MYSQL_PASS=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.username)
 export CONSUL_NODE_ID=$(curl -s http://127.0.0.1:8500/v1/catalog/node/consul-client1 | jq -r .Node.ID)
 
-# Create mysql database
-python3 ./scripts/create_db.py $MYSQL_HOST $MYSQL_USER $MYSQL_PASS
+# enable transit
+curl \
+    --header "X-Vault-Token: ${VAULT_TOKEN}" \
+    --request POST \
+    --data '{"type":"transit"}' \
+    http://vault-main.service.${REGION}.consul:8200/v1/sys/mounts/transit
 
-# load product data
-python3 ./scripts/product_load.py
+curl \
+    --header "X-Vault-Token: ${VAULT_TOKEN}" \
+    --request POST \
+    http://vault-main.service.${REGION}.consul:8200/v1/transit/keys/account
+
+curl \
+    --header "X-Vault-Token: ${VAULT_TOKEN}" \
+    --request POST \
+    http://vault-main.service.${REGION}.consul:8200/v1/transit/keys/payment
 
 # register the database host with consul
 curl \
@@ -22,10 +33,11 @@ curl \
     --data "{ \"Datacenter\": \"${REGION}\", \"Node\": \"${CONSUL_NODE_ID}\", \"Address\":\"${MYSQL_HOST}\", \"Service\": { \"ID\": \"customer-db\", \"Service\": \"customer-db\", \"Address\": \"${MYSQL_HOST}\", \"Port\": 3306 } }" \
     http://127.0.0.1:8500/v1/catalog/register
 
-# curl \
-#     --request PUT \
-#     --data "{ \"Datacenter\": \"us-east-1\", \"Node\": \"508ac12c-37d3-bb11-a17a-ca324fdb24c6\", \"Address\":\"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Service\": { \"ID\": \"customer-db\", \"Service\": \"customer-db\", \"Address\": \"kevinvaultdb.cd2ntnfz8tii.us-east-1.rds.amazonaws.com\", \"Port\": 3306 } }" \
-#     http://127.0.0.1:8500/v1/catalog/register
+# Create mysql database
+python3 ./scripts/create_db.py customer-db.service.us-east-1.consul $MYSQL_USER $MYSQL_PASS
+
+# load product data
+python3 ./scripts/product_load.py
 
 # Upload images to S3
 aws s3 cp /root/hashistack-workshop/apis/productapi/images/ s3://${S3_BUCKET}/images/ --recursive --acl public-read

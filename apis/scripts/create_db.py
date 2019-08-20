@@ -1,15 +1,36 @@
 import MySQLdb # pylint: disable=import-error
 import sys
+import hvac
+import base64
 
 dbname = sys.argv[1]
 username = sys.argv[2]
 password = sys.argv[3]
+roottoken = sys.argv[4]
+region = sys.argv[5]
+vault = hvac.Client(url="vault-main.service."+region+".consul", token=roottoken)
 
 db = MySQLdb.connect(host = dbname,
                      user = username,
                      password = password)
 
 cursor = db.cursor()
+
+def encrypt_acct(data):
+    retval = vault.secrets.transit.encrypt_data(
+        mount_point = 'transit',
+        name = 'account',
+        plaintext = base64.b64encode(data.encode()).decode('ascii')
+    )
+    return retval['data']['ciphertext']
+
+def encrypt_cc(data):
+    retval = vault.secrets.transit.encrypt_data(
+        mount_point = 'transit',
+        name = 'payment',
+        plaintext = base64.b64encode(data.encode()).decode('ascii')
+    )
+    return retval['data']['ciphertext']
 
 sql = "create database if not exists javaperks"
 x = cursor.execute(sql)
@@ -105,12 +126,16 @@ sql = """insert into customer_main(
         'CS100312', 
         'Janice', 
         'Thompson', 
-        'jthomp4423@example.com', 
-        '11/28/1983', 
-        '027-40-7057', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2016-05-01'
     )
-"""
+""".format(
+    email = encrypt_acct('jthomp4423@example.com'), 
+    dob = encrypt_acct('11/28/1983'), 
+    ssn = encrypt_acct('027-40-7057')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -118,65 +143,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Janice Thompson', "
-        "'3611 Farland Street', "
-        "'Brockton', "
-        "'MA', "
-        "'02401', "
-        "'774-240-5996', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Janice Thompson', 
+        '3611 Farland Street', 
+        'Brockton', 
+        'MA', 
+        '02401', 
+        '774-240-5996', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Janice Thompson', "
-        "'3611 Farland Street', "
-        "'Brockton', "
-        "'MA', "
-        "'02401', "
-        "'774-240-5996', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Janice Thompson', 
+        '3611 Farland Street', 
+        'Brockton', 
+        'MA', 
+        '02401', 
+        '774-240-5996', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Janice Thompson', "
-        "'378282246310005', "
-        "'AX', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'Janice Thompson', 
+        '{cardnum}', 
+        'AX', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('378282246310005'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 ##################################
@@ -195,12 +231,16 @@ sql = """insert into customer_main(
         'CS106004', 
         'James', 
         'Wilson', 
-        'wilson@example.com', 
-        '6/4/1974', 
-        '309-64-5158', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2013-07-06'
     )
-"""
+""".format(
+    email = encrypt_acct('wilson@example.com'), 
+    dob = encrypt_acct('6/4/1974'), 
+    ssn = encrypt_acct('309-64-5158')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -208,65 +248,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'James Wilson', "
-        "'1437 Capitol Avenue', "
-        "'Paragon', "
-        "'IN', "
-        "'46166', "
-        "'765-537-0152', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'James Wilson', 
+        '1437 Capitol Avenue', 
+        'Paragon', 
+        'IN', 
+        '46166', 
+        '765-537-0152', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'James Wilson', "
-        "'1437 Capitol Avenue', "
-        "'Paragon', "
-        "'IN', "
-        "'46166', "
-        "'765-537-0152', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'James Wilson', 
+        '1437 Capitol Avenue', 
+        'Paragon', 
+        'IN', 
+        '46166', 
+        '765-537-0152', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'James Wilson', "
-        "'371449635398431', "
-        "'AX', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'James Wilson', 
+        '{cardnum}', 
+        'AX', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('371449635398431'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 ##################################
@@ -285,12 +336,16 @@ sql = """insert into customer_main(
         'CS101438', 
         'Tommy', 
         'Ballinger', 
-        'tommy6677@example.com', 
-        '1/5/1984', 
-        '530-02-6158', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2016-12-28'
     )
-"""
+""".format(
+    email = encrypt_acct('tommy6677@example.com'), 
+    dob = encrypt_acct('1/5/1984'), 
+    ssn = encrypt_acct('530-02-6158')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -298,65 +353,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Tommy Ballinger', "
-        "'2143 Wescam Court', "
-        "'Reno', "
-        "'NV', "
-        "'89502', "
-        "'775-856-9045', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Tommy Ballinger', 
+        '2143 Wescam Court', 
+        'Reno', 
+        'NV', 
+        '89502', 
+        '775-856-9045', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Tommy Ballinger', "
-        "'2143 Wescam Court', "
-        "'Reno', "
-        "'NV', "
-        "'89502', "
-        "'775-856-9045', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Tommy Ballinger', 
+        '2143 Wescam Court', 
+        'Reno', 
+        'NV', 
+        '89502', 
+        '775-856-9045', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Tommy Ballinger', "
-        "'378734493671000', "
-        "'AX', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'Tommy Ballinger', 
+        '{cardnum}', 
+        'AX', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('378734493671000'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 ##################################
@@ -375,12 +441,16 @@ sql = """insert into customer_main(
         'CS210895', 
         'Mary', 
         'McCann', 
-        'mmccann1212@example.com', 
-        '9/4/1981', 
-        '246-98-9817', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2018-05-24'
     )
-"""
+""".format(
+    email = encrypt_acct('mmccann1212@example.com'), 
+    dob = encrypt_acct('9/4/1981'), 
+    ssn = encrypt_acct('246-98-9817')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -388,65 +458,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Mary McCann', "
-        "'4512 Layman Avenue', "
-        "'Robbins', "
-        "'NC', "
-        "'27325', "
-        "'910-948-3965', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Mary McCann', 
+        '4512 Layman Avenue', 
+        'Robbins', 
+        'NC', 
+        '27325', 
+        '910-948-3965', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Mary McCann', "
-        "'4512 Layman Avenue', "
-        "'Robbins', "
-        "'NC', "
-        "'27325', "
-        "'910-948-3965', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Mary McCann', 
+        '4512 Layman Avenue', 
+        'Robbins', 
+        'NC', 
+        '27325', 
+        '910-948-3965', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Mary McCann', "
-        "'6011111111111117', "
-        "'DS', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'Mary McCann', 
+        '{cardnum}', 
+        'DS', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('6011111111111117'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 ##################################
@@ -465,12 +546,16 @@ sql = """insert into customer_main(
         'CS122955', 
         'Chris', 
         'Peterson', 
-        'cjpcomp@example.com', 
-        '9/9/1975', 
-        '019-26-9782', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2015-03-04'
     )
-"""
+""".format(
+    email = encrypt_acct('cjpcomp@example.com'), 
+    dob = encrypt_acct('9/9/1975'), 
+    ssn = encrypt_acct('019-26-9782')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -478,65 +563,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Chris Peterson', "
-        "'2329 Joanne Lane', "
-        "'Newburyport', "
-        "'MA', "
-        "'01950', "
-        "'978-499-7306', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Chris Peterson', 
+        '2329 Joanne Lane', 
+        'Newburyport', 
+        'MA', 
+        '01950', 
+        '978-499-7306', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Chris Peterson', "
-        "'2329 Joanne Lane', "
-        "'Newburyport', "
-        "'MA', "
-        "'01950', "
-        "'978-499-7306', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Chris Peterson', 
+        '2329 Joanne Lane', 
+        'Newburyport', 
+        'MA', 
+        '01950', 
+        '978-499-7306', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Chris Peterson', "
-        "'6011000990139424', "
-        "'DS', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'Chris Peterson', 
+        '{cardnum}', 
+        'DS', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('6011000990139424'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 ##################################
@@ -555,12 +651,16 @@ sql = """insert into customer_main(
         'CS602934', 
         'Jennifer', 
         'Jones', 
-        'jjhome7823@example.com', 
-        '10/31/1983', 
-        '209-62-4365', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2014-10-17'
     )
-"""
+""".format(
+    email = encrypt_acct('jjhome7823@example.com'), 
+    dob = encrypt_acct('10/31/1983'), 
+    ssn = encrypt_acct('209-62-4365')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -568,65 +668,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Jennifer Jones', "
-        "'589 Hidden Valley Road', "
-        "'Lancaster', "
-        "'PA', "
-        "'17670', "
-        "'717-224-9902', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Jennifer Jones', 
+        '589 Hidden Valley Road', 
+        'Lancaster', 
+        'PA', 
+        '17670', 
+        '717-224-9902', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Jennifer Jones', "
-        "'589 Hidden Valley Road', "
-        "'Lancaster', "
-        "'PA', "
-        "'17670', "
-        "'717-224-9902', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Jennifer Jones', 
+        '589 Hidden Valley Road', 
+        'Lancaster', 
+        'PA', 
+        '17670', 
+        '717-224-9902', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Jennifer Jones', "
-        "'5555555555554444', "
-        "'MC', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'Jennifer Jones', 
+        '{cardnum}', 
+        'MC', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('5555555555554444'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 ##################################
@@ -645,12 +756,16 @@ sql = """insert into customer_main(
         'CS157843', 
         'Clint', 
         'Mason', 
-        'clint.mason312@example.com', 
-        '10/7/1983', 
-        '453-37-0205', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2014-08-23'
     )
-"""
+""".format(
+    email = encrypt_acct('clint.mason312@example.com'), 
+    dob = encrypt_acct('10/7/1983'), 
+    ssn = encrypt_acct('453-37-0205')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -658,65 +773,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Clint Mason', "
-        "'3641 Alexander Drive', "
-        "'Denton', "
-        "'TX', "
-        "'76201', "
-        "'940-349-9386', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Clint Mason', 
+        '3641 Alexander Drive', 
+        'Denton', 
+        'TX', 
+        '76201', 
+        '940-349-9386', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Clint Mason', "
-        "'3641 Alexander Drive', "
-        "'Denton', "
-        "'TX', "
-        "'76201', "
-        "'940-349-9386', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Clint Mason', 
+        '3641 Alexander Drive', 
+        'Denton', 
+        'TX', 
+        '76201', 
+        '940-349-9386', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Clint Mason', "
-        "'5105105105105100', "
-        "'MC', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'Clint Mason', 
+        '{cardnum}', 
+        'MC', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('5105105105105100'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 ##################################
@@ -735,12 +861,16 @@ sql = """insert into customer_main(
         'CS523484', 
         'Matt', 
         'Grey', 
-        'greystone89@example.com', 
-        '7/25/1963', 
-        '184-36-8146', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2016-11-12'
     )
-"""
+""".format(
+    email = encrypt_acct('greystone89@example.com'), 
+    dob = encrypt_acct('7/25/1963'), 
+    ssn = encrypt_acct('184-36-8146')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -748,65 +878,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Matt Grey', "
-        "'1320 Tree Top Lane', "
-        "'Wayne', "
-        "'PA', "
-        "'19087', "
-        "'610-225-6567', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Matt Grey', 
+        '1320 Tree Top Lane', 
+        'Wayne', 
+        'PA', 
+        '19087', 
+        '610-225-6567', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Matt Grey', "
-        "'1320 Tree Top Lane', "
-        "'Wayne', "
-        "'PA', "
-        "'19087', "
-        "'610-225-6567', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Matt Grey', 
+        '1320 Tree Top Lane', 
+        'Wayne', 
+        'PA', 
+        '19087', 
+        '610-225-6567', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Matt Grey', "
-        "'4111111111111111', "
-        "'VI', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'Matt Grey', 
+        '{cardnum}', 
+        'VI', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('4111111111111111'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 ##################################
@@ -825,12 +966,16 @@ sql = """insert into customer_main(
         'CS658871', 
         'Howard', 
         'Turner', 
-        'runwayyourway@example.com', 
-        '6/29/1977', 
-        '019-26-8577', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2014-03-03'
     )
-"""
+""".format(
+    email = encrypt_acct('runwayyourway@example.com'), 
+    dob = encrypt_acct('6/29/1977'), 
+    ssn = encrypt_acct('019-26-8577')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -838,65 +983,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Howard Turner', "
-        "'1179 Lynn Street', "
-        "'Woburn', "
-        "'MA', "
-        "'01801', "
-        "'617-251-5420', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Howard Turner', 
+        '1179 Lynn Street', 
+        'Woburn', 
+        'MA', 
+        '01801', 
+        '617-251-5420', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Howard Turner', "
-        "'1179 Lynn Street', "
-        "'Woburn', "
-        "'MA', "
-        "'01801', "
-        "'617-251-5420', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Howard Turner', 
+        '1179 Lynn Street', 
+        'Woburn', 
+        'MA', 
+        '01801', 
+        '617-251-5420', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Howard Turner', "
-        "'4012888888881881', "
-        "'VI', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'Howard Turner', 
+        '{cardnum}', 
+        'VI', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('4012888888881881'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 ##################################
@@ -915,12 +1071,16 @@ sql = """insert into customer_main(
         'CS103393', 
         'Larry', 
         'Olsen', 
-        'olsendog1979@example.com', 
-        '4/17/1992', 
-        '285-70-8598', 
+        '{email}', 
+        '{dob}', 
+        '{ssn}', 
         '2016-02-21'
     )
-"""
+""".format(
+    email = encrypt_acct('olsendog1979@example.com'), 
+    dob = encrypt_acct('4/17/1992'), 
+    ssn = encrypt_acct('285-70-8598')
+)
 x = cursor.execute(sql)
 
 sql = "select last_insert_id()"
@@ -928,65 +1088,76 @@ retval = cursor.execute(sql)
 rset = cursor.fetchall()
 nextid = rset[0][0]
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Larry Olsen', "
-        "'2850 Still Street', "
-        "'Oregon', "
-        "'OH', "
-        "'43616', "
-        "'419-698-9890', "
-        "'B'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Larry Olsen', 
+        '2850 Still Street', 
+        'Oregon', 
+        'OH', 
+        '43616', 
+        '419-698-9890', 
+        'B'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_addresses("
-        "custid, "
-        "contact, "
-        "address1, "
-        "city, "
-        "state, "
-        "zip, "
-        "phone, "
-        "addrtype"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Larry Olsen', "
-        "'2850 Still Street', "
-        "'Oregon', "
-        "'OH', "
-        "'43616', "
-        "'419-698-9890', "
-        "'S'"
-    ")")
+sql = """insert into customer_addresses(
+        custid, 
+        contact, 
+        address1, 
+        city, 
+        state, 
+        zip, 
+        phone, 
+        addrtype
+    ) values (
+        {id}, 
+        'Larry Olsen', 
+        '2850 Still Street', 
+        'Oregon', 
+        'OH', 
+        '43616', 
+        '419-698-9890', 
+        'S'
+    )
+""".format(
+    id = str(nextid)
+)
 x = cursor.execute(sql)
 
-sql = ("insert into customer_payment("
-        "custid, "
-        "cardname, "
-        "cardnumber, "
-        "cardtype, "
-        "cvv, "
-        "expmonth, "
-        "expyear"
-    ") values ("
-        "" + str(nextid) + ", "
-        "'Larry Olsen', "
-        "'4111111111111111', "
-        "'VI', "
-        "'344', "
-        "'08', "
-        "'2024'"
-    ")")
+sql = """insert into customer_payment(
+        custid, 
+        cardname, 
+        cardnumber, 
+        cardtype, 
+        cvv, 
+        expmonth, 
+        expyear
+    ) values (
+        {id}, 
+        'Larry Olsen', 
+        '{cardnum}', 
+        'VI', 
+        '{cvv}', 
+        '08', 
+        '2024'
+    )
+""".format(
+    id = str(nextid), 
+    cardnum = encrypt_cc('4111111111111111'),
+    cvv = encrypt_cc('344')
+)
 x = cursor.execute(sql)
 
 db.commit()
