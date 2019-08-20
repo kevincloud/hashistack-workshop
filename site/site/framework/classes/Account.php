@@ -69,27 +69,35 @@ class Account
 				$this->SSN = $row->ssn;
 				$this->Birthday = $row->dob;
 				
-			 	$this->BillingAddress = new Address();
-				$this->BillingAddress->AddressID = $row->addresses[0]->addrId;
-				$this->BillingAddress->CustomerID = $this->CustomerID;
-				$this->BillingAddress->AddressType = "B";
-				$this->BillingAddress->Address1 = $row->addresses[0]->address1;
-				$this->BillingAddress->Address2 = $row->addresses[0]->address2;
-				$this->BillingAddress->City = $row->addresses[0]->city;
-				$this->BillingAddress->State = $row->addresses[0]->state;
-				$this->BillingAddress->Zip = $row->addresses[0]->zip;
-				$this->BillingAddress->Phone = $row->addresses[0]->phone;
-				
-				$this->ShippingAddress = new Address();
-				$this->ShippingAddress->AddressID = $row->addresses[0]->addrId;
-				$this->ShippingAddress->CustomerID = $this->CustomerID;
-				$this->ShippingAddress->AddressType = "S";
-				$this->ShippingAddress->Address1 = $row->addresses[0]->address1;
-				$this->ShippingAddress->Address2 = $row->addresses[0]->address2;
-				$this->ShippingAddress->City = $row->addresses[0]->city;
-				$this->ShippingAddress->State = $row->addresses[0]->state;
-				$this->ShippingAddress->Zip = $row->addresses[0]->zip;
-				$this->ShippingAddress->Phone = $row->addresses[0]->phone;
+				foreach ($row->addresses as $address)
+				{
+					if ($address->addrType == "B")
+					{
+						$this->BillingAddress = new Address();
+						$this->BillingAddress->AddressID = $address->addrId;
+						$this->BillingAddress->CustomerID = $this->CustomerID;
+						$this->BillingAddress->AddressType = "B";
+						$this->BillingAddress->Contact = $address->contact;
+						$this->BillingAddress->Address1 = $address->address1;
+						$this->BillingAddress->Address2 = $address->address2;
+						$this->BillingAddress->City = $address->city;
+						$this->BillingAddress->State = $address->state;
+						$this->BillingAddress->Zip = $address->zip;
+						$this->BillingAddress->Phone = $address->phone;
+					} elseif ($address->addrType == "S") {
+						$this->ShippingAddress = new Address();
+						$this->ShippingAddress->AddressID = $address->addrId;
+						$this->ShippingAddress->CustomerID = $this->CustomerID;
+						$this->ShippingAddress->AddressType = "S";
+						$this->ShippingAddress->Contact = $address->contact;
+						$this->ShippingAddress->Address1 = $address->address1;
+						$this->ShippingAddress->Address2 = $address->address2;
+						$this->ShippingAddress->City = $address->city;
+						$this->ShippingAddress->State = $address->state;
+						$this->ShippingAddress->Zip = $address->zip;
+						$this->ShippingAddress->Phone = $address->phone;
+							}
+				}
 			}
 			else
 				throw new Exception("The customer account could not be located.");
@@ -463,10 +471,9 @@ class Account
 		$out .= "			<div style=\"font-weight:bold;\">Personal Information</div>\n";
 		$out .= "			<div style=\"padding-left:20px;\">\n";
 		$out .= "				<div style=\"\">".$this->FullName()."</div>\n";
-		$out .= "				<div style=\"\">Gender: ".(isBlank($this->Gender) ? "<span style=\"font-style:italic;\">(not specified)</span>" : $this->Gender)."</div>\n";
 		$out .= "				<div style=\"\">Birthday: ".(isBlank($this->Birthday) ? "<span style=\"font-style:italic;\">(not provided)</span>" : date("F d, Y", strtotime($this->Birthday)))."</div>\n";
 		$out .= "				<div style=\"\">&nbsp;</div>\n";
-		$out .= "				<div style=\"\">E-mail: ".$this->Email."</div>\n";
+		$out .= "				<div style=\"\">E-mail: ".Utilities::DecryptValue("account", $this->Email)."</div>\n";
 		$out .= "				<div style=\"\">Password: ********</div>\n";
 		$out .= "			</div>\n";
 		$out .= "		</div>\n";
@@ -600,30 +607,31 @@ class Account
 		$out .= "		<p>\n";
 		$out .= "			<button class=\"button green\" onclick=\"acctAddNewCard();\">Add New Credit Card</button>\n";
 		$out .= "		</p>\n";
-		// ***INLINESQL***
-		// $sql = "select id, rguid, cardtype, cardname, cardnum, expmo, expyr, cvv from cc_moulah where custid = ".smartQuote($this->CustomerID)." and isnull(custid, '') <> '' and active = 1 and case when convert(smallint, expyr) > YEAR(getdate()) then 1 when convert(smallint, expyr) = YEAR(getdate()) and convert(tinyint, expmo) >= month(getdate()) then 1 else 0 end = 1 order by id";
-		// $rs = $this->_db->get_results($sql);
-		// if (count($rs) > 0)
-		// {
-		// 	foreach ($rs as $row)
-		// 	{
-		// 		$cc = new CreditCard();
-		// 		$cc->CardID = $row->id;
-		// 		$cc->RowID = mssql_guid_string($row->rguid);
-		// 		$cc->CardType = $row->cardtype;
-		// 		$cc->CardName = $row->cardname;
-		// 		$cc->CardNumber = $cc->DecodeNumber($row->cardnum);
-		// 		$cc->ExpirationMonth = intval($row->expmo);
-		// 		$cc->ExpirationYear = intval($row->expyr);
-		// 		$cc->CVV = $row->cvv;
+		$r = new RestRunner();
+
+		$result = $r->Get($this->CustomerApi."/payments/".$_SESSION["__account__"]->RowID);
+		if (count($result) > 0)
+		{
+			foreach ($result as $item)
+			{
+				$cc = new CreditCard();
+				$cc->CardID = $item->payId;
+				$cc->RowID = $item->payId;
+				// $cc->RowID = strtoupper(str_replace(array("{", "}", "-"), "", mssql_guid_string($row->rguid)));
+				$cc->CardType = $item->cardType;
+				$cc->CardName = $item->cardName;
+				$cc->CardNumber = Utilities::DecryptValue("payment", $item->cardNumber);
+				$cc->ExpirationMonth = intval($item->expirationMonth);
+				$cc->ExpirationYear = intval($item->expirationYear);
+				$cc->CVV = Utilities::DecryptValue("payment", $item->cvv);
 				
-		// 		$out .= $cc->DisplayStacked();
-		// 	}
-		// }
-		// else
-		// {
+				$out .= $cc->DisplayStacked();
+			}
+		}
+		else
+		{
 			$out .= "		<p>You have no saved credit cards.</p>\n";
-		// }
+		}
 		$out .= "		<p>	\n";
 		$out .= "			<a class=\"alignright button\" href=\"/profile/view\">Go Back</a>\n";
 		$out .= "		</p>\n";
@@ -873,7 +881,7 @@ class Account
 		}
 		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_email\">Email Address</label>\n";
-		$out .= "			<input type=\"text\" name=\"info_email\" id=\"info_email\" value=\"".$this->Email."\" />\n";
+		$out .= "			<input type=\"text\" name=\"info_email\" id=\"info_email\" value=\"".Utilities::DecryptValue("account", $this->Email)."\" />\n";
 		$out .= "		</p>\n";
 		$out .= "		<p>	\n";
 		$out .= "			<input type=\"submit\" class=\"alignright green button\" value=\"Continue\" />\n";
@@ -1337,6 +1345,7 @@ class Address
 {
 	public $AddressID = 0;
 	public $CustomerID = "";
+	public $Contact = "";
 	public $AddressType = "";
 	public $Address1 = "";
 	public $Address2 = "";
@@ -1353,7 +1362,7 @@ class Address
 	{
 		$out = "";
 		
-		// $out .= "			<div>".$this->Contact."</div>\n";
+		$out .= "			<div>".$this->Contact."</div>\n";
 		$out .= "			<div>".$this->Address1."</div>\n";
 		if (!isBlank($this->Address2))
 		{

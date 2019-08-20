@@ -637,7 +637,7 @@ class ShoppingCart
 			$cc->CardNumber = Utilities::DecryptValue("payment", $item->cardNumber);
 			$cc->ExpirationMonth = intval($item->expirationMonth);
 			$cc->ExpirationYear = intval($item->expirationYear);
-			$cc->CVV = $item->cvv;
+			$cc->CVV = Utilities::DecryptValue("payment", $item->cvv);
 			
 			$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
 			$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == $cc->RowID ? " checked=\"checked\"" : "")." id=\"pay_type_".$cc->RowID."\" name=\"pay_type\" value=\"".$cc->RowID."\" style=\"vertical-align:middle;\" /></div>\n";
@@ -835,14 +835,9 @@ class ShoppingCart
 		$out .= "			<div class=\"address-input\"><input type=\"checkbox\" name=\"cart_b_default\" id=\"cart_b_default\" value=\"1\" checked=\"checked\" /> <label for=\"cart_b_default\">Save these addresses</label></div>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
 		$out .= "		</div>\n";
-		// $out .= "		<div class=\"address-line\">\n";
-		// $out .= "			<div class=\"address-label\">Contact Name:</div>\n";
-		// $out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_contact\" id=\"cart_b_contact\" value=\"".$this->BillingAddress->Contact."\" maxlength=\"50\" /></div>\n";
-		// $out .= "			<div class=\"clearfloat\"></div>\n";
-		// $out .= "		</div>\n";
 		$out .= "		<div class=\"address-line\">\n";
 		$out .= "			<div class=\"address-label\">Contact Name:</div>\n";
-		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_contact\" id=\"cart_b_contact\" value=\"\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_b_contact\" id=\"cart_b_contact\" value=\"".$this->BillingAddress->Contact."\" maxlength=\"50\" /></div>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
 		$out .= "		</div>\n";
 		$out .= "		<div class=\"address-line\">\n";
@@ -886,14 +881,9 @@ class ShoppingCart
 		$out .= "			<div class=\"address-input\"><input type=\"checkbox\" name=\"cart_s_same\" id=\"cart_s_same\" value=\"1\" /> <label for=\"cart_s_same\">Same as Billing Address</label></div>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
 		$out .= "		</div>\n";
-		// $out .= "		<div class=\"address-line\">\n";
-		// $out .= "			<div class=\"address-label\">Contact Name:</div>\n";
-		// $out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_contact\" id=\"cart_s_contact\" value=\"".$this->ShippingAddress->Contact."\" maxlength=\"50\" /></div>\n";
-		// $out .= "			<div class=\"clearfloat\"></div>\n";
-		// $out .= "		</div>\n";
 		$out .= "		<div class=\"address-line\">\n";
 		$out .= "			<div class=\"address-label\">Contact Name:</div>\n";
-		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_contact\" id=\"cart_s_contact\" value=\"\" maxlength=\"50\" /></div>\n";
+		$out .= "			<div class=\"address-input\"><input type=\"text\" name=\"cart_s_contact\" id=\"cart_s_contact\" value=\"".$this->ShippingAddress->Contact."\" maxlength=\"50\" /></div>\n";
 		$out .= "			<div class=\"clearfloat\"></div>\n";
 		$out .= "		</div>\n";
 		$out .= "		<div class=\"address-line\">\n";

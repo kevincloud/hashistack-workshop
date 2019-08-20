@@ -46,7 +46,7 @@ public class Address
     }
 
     public String getContact() {
-        return this.address1;
+        return this.contact;
     }
 
     public void setContact(String contact) {
