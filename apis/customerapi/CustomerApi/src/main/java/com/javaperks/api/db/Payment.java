@@ -41,7 +41,7 @@ public class Payment
         this.custId = custId;
     }
 
-    public String getAddress1() {
+    public String getCardName() {
         return this.cardName;
     }
 

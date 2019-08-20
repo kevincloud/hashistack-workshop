@@ -15,12 +15,15 @@ class ShoppingCart
 	public $PayType = "NEW";
 	
 	private $CartApi = "";
+	private $CustomerApi = "";
 
 	public function __construct()
 	{
 		global $cartapi;
+		global $customerapi;
 
 		$this->CartApi = $cartapi."/cart";
+		$this->CustomerApi = $customerapi."/customers";
 	}
 		
 	public function Count()
@@ -620,30 +623,28 @@ class ShoppingCart
 		$out .= "					<div class=\"clearfloat\"></div>\n";
 		$out .= "				</li>\n";
 
-		// ***INLINESQL***
-		// $sql = "select * from cc_moulah where custid = ".smartQuote($_SESSION["__account__"]->CustomerID)." and isnull(custid, '') <> '' and active = 1 and case when convert(smallint, expyr) > YEAR(getdate()) then 1 when convert(smallint, expyr) = YEAR(getdate()) and convert(tinyint, expmo) >= month(getdate()) then 1 else 0 end = 1 order by id";
-		// $rs = $this->_db->get_results($sql);
-		// if (count($rs) > 0)
-		// {
-		// 	foreach ($rs as &$row)
-		// 	{
-		// 		$cc = new CreditCard();
-		// 		$cc->CardID = $row->id;
-		// 		$cc->RowID = strtoupper(str_replace(array("{", "}", "-"), "", mssql_guid_string($row->rguid)));
-		// 		$cc->CardType = $row->cardtype;
-		// 		$cc->CardName = $row->cardname;
-		// 		$cc->CardNumber = $cc->DecodeNumber($row->cardnum);
-		// 		$cc->ExpirationMonth = intval($row->expmo);
-		// 		$cc->ExpirationYear = intval($row->expyr);
-		// 		$cc->CVV = $row->cvv;
-				
-		// 		$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
-		// 		$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == $cc->RowID ? " checked=\"checked\"" : "")." id=\"pay_type_".$cc->RowID."\" name=\"pay_type\" value=\"".$cc->RowID."\" style=\"vertical-align:middle;\" /></div>\n";
-		// 		$out .= "					<div style=\"float:left;vertical-align:middle;\">".$cc->DisplayFormatted()."</div>\n";
-		// 		$out .= "					<div class=\"clearfloat\"></div>\n";
-		// 		$out .= "				</li>\n";
-		// 	}
-		// }
+		$r = new RestRunner();
+
+		$result = $r->Get($this->CustomerApi."/payments/".$_SESSION["__account__"]->RowID);
+		foreach ($result->items as $item)
+		{
+			$cc = new CreditCard();
+			$cc->CardID = $item->payId;
+			$cc->RowID = $item->payId;
+			// $cc->RowID = strtoupper(str_replace(array("{", "}", "-"), "", mssql_guid_string($row->rguid)));
+			$cc->CardType = $item->cardType;
+			$cc->CardName = $item->cardName;
+			$cc->CardNumber = $item->cardNum;
+			$cc->ExpirationMonth = intval($item->expirationMonth);
+			$cc->ExpirationYear = intval($item->expirationYear);
+			$cc->CVV = $item->cvv;
+			
+			$out .= "				<li style=\"list-style:none;padding-bottom:10px;\">\n";
+			$out .= "					<div style=\"float:left;width:24px;vertical-align:middle;\"><input type=\"radio\"".($this->PayType == $cc->RowID ? " checked=\"checked\"" : "")." id=\"pay_type_".$cc->RowID."\" name=\"pay_type\" value=\"".$cc->RowID."\" style=\"vertical-align:middle;\" /></div>\n";
+			$out .= "					<div style=\"float:left;vertical-align:middle;\">".$cc->DisplayFormatted()."</div>\n";
+			$out .= "					<div class=\"clearfloat\"></div>\n";
+			$out .= "				</li>\n";
+		}
 
 		// hard code terms for now
 		$this->CreditCard = new CreditCard();
