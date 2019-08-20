@@ -491,26 +491,6 @@ abstract class BasePage
 		
 		return $out;
 	}
-
-	protected function GetVaultSecret($secretpath)
-	{
-		$r = new RestRunner();
-
-		$r->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
-		$result = $r->Get($this->VaultUrl."/".$secretpath);
-		return $result->data->data;
-	}
-
-	protected function DecryptValue($transitkey, $ciphertext)
-	{
-		$r = new RestRunner();
-
-		$r->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
-		$result = $r->Post(
-			$this->VaultUrl."/v1/transit/decrypt/".$transitkey, 
-			"{ \"ciphertext\": \"".$ciphertext."\" }");
-		return base64_decode($result->data->plaintext);
-	}
 }
 
 ?>

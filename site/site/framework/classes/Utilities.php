@@ -18,6 +18,27 @@ class Utilities
 	{
 		return "{".substr($id, 0, 8)."-".substr($id, 8, 4)."-".substr($id, 12, 4)."-".substr($id, 16, 4)."-".substr($id, 20)."}";
 	}
+
+
+	public static function GetVaultSecret($secretpath)
+	{
+		$r = new RestRunner();
+
+		$r->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
+		$result = $r->Get($this->VaultUrl."/".$secretpath);
+		return $result->data->data;
+	}
+
+	public static function DecryptValue($transitkey, $ciphertext)
+	{
+		$r = new RestRunner();
+
+		$r->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
+		$result = $r->Post(
+			$this->VaultUrl."/v1/transit/decrypt/".$transitkey, 
+			"{ \"ciphertext\": \"".$ciphertext."\" }");
+		return base64_decode($result->data->plaintext);
+	}
 }
 
 ?>

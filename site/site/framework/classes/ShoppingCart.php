@@ -543,7 +543,7 @@ class ShoppingCart
 		$out .= "		<div style=\"padding-left:10px;\">".$this->ShippingAddress->DisplayFormatted()."</div>\n";
 		$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">E-mail Address</div>\n";
 		$out .= "		<div style=\"padding-left:10px;\">\n";
-		$out .= "			<div>".$this->DecryptValue("payment", $_SESSION["__account__"]->Email)."</div>\n";
+		$out .= "			<div>".Utilities::DecryptValue("payment", $_SESSION["__account__"]->Email)."</div>\n";
 		$out .= "		</div>\n";
 		$out .= "	</div>\n";
 		
@@ -634,7 +634,7 @@ class ShoppingCart
 			// $cc->RowID = strtoupper(str_replace(array("{", "}", "-"), "", mssql_guid_string($row->rguid)));
 			$cc->CardType = $item->cardType;
 			$cc->CardName = $item->cardName;
-			$cc->CardNumber = $this->DecryptValue("payment", $item->cardNumber);
+			$cc->CardNumber = Utilities::DecryptValue("payment", $item->cardNumber);
 			$cc->ExpirationMonth = intval($item->expirationMonth);
 			$cc->ExpirationYear = intval($item->expirationYear);
 			$cc->CVV = $item->cvv;

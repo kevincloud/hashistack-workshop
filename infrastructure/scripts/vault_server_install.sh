@@ -146,7 +146,7 @@ EOF
 
 sudo bash -c "cat >/etc/vault.d/access-creds.json" <<EOF
 {
-    "policy": "path \"secret/data/aws\" {\n  capabilities = [\"read\", \"list\"]\n}\n"
+    "policy": "path \"secret/data/aws\" {\n  capabilities = [\"read\", \"list\"]\n}\n\npath \"secret/data/roottoken\" {\n  capabilities = [\"read\", \"list\"]\n}\n"
 }
 EOF
 
