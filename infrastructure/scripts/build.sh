@@ -6,8 +6,8 @@
 cd /root/hashistack-workshop/apis
 
 # export MYSQL_HOST=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.address)
-export MYSQL_USER=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.password)
-export MYSQL_PASS=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.username)
+export MYSQL_USER=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.username)
+export MYSQL_PASS=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.password)
 export CONSUL_NODE_ID=$(curl -s http://127.0.0.1:8500/v1/catalog/node/consul-client1 | jq -r .Node.ID)
 
 # enable transit

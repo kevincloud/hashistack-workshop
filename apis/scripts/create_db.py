@@ -518,7 +518,7 @@ sql = """insert into customer_payment(
         {id}, 
         'Mary McCann', 
         '{cardnum}', 
-        'DS', 
+        'DI', 
         '{cvv}', 
         '08', 
         '2024'
@@ -623,7 +623,7 @@ sql = """insert into customer_payment(
         {id}, 
         'Chris Peterson', 
         '{cardnum}', 
-        'DS', 
+        'DI', 
         '{cvv}', 
         '08', 
         '2024'
@@ -938,7 +938,7 @@ sql = """insert into customer_payment(
         {id}, 
         'Matt Grey', 
         '{cardnum}', 
-        'VI', 
+        'VS', 
         '{cvv}', 
         '08', 
         '2024'
@@ -1043,7 +1043,7 @@ sql = """insert into customer_payment(
         {id}, 
         'Howard Turner', 
         '{cardnum}', 
-        'VI', 
+        'VS', 
         '{cvv}', 
         '08', 
         '2024'
@@ -1148,7 +1148,7 @@ sql = """insert into customer_payment(
         {id}, 
         'Larry Olsen', 
         '{cardnum}', 
-        'VI', 
+        'VS', 
         '{cvv}', 
         '08', 
         '2024'
