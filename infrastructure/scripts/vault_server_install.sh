@@ -250,7 +250,7 @@ curl \
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
-    --data '{"data": { "token": "$VAULT_TOKEN" } }' \
+    --data "{\"data\": { \"token\": \"$VAULT_TOKEN\" } }" \
     http://127.0.0.1:8200/v1/secret/data/roottoken
 
 curl \

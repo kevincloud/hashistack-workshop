@@ -34,7 +34,7 @@ curl \
     http://127.0.0.1:8500/v1/catalog/register
 
 # Create mysql database
-python3 ./scripts/create_db.py customer-db.service.us-east-1.consul $MYSQL_USER $MYSQL_PASS
+python3 ./scripts/create_db.py customer-db.service.us-east-1.consul $MYSQL_USER $MYSQL_PASS ${VAULT_TOKEN} ${REGION}
 
 # load product data
 python3 ./scripts/product_load.py
