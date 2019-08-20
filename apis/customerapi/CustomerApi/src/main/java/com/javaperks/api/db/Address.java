@@ -4,6 +4,7 @@ public class Address
 {
     private int addrId;
     private int custId;
+    private String contact;
     private String address1;
     private String address2;
     private String city;
@@ -15,9 +16,10 @@ public class Address
     public Address() {
     }
 
-    public Address(int addrId, int custId, String address1, String address2, String city, String state, String zip, String phone, String addrType) {
+    public Address(int addrId, int custId, String contact, String address1, String address2, String city, String state, String zip, String phone, String addrType) {
         this.addrId = addrId;
         this.custId = custId;
+        this.contact = contact;
         this.address1 = address1;
         this.address2 = address2;
         this.city = city;
@@ -41,6 +43,14 @@ public class Address
 
     public void setCustId(int custId) {
         this.custId = custId;
+    }
+
+    public String getContact() {
+        return this.address1;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
     public String getAddress1() {
