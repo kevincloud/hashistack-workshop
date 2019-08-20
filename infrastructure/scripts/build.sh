@@ -391,7 +391,7 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nREGION = \"${REGION}\"\n                ",
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}{{with secret \"secret/data/roottoken\"}}\nVAULT_TOKEN = \"{{.Data.data.token}}\"\n{{end}}\nREGION = \"${REGION}\"\n                ",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],

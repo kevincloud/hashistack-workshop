@@ -18,9 +18,18 @@ class RestRunner
         curl_close($this->curl);
     }
 
-    public function Post($url, $parms)
+    public function SetHeader($key, $value)
     {
-        $p = $this->BuildParms($parms);
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array($key.": ".$value));
+    }
+
+    public function Post($url, $parms=null)
+    {
+        $p = "";
+        if (is_array($parms))
+            $p = $this->BuildParms($parms);
+        else
+            $p = $parms;
 
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_POST, 1);
@@ -32,7 +41,11 @@ class RestRunner
 
     public function Delete($url, $parms)
     {
-        $p = $this->BuildParms($parms);
+        $p = "";
+        if (is_array($parms))
+            $p = $this->BuildParms($parms);
+        else
+            $p = $parms;
 
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "DELETE");
