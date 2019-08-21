@@ -108,7 +108,7 @@ public class CustomerDb
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
             String sql = "update customer_main set " +
-                "email = '" + customer.getFirstName().replace("'", "''") + "' " +
+                "email = '" + customer.getEmail().replace("'", "''") + "' " +
             "where custid = " + Integer.toString(customer.getCustId());
             Statement s = cn.createStatement();
             s.executeUpdate(sql);
