@@ -85,16 +85,54 @@ public class CustomerDb
         return customers;
     }
 
-    public Status updateCustomer(Customer customer) {
+    public Status updatePersonalInfo(Customer customer) {
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
             String sql = "update customer_main set " +
                 "firstname = '" + customer.getFirstName().replace("'", "''") + "', " +
                 "lastname = '" + customer.getFirstName().replace("'", "''") + "', " +
-                "email = '" + customer.getFirstName().replace("'", "''") + "', " +
                 "dob = '" + customer.getFirstName().replace("'", "''") + "', " +
                 "ssn = '" + customer.getFirstName().replace("'", "''") + "', " +
-            "where custno = '" + Integer.toString(customer.getCustId()) + "'";
+            "where custid = " + Integer.toString(customer.getCustId());
+            Statement s = cn.createStatement();
+            s.executeUpdate(sql);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        Status status = new Status(true, "Success!");
+        return status;
+    }
+
+    public Status updateEmailAddress(Customer customer) {
+        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
+        {
+            String sql = "update customer_main set " +
+                "email = '" + customer.getFirstName().replace("'", "''") + "' " +
+            "where custid = " + Integer.toString(customer.getCustId());
+            Statement s = cn.createStatement();
+            s.executeUpdate(sql);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        Status status = new Status(true, "Success!");
+        return status;
+    }
+
+    public Status updateAddress(Address address) {
+        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
+        {
+            String sql = "update customer_addresses set " +
+                "contact = '" + address.getContact().replace("'", "''") + "', " +
+                "address1 = '" + address.getAddress1().replace("'", "''") + "', " +
+                "address2 = '" + address.getAddress2().replace("'", "''") + "', " +
+                "city = '" + address.getCity().replace("'", "''") + "', " +
+                "state = '" + address.getState().replace("'", "''") + "', " +
+                "zip = '" + address.getZip().replace("'", "''") + "', " +
+                "phone = '" + address.getPhone().replace("'", "''") + "' " +
+            "where custid = " + Integer.toString(address.getCustId()) + " " +
+                "and addrtype = '" + address.getAddrType() + "'";
             Statement s = cn.createStatement();
             s.executeUpdate(sql);
         } catch (SQLException ex) {

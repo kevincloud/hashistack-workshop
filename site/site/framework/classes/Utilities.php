@@ -42,7 +42,7 @@ class Utilities
 		return base64_decode($result->data->plaintext);
 	}
 
-	public static function GetStates($selected="")
+	public static function GetStates()
 	{
 		$states = array(
 			array("Name" => "Alabama", "Abbr" => "AL"), 
@@ -97,16 +97,7 @@ class Utilities
 			array("Name" => "Wyoming", "Abbr" => "WY")
 		);
 
-		$out = "";
-		foreach ($states as $state)
-		{
-			$strsel = "";
-			if ($state->Abbr == $selected)
-				$strsel = " selected";
-			$out .= "				<option value=\"".$state->Abbr."\"".$strsel.">".$state->Name."</option>\n";
-		}
-
-		return $out;
+		return $states;
 	}
 }
 

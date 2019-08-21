@@ -702,7 +702,18 @@ class Account
 		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_state\">State</label>\n";
 		$out .= "			<select name=\"info_state\" id=\"info_state\" /></div>\n";
-		$out .= Utilities::GetStates();
+
+		$states = Utilities::GetStates();
+		$out = "";
+		foreach ($states as $x)
+		{
+			$state = (object) $x;
+			$strsel = "";
+			if ($state->Abbr == $address->State)
+				$strsel = " selected";
+			$out .= "				<option value=\"".$state->Abbr."\"".$strsel.">".$state->Name."</option>\n";
+		}
+
 		$out .= "			</select>\n";
 		$out .= "		</p>\n";
 		$out .= "		<p>\n";
@@ -783,6 +794,10 @@ class Account
 		$out .= "			<input type=\"text\" name=\"info_lastname\" id=\"info_lastname\" value=\"".$this->LastName."\" />\n";
 		$out .= "		</p>\n";
 		$out .= "		<p>\n";
+		$out .= "			<label for=\"info_ssn\">Social Security Number</label>\n";
+		$out .= "			<input type=\"text\" readonly=\"readonly\" name=\"info_ssn\" id=\"info_ssn\" value=\"".(!$this->SSN ? "" : $this->SSN)."\" />\n";
+		$out .= "		</p>\n";
+		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_birthday\">Birthday</label>\n";
 		$out .= "			<input type=\"text\" readonly=\"readonly\" name=\"info_birthday\" id=\"info_birthday\" value=\"".(!$this->Birthday ? "" : date("m/d/Y", strtotime($this->Birthday)))."\" />\n";
 		$out .= "		</p>\n";
@@ -797,7 +812,7 @@ class Account
 		return $this->PageWrapper("Personal Information", $out);
 	}
 	
-	public function SavePersonalInfo($firstname, $lastname, $birthday)
+	public function SavePersonalInfo($firstname, $lastname, $ssn, $birthday)
 	{
 		// ***INLINESQL***
 		// $sql = "update pw_customer set firstname = ".smartQuote($firstname).", lastname = ".smartQuote($lastname).", gender = ".smartQuote($gender).", birthday = ".smartQuote($birthday)." where custid = ".smartQuote($this->CustomerID);
@@ -805,6 +820,7 @@ class Account
 		
 		$this->FirstName = $firstname;
 		$this->LastName = $lastname;
+		$this->SSN = $ssn;
 		$this->Birthday = $birthday;
 	}
 	

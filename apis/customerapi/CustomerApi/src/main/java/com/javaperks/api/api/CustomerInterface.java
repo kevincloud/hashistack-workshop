@@ -74,9 +74,23 @@ public class CustomerInterface
     }
 
     @PUT
-    @Path("/{id}")
-    public Response updateCustomer(Customer customer) {
+    @Path("/info/{id}")
+    public Response updatePersonalInfo(Customer customer) {
         CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.updateCustomer(customer)).build();
+        return Response.ok(cdb.updatePersonalInfo(customer)).build();
+    }
+
+    @PUT
+    @Path("/email/{id}")
+    public Response updateEmailAddress(Customer customer) {
+        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(cdb.updateEmailAddress(customer)).build();
+    }
+
+    @PUT
+    @Path("/address/{id}")
+    public Response updateAddress(Address address) {
+        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(cdb.updateAddress(address)).build();
     }
 }
