@@ -821,14 +821,6 @@ class Account
 		$out .= "			<input type=\"text\" name=\"info_lastname\" id=\"info_lastname\" value=\"".$this->LastName."\" />\n";
 		$out .= "		</p>\n";
 		$out .= "		<p>\n";
-		$out .= "			<label for=\"info_gender\">Gender</label>\n";
-		$out .= "			<select name=\"info_gender\" id=\"info_gender\">\n";
-		$out .= "				<option value=\"\"></option>\n";
-		$out .= "				<option value=\"Male\"".($this->Gender == "Male" ? " selected" : "").">Male</option>\n";
-		$out .= "				<option value=\"Female\"".($this->Gender == "Female" ? " selected" : "").">Female</option>\n";
-		$out .= "			</select>\n";
-		$out .= "		</p>\n";
-		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_birthday\">Birthday</label>\n";
 		$out .= "			<input type=\"text\" readonly=\"readonly\" name=\"info_birthday\" id=\"info_birthday\" value=\"".(!$this->Birthday ? "" : date("m/d/Y", strtotime($this->Birthday)))."\" />\n";
 		$out .= "		</p>\n";
@@ -843,7 +835,7 @@ class Account
 		return $this->PageWrapper("Personal Information", $out);
 	}
 	
-	public function SavePersonalInfo($firstname, $lastname, $gender, $birthday)
+	public function SavePersonalInfo($firstname, $lastname, $birthday)
 	{
 		// ***INLINESQL***
 		// $sql = "update pw_customer set firstname = ".smartQuote($firstname).", lastname = ".smartQuote($lastname).", gender = ".smartQuote($gender).", birthday = ".smartQuote($birthday)." where custid = ".smartQuote($this->CustomerID);
@@ -851,7 +843,6 @@ class Account
 		
 		$this->FirstName = $firstname;
 		$this->LastName = $lastname;
-		$this->Gender = $gender;
 		$this->Birthday = $birthday;
 	}
 	
