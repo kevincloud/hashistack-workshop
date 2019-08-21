@@ -662,11 +662,6 @@ class Account
 				$address->AddressType = $addrtype;
 				break;
 		}
-
-		if ($address->Country == "USA" || $address->Country == "AUS" || $address->Country == "CAN" || $address->Country == "")
-			$initdisplay = "list";
-		else
-			$initdisplay = "text";
 		
 		$out .= "	<p>Update your ".strtolower($label)." address.</p>\n";
 		$out .= "	<section class=\"info-box\">\n";
@@ -701,46 +696,14 @@ class Account
 		$out .= "			<input type=\"text\" name=\"info_address2\" id=\"info_address2\" value=\"".$address->Address2."\" />\n";
 		$out .= "		</p>\n";
 		$out .= "		<p>\n";
-		$out .= "			<label for=\"info_country\">Country</label>\n";
-		$out .= "				<select name=\"info_country\" id=\"info_country\" onchange=\"acctGetStates(this.options[this.selectedIndex].value, '".$address->State."');\" />\n";
-		
-		// ***INLINESQL***
-		// $sql = "select numcode, country from cc_countries where active = 1 and numcode > 0 order by country";
-		// $rs = $this->_db->get_results($sql);
-		// foreach ($rs as $row)
-		// {
-		// 	$strsel = "";
-		// 	if ($row->numcode == $address->CountryCode)
-		// 		$strsel = " selected";
-		// 	$out .= "					<option value=\"".$row->numcode."\"".$strsel.">".$row->country."</option>\n";
-		// }
-		
-		$out .= "				</select>\n";
-		$out .= "		</p>\n";
-		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_city\">City</label>\n";
 		$out .= "			<input type=\"text\" name=\"info_city\" id=\"info_city\" value=\"".$address->City."\" />\n";
 		$out .= "		</p>\n";
-		$out .= "		<p id=\"label_state\"".($initdisplay == "list" ? "" : " style=\"display:none;\"").">\n";
+		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_state\">State</label>\n";
 		$out .= "			<select name=\"info_state\" id=\"info_state\" /></div>\n";
-
-		// ***INLINESQL***
-		// $sql = "select code, state from pw_states where id > 0 and location = ".smartQuote($address->Country)." order by state";
-		// $rs = $this->_db->get_results($sql);
-		// foreach ($rs as $row)
-		// {
-		// 	$strsel = "";
-		// 	if ($row->code == $address->State)
-		// 		$strsel = " selected";
-		// 	$out .= "				<option value=\"".$row->code."\"".$strsel.">".$row->state."</option>\n";
-		// }
-
+		$out .= Utilities::GetStates();
 		$out .= "			</select>\n";
-		$out .= "		</p>\n";
-		$out .= "		<p id=\"label_istate\"".($initdisplay == "text" ? "" : " style=\"display:none;\"").">\n";
-		$out .= "			<label for=\"info_state\">State</label>\n";
-		$out .= "			<input type=\"text\" name=\"info_istate\" id=\"info_istate\" value=\"".$address->State."\" />\n";
 		$out .= "		</p>\n";
 		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_zip\">Zip</label>\n";
@@ -761,7 +724,7 @@ class Account
 		return $this->PageWrapper($label." Address", $out);
 	}
 	
-	public function SaveAddress($addrtype, $contact, $address1, $address2, $city, $state, $zip, $country, $phone)
+	public function SaveAddress($addrtype, $contact, $address1, $address2, $city, $state, $zip, $phone)
 	{
 		switch (strtoupper($addrtype))
 		{
@@ -782,7 +745,6 @@ class Account
 		$address->City = $city;
 		$address->State = $state;
 		$address->Zip = $zip;
-		$address->CountryCode = $country;
 		$address->Phone = $phone;
 		
 		$address->SaveAddress();
