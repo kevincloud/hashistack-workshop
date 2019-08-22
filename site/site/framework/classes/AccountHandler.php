@@ -162,12 +162,15 @@ class AccountHandler extends BasePage
 	{
 		$firstname = trim($this->PageVariables["info_firstname"]);
 		$lastname = trim($this->PageVariables["info_lastname"]);
-		$gender = $this->PageVariables["info_gender"];
+		$ssn = $this->PageVariables["info_ssn"];
 		$birthday = $this->PageVariables["info_birthday"];
 		
+		$ssn = $ssn == "" ? "" : Utilities::EncryptValue("account", $ssn);
+		$birthday = $birthday == "" ? "" : Utilities::EncryptValue("account", $birthday);
+
 		if ($firstname != "" && $lastname != "")
 		{
-			$this->Account->SavePersonalInfo($firstname, $lastname, $gender, $birthday);
+			$this->Account->SavePersonalInfo($firstname, $lastname, $ssn, $birthday);
 			$this->Account->LastMessage = "saved";
 			$this->Redirect("/profile/info");
 		}
@@ -193,7 +196,7 @@ class AccountHandler extends BasePage
 	{
 		if (filter_var($this->PageVariables["info_email"], FILTER_VALIDATE_EMAIL))
 		{
-			$this->Account->SaveEmail($this->PageVariables["info_email"]);
+			$this->Account->SaveEmail(Utilities::EncryptValue("account", $this->PageVariables["info_email"]));
 			$this->Account->LastMessage = "l:saved";
 		}
 		else

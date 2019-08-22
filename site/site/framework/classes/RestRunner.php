@@ -58,7 +58,11 @@ class RestRunner
 
     public function Put($url, $parms)
     {
-        $p = $this->BuildParms($parms);
+        $p = "";
+        if (is_array($parms))
+            $p = $this->BuildParms($parms);
+        else
+            $p = $parms;
 
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "PUT");

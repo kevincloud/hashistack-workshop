@@ -90,9 +90,9 @@ public class CustomerDb
         {
             String sql = "update customer_main set " +
                 "firstname = '" + customer.getFirstName().replace("'", "''") + "', " +
-                "lastname = '" + customer.getFirstName().replace("'", "''") + "', " +
-                "dob = '" + customer.getFirstName().replace("'", "''") + "', " +
-                "ssn = '" + customer.getFirstName().replace("'", "''") + "', " +
+                "lastname = '" + customer.getLastName().replace("'", "''") + "', " +
+                "dob = '" + customer.getDOB().replace("'", "''") + "', " +
+                "ssn = '" + customer.getSSN().replace("'", "''") + "' " +
             "where custid = " + Integer.toString(customer.getCustId());
             Statement s = cn.createStatement();
             s.executeUpdate(sql);

@@ -795,11 +795,11 @@ class Account
 		$out .= "		</p>\n";
 		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_ssn\">Social Security Number</label>\n";
-		$out .= "			<input type=\"text\" readonly=\"readonly\" name=\"info_ssn\" id=\"info_ssn\" value=\"".(!$this->SSN ? "" : $this->SSN)."\" />\n";
+		$out .= "			<input type=\"text\" readonly=\"readonly\" name=\"info_ssn\" id=\"info_ssn\" value=\"".(!$this->SSN ? "" : Utilities::DecryptValue("account", $this->SSN))."\" />\n";
 		$out .= "		</p>\n";
 		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_birthday\">Birthday</label>\n";
-		$out .= "			<input type=\"text\" readonly=\"readonly\" name=\"info_birthday\" id=\"info_birthday\" value=\"".(!$this->Birthday ? "" : date("m/d/Y", strtotime($this->Birthday)))."\" />\n";
+		$out .= "			<input type=\"text\" readonly=\"readonly\" name=\"info_birthday\" id=\"info_birthday\" value=\"".(!$this->Birthday ? "" : date("m/d/Y", strtotime(Utilities::DecryptValue("account", $this->Birthday))))."\" />\n";
 		$out .= "		</p>\n";
 		$out .= "		<p>	\n";
 		$out .= "			<input type=\"submit\" class=\"alignright green button\" value=\"Continue\" />\n";
@@ -814,9 +814,9 @@ class Account
 	
 	public function SavePersonalInfo($firstname, $lastname, $ssn, $birthday)
 	{
-		// ***INLINESQL***
-		// $sql = "update pw_customer set firstname = ".smartQuote($firstname).", lastname = ".smartQuote($lastname).", gender = ".smartQuote($gender).", birthday = ".smartQuote($birthday)." where custid = ".smartQuote($this->CustomerID);
-		// $this->_db->query($sql);
+		$request = $this->CustomerApi."/customers/info/".$custid;
+		$rr = new RestRunner();
+		$retval = $rr->Put($request, $this->OutputJson());
 		
 		$this->FirstName = $firstname;
 		$this->LastName = $lastname;
@@ -902,7 +902,12 @@ class Account
 	
 	public function SaveEmail($email)
 	{
+		$request = $this->CustomerApi."/customers/email/".$custid;
+		$rr = new RestRunner();
+		$retval = $rr->Put($request, $this->OutputJson());
+
 		$this->Email = $email;
+
 		// ***INLINESQL***
 		// $sql = "update pw_customer set email = ".smartQuote($email)." where custid = ".smartQuote($this->CustomerID);
 		// $this->_db->query($sql);
@@ -1306,6 +1311,25 @@ class Account
 		
 		return $out;
 	}
+
+	public function OutputJson()
+	{
+		$out = "";
+
+		$out .= "{\n";
+		$out .= "    \"custId\": ".$this->RowID.",";
+		$out .= "    \"custNo\": \"".$this->CustomerID."\",";
+		$out .= "    \"firstName\": \"".$this->FirstName."\",";
+		$out .= "    \"lastName\": \"".$this->LastName."\",";
+		$out .= "    \"email\": \"".$this->Email."\",";
+		$out .= "    \"dob\": \"".$this->Birthday."\",";
+		$out .= "    \"ssn\": \"".$this->SSN."\",";
+		$out .= "    \"addresses\": [],";
+		$out .= "    \"dateCreated\": 0";
+		$out .= "}";
+
+		return $out;
+	}
 }
 
 
@@ -1440,6 +1464,26 @@ class Address
 			// 	//exit();
 			// $this->_db->query($sql);
 		}
+	}
+
+	public function OutputJson()
+	{
+		$out = "";
+
+		$out .= "{";
+		$out .= "    \"addrId\": ".$this->AddressID.",";
+		$out .= "    \"custId\": ".$this->CustomerID.",";
+		$out .= "    \"contact\": \"".$this->Contact."\",";
+		$out .= "    \"address1\": \"".$this->Address1."\",";
+		$out .= "    \"address2\": \"".$this->Address2."\",";
+		$out .= "    \"city\": \"".$this->City."\",";
+		$out .= "    \"state\": \"".$this->State."\",";
+		$out .= "    \"zip\": \"".$this->Zip."\",";
+		$out .= "    \"phone\": \"".$this->Phone."\",";
+		$out .= "    \"addrType\": \"".$this->AddressType."\"";
+		$out .= "}";
+	
+		return $out;
 	}
 }
 

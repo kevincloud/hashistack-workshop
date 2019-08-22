@@ -30,6 +30,19 @@ class Utilities
 		return $result->data->data;
 	}
 
+	public static function EncryptValue($transitkey, $plaintext)
+	{
+		global $vaulturl;
+		$r = new RestRunner();
+
+
+		$r->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
+		$result = $r->Post(
+			$vaulturl."/v1/transit/encrypt/".$transitkey, 
+			"{ \"plaintext\": \"".base64_encode($plaintext)."\" }");
+		return $result->data->ciphertext;
+	}
+
 	public static function DecryptValue($transitkey, $ciphertext)
 	{
 		global $vaulturl;
