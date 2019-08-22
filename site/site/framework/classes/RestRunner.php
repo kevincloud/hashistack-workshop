@@ -39,7 +39,7 @@ class RestRunner
         return $output;
     }
 
-    public function Delete($url, $parms)
+    public function Delete($url, $parms=null)
     {
         $p = "";
         if (is_array($parms))
@@ -56,7 +56,7 @@ class RestRunner
         return $output;
     }
 
-    public function Put($url, $parms)
+    public function Put($url, $parms=null)
     {
         $p = "";
         if (is_array($parms))

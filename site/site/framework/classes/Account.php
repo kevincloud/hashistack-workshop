@@ -798,7 +798,7 @@ class Account
 		$out .= "		</p>\n";
 		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_ssn\">Social Security Number</label>\n";
-		$out .= "			<input type=\"text\" readonly=\"readonly\" name=\"info_ssn\" id=\"info_ssn\" value=\"".(!$this->SSN ? "" : Utilities::DecryptValue("account", $this->SSN))."\" />\n";
+		$out .= "			<input type=\"text\" name=\"info_ssn\" id=\"info_ssn\" value=\"".(!$this->SSN ? "" : Utilities::DecryptValue("account", $this->SSN))."\" />\n";
 		$out .= "		</p>\n";
 		$out .= "		<p>\n";
 		$out .= "			<label for=\"info_birthday\">Birthday</label>\n";
@@ -905,6 +905,9 @@ class Account
 	
 	public function SaveEmail($email)
 	{
+		$oldemail = Utilities::DecryptValue("account", $this->Email);
+		$newemail = Utilities::DecryptValue("account", $email);
+
 		// Update the customer database
 		$request = $this->CustomerApi."/customers/email/".$custid;
 		$rr = new RestRunner();
@@ -913,19 +916,20 @@ class Account
 		// Update the login information in Vault
 		//
 		// get the password
-		$request = $this->VaultUrl."/v1/usercreds/data/".$this->Email;
+		$request = $this->VaultUrl."/v1/usercreds/data/".$oldemail;
+		$rr = new RestRunner();
 		$rr->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
 		$retval = $rr->Get($request);
 		$password = $retval->data->data->password;
 
 		// create the new record
-		$request = $this->VaultUrl."/v1/usercreds/data/".$email;
+		$request = $this->VaultUrl."/v1/usercreds/data/".$newemail;
 		$rr = new RestRunner();
 		$rr->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
-		$retval = $rr->Post($request, "{\"data\": { \"username\": \"".$email."\", \"password\": \"".$password."\", \"customerno\": \"".$this->CustomerID."\" } }");
+		$retval = $rr->Post($request, "{\"data\": { \"username\": \"".$newemail."\", \"password\": \"".$password."\", \"customerno\": \"".$this->CustomerID."\" } }");
 
 		// destroy the previous one
-		$request = $this->VaultUrl."/v1/secret/metadata/".$this->Email;
+		$request = $this->VaultUrl."/v1/secret/metadata/".$oldemail;
 		$rr = new RestRunner();
 		$rr->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
 		$retval = $rr->Delete($request);
