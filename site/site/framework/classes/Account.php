@@ -19,6 +19,7 @@ class Account
 	
 	private $AuthApi;
 	private $CustomerApi;
+	private $VaultUrl;
 	
 	/*
 	 *	Function: 	__construct
@@ -35,9 +36,11 @@ class Account
 	{
 		global $authapi;
 		global $customerapi;
+		global $vaulturl;
 
 		$this->AuthApi = $authapi;
 		$this->CustomerApi = $customerapi;
+		$this->VaultUrl = $vaulturl;
 	}
 	
 	/*
@@ -96,7 +99,7 @@ class Account
 						$this->ShippingAddress->State = $address->state;
 						$this->ShippingAddress->Zip = $address->zip;
 						$this->ShippingAddress->Phone = $address->phone;
-							}
+					}
 				}
 			}
 			else
@@ -902,9 +905,30 @@ class Account
 	
 	public function SaveEmail($email)
 	{
+		// Update the customer database
 		$request = $this->CustomerApi."/customers/email/".$custid;
 		$rr = new RestRunner();
 		$retval = $rr->Put($request, $this->OutputJson());
+
+		// Update the login information in Vault
+		//
+		// get the password
+		$request = $this->VaultUrl."/v1/usercreds/data/".$this->Email;
+		$rr->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
+		$retval = $rr->Get($request);
+		$password = $retval->data->data->password;
+
+		// create the new record
+		$request = $this->VaultUrl."/v1/usercreds/data/".$email;
+		$rr = new RestRunner();
+		$rr->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
+		$retval = $rr->Post($request, "{\"data\": { \"username\": \"".$email."\", \"password\": \"".$password."\", \"customerno\": \"".$this->CustomerID."\" } }");
+
+		// destroy the previous one
+		$request = $this->VaultUrl."/v1/secret/metadata/".$this->Email;
+		$rr = new RestRunner();
+		$rr->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
+		$retval = $rr->Delete($request);
 
 		$this->Email = $email;
 	}
