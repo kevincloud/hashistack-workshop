@@ -907,12 +907,6 @@ class Account
 		$retval = $rr->Put($request, $this->OutputJson());
 
 		$this->Email = $email;
-
-		// ***INLINESQL***
-		// $sql = "update pw_customer set email = ".smartQuote($email)." where custid = ".smartQuote($this->CustomerID);
-		// $this->_db->query($sql);
-		// $sql = "update pw_user set email = ".smartQuote($email)." where custid = ".smartQuote($this->CustomerID);
-		// $this->_db->query($sql);
 	}
 	
 	public function SavePassword($pass)
