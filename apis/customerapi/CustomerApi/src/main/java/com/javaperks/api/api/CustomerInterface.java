@@ -81,7 +81,7 @@ public class CustomerInterface
     }
 
     @POST
-    @Path("/payments/{id}")
+    @Path("/payments")
     public Response addPayment(Payment payment) {
         LOGGER.info("POST: Adding payment");
         LOGGER.info(payment.toString());
