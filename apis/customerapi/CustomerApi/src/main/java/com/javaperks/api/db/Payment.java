@@ -91,7 +91,16 @@ public class Payment
 
     @Override
     public String toString() {
-        String out = "(Hidden)";
+        String out = "{\n";
+        out += "    \"payId\": \"" + this.payId + "\"\n";
+        out += "    \"custId\": \"" + this.custId + "\"\n";
+        out += "    \"cardName\": \"" + this.cardName + "\"\n";
+        out += "    \"cardNumber\": \"" + this.cardNumber + "\"\n";
+        out += "    \"cardType\": \"" + this.cardType + "\"\n";
+        out += "    \"cvv\": \"" + this.cvv + "\"\n";
+        out += "    \"expMonth\": \"" + this.expMonth + "\"\n";
+        out += "    \"expYear\": \"" + this.expYear + "\"\n";
+        out += "}\n";
 
         return out;
     }

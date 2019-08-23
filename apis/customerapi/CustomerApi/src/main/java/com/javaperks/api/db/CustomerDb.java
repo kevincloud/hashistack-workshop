@@ -267,6 +267,7 @@ public class CustomerDb
     }
 
     public Status updatePayment(Payment payment) {
+        LOGGER.info("Update a credit card");
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
             String sql = "update customer_payment set " +
@@ -288,6 +289,8 @@ public class CustomerDb
     }
 
     public Status addPayment(Payment payment) {
+        LOGGER.info("Add a new credit card");
+        LOGGER.debug(payment.toString());
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
             String sql = "insert into customer_payment values (" +
