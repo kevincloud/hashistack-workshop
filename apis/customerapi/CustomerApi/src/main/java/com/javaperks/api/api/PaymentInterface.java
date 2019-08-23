@@ -69,8 +69,6 @@ public class PaymentInterface
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addPayment(Payment payment) {
-        LOGGER.info("POST: Adding payment");
-        LOGGER.info(payment.toString());
         PaymentDb pdb = new PaymentDb(this.dbserver, this.database, this.username, this.password);
         return Response.ok(pdb.addPayment(payment)).build();
     }

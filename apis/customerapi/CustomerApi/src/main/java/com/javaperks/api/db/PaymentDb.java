@@ -102,7 +102,6 @@ public class PaymentDb
 
     public Status addPayment(Payment payment) {
         LOGGER.info("Add a new credit card");
-        LOGGER.debug(payment.toString());
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
             String sql = "insert into customer_payment values (" +
@@ -114,7 +113,6 @@ public class PaymentDb
                 "'" + payment.getExpirationMonth().replace("'", "''") + "', " +
                 "'" + payment.getExpirationYear().replace("'", "''") + "') ";
             Statement s = cn.createStatement();
-            LOGGER.info(sql);
             s.executeUpdate(sql);
         } catch (SQLException ex) {
             ex.printStackTrace();
