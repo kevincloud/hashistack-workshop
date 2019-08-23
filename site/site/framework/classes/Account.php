@@ -982,6 +982,7 @@ class Account
 			$xc->ExpirationMonth = $month;
 			$xc->ExpirationYear = $year;
 			
+			throw new Exception($xc->OutputJson());
 			$request = $this->CustomerApi."/payments";
 			$rr = new RestRunner();
 			$retval = $rr->Post($request, $xc->OutputJson());
@@ -1628,14 +1629,14 @@ class CreditCard
 		$out = "";
 
 		$out .="{";
-		$out .="	\"payId\": ".$this->ID.",";
-		$out .="	\"custId\": ".$this->CustID.",";
-		$out .="	\"cardName\": \"".$this->CardName."\",";
-		$out .="	\"cardNumber\": \"".$this->CardNumber."\",";
-		$out .="	\"cardType\": \"".$this->CardType."\",";
-		$out .="	\"cvv\": \"".$this->CVV."\",";
-		$out .="	\"expirationMonth\": \"".$this->ExpirationMonth."\",";
-		$out .="	\"expirationYear\": \"".$this->ExpirationYear."\"";
+		$out .="	\"payId\": ".$this->ID.", ";
+		$out .="	\"custId\": ".$this->CustID.", ";
+		$out .="	\"cardName\": \"".$this->CardName."\", ";
+		$out .="	\"cardNumber\": \"".$this->CardNumber."\", ";
+		$out .="	\"cardType\": \"".$this->CardType."\", ";
+		$out .="	\"cvv\": \"".$this->CVV."\", ";
+		$out .="	\"expirationMonth\": \"".$this->ExpirationMonth."\", ";
+		$out .="	\"expirationYear\": \"".$this->ExpirationYear."\" ";
 		$out .="}";
 		
 		return $out;
