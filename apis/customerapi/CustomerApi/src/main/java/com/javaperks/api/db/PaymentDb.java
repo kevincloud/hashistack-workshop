@@ -104,8 +104,9 @@ public class PaymentDb
         LOGGER.info("Add a new credit card");
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
-            String sql = "insert into customer_payment values (" +
-                "'" + Integer.toString(payment.getCustId()) + "'" +
+            String sql = "insert into customer_payment " + 
+                "(custid, cardname, cardnumber, cardtype, cvv, expmonth, expyear) values (" +
+                "'" + Integer.toString(payment.getCustId()) + "', " +
                 "'" + payment.getCardName().replace("'", "''") + "', " +
                 "'" + payment.getCardNumber().replace("'", "''") + "', " +
                 "'" + payment.getCardType().replace("'", "''") + "', " +
