@@ -125,8 +125,7 @@ class AccountHandler extends BasePage
 		$address1 = trim($this->PageVariables["info_address1"]);
 		$address2 = trim($this->PageVariables["info_address2"]);
 		$city = trim($this->PageVariables["info_city"]);
-		$country = trim($this->PageVariables["info_country"]);
-		$state = ($country == 840 || $country == 36 || $country == 124) ? trim($this->PageVariables["info_state"]) : trim($this->PageVariables["info_istate"]);
+		$state = trim($this->PageVariables["info_state"]);
 		$zip = trim($this->PageVariables["info_zip"]);
 		$phone = trim($this->PageVariables["info_phone"]);
 		$error = "";
@@ -149,7 +148,7 @@ class AccountHandler extends BasePage
 		}
 		
 		$this->Account->LastMessage = "saved";
-		$this->Account->SaveAddress($addrtype, $contact, $address1, $address2, $city, $state, $zip, $country, $phone);
+		$this->Account->SaveAddress($addrtype, $contact, $address1, $address2, $city, $state, $zip, $phone);
 		$this->Redirect("/profile/".($addrtype == "B" ? "billing" : "shipping"));
 	}
 	

@@ -612,7 +612,7 @@ class Account
 		$out .= "		</p>\n";
 		$r = new RestRunner();
 
-		$result = $r->Get($this->CustomerApi."/customer/payments/".$_SESSION["__account__"]->RowID);
+		$result = $r->Get($this->CustomerApi."/customers/payments/".$_SESSION["__account__"]->RowID);
 		if (count($result) > 0)
 		{
 			foreach ($result as $item)
@@ -974,18 +974,18 @@ class Account
 		if ($this->CustomerID != "")
 		{
 			$xc = new CreditCard();
-			// ***INLINESQL***
-			// $sql = "set nocount on; insert into cc_moulah(custid, cardname, cardnum, cardtype, cvv, expmo, expyr, active) values(".
-			// 	smartQuote($this->CustomerID).", ".
-			// 	smartQuote($name).", ".
-			// 	smartQuote($xc->EncodeNumber($number)).", ".
-			// 	smartQuote($type).", ".
-			// 	smartQuote($cvv).", ".
-			// 	smartQuote($month).", ".
-			// 	smartQuote($year).", ".
-			// 	"1); select @@identity as id";
-			// $this->_db->query($sql);
-		}
+			$xc->CustID = $this->CustomerID;
+			$xc->CardName = $name;
+			$xc->CardNumber = $number;
+			$xc->CardType = $type;
+			$xc->CVV = $cvv;
+			$xc->ExpirationMonth = $month;
+			$xc->ExpirationYear = $year;
+			
+			$request = $this->CustomerApi."/customers/payments/".$custid;
+			$rr = new RestRunner();
+			$retval = $rr->Put($request, $this->OutputJson());
+			}
 	}
 	
 	public function AddNewCard()

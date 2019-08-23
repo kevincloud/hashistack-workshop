@@ -112,6 +112,9 @@ class AccountAjax extends AjaxHandler
 			$this->Error = "The credit card is expired. Please use a current credit card.";
 			return;
 		}
+
+		$CardNumber = Utilities::EncryptValue("payment", $CardNumber);
+		$CardCVV = Utilities::EncryptValue("payment", $CardCVV);
 		
 		$this->Account->SaveCreditCard($CardName, $CardType, $CardNumber, $CardCVV, $CardExpMonth, $CardExpYear);
 	}

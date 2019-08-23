@@ -75,6 +75,20 @@ public class CustomerInterface
         return Response.ok(cdb.getPaymentsByCustomerId(id)).build();
     }
 
+    @POST
+    @Path("/payments/{id}")
+    public Response addPayment(Payment payment) {
+        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(cdb.addPayment(payment)).build();
+    }
+
+    @PUT
+    @Path("/payments/{id}")
+    public Response updatePayment(Payment payment) {
+        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(cdb.updatePayment(payment)).build();
+    }
+
     @DELETE
     @Path("/payments/{id}")
     public Response deletePayment(@PathParam("id") int id) {
