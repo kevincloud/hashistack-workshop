@@ -112,8 +112,7 @@ public class PaymentDb
                 "'" + payment.getCardType().replace("'", "''") + "', " +
                 "'" + payment.getCVV().replace("'", "''") + "', " +
                 "'" + payment.getExpirationMonth().replace("'", "''") + "', " +
-                "'" + payment.getExpirationYear().replace("'", "''") + "') " +
-            "where payid = " + Integer.toString(payment.getPayId());
+                "'" + payment.getExpirationYear().replace("'", "''") + "') ";
             Statement s = cn.createStatement();
             LOGGER.info(sql);
             s.executeUpdate(sql);

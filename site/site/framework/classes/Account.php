@@ -984,6 +984,7 @@ class Account
 			
 			$request = $this->CustomerApi."/payments";
 			$rr = new RestRunner();
+			$rr->SetHeader("Content-Type", "application/json");
 			$retval = $rr->Post($request, $xc->OutputJson());
 		}
 	}
