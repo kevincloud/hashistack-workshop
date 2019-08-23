@@ -114,6 +114,7 @@ public class PaymentDb
                 "'" + payment.getExpirationMonth().replace("'", "''") + "', " +
                 "'" + payment.getExpirationYear().replace("'", "''") + "') ";
             Statement s = cn.createStatement();
+            LOGGER.info(sql);
             s.executeUpdate(sql);
         } catch (SQLException ex) {
             ex.printStackTrace();
