@@ -66,7 +66,6 @@ public class PaymentInterface
     }
 
     @POST
-    // @Path("/{id}")
     public Response addPayment(Payment payment) {
         LOGGER.info("POST: Adding payment");
         LOGGER.info(payment.toString());
@@ -75,7 +74,6 @@ public class PaymentInterface
     }
 
     @PUT
-    // @Path("/{id}")
     public Response updatePayment(Payment payment) {
         PaymentDb pdb = new PaymentDb(this.dbserver, this.database, this.username, this.password);
         return Response.ok(pdb.updatePayment(payment)).build();
