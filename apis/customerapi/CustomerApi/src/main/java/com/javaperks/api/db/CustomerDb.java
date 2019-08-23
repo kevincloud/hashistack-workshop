@@ -150,21 +150,6 @@ public class CustomerDb
         return status;
     }
 
-    public Status deletePayment(int payid) {
-        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
-        {
-            String sql = "delete from customer_payment " +
-            "where payid = " + Integer.toString(payid);
-            Statement s = cn.createStatement();
-            s.executeUpdate(sql);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
-        Status status = new Status(true, "Success!");
-        return status;
-    }
-
     public Status updateAddress(Address address) {
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
@@ -235,81 +220,5 @@ public class CustomerDb
         }
 
         return customer;
-    }
-
-    public List<Payment> getPaymentsByCustomerId(String custId) {
-        LOGGER.info("Get all credit cards for a customer");
-        List<Payment> payments = new ArrayList<Payment>();
-
-        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
-        {
-            String sql = "select * from customer_payment where custid = " + custId;
-            Statement s = cn.createStatement();
-            ResultSet rs = s.executeQuery(sql);
-
-            while(rs.next()) {
-                payments.add(new Payment(
-                    rs.getInt("payid"), 
-                    rs.getInt("custid"), 
-                    rs.getString("cardname"), 
-                    rs.getString("cardnumber"), 
-                    rs.getString("cardtype"), 
-                    rs.getString("cvv"), 
-                    rs.getString("expmonth"), 
-                    rs.getString("expyear"))
-                );
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
-        return payments;
-    }
-
-    public Status updatePayment(Payment payment) {
-        LOGGER.info("Update a credit card");
-        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
-        {
-            String sql = "update customer_payment set " +
-                "cardname = '" + payment.getCardName().replace("'", "''") + "', " +
-                "cardnumber = '" + payment.getCardNumber().replace("'", "''") + "', " +
-                "cardtype = '" + payment.getCardType().replace("'", "''") + "', " +
-                "cvv = '" + payment.getCVV().replace("'", "''") + "', " +
-                "expmonth = '" + payment.getExpirationMonth().replace("'", "''") + "', " +
-                "expyear = '" + payment.getExpirationYear().replace("'", "''") + "' " +
-            "where payid = " + Integer.toString(payment.getPayId()) + " ";
-            Statement s = cn.createStatement();
-            s.executeUpdate(sql);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
-        Status status = new Status(true, "Success!");
-        return status;
-    }
-
-    public Status addPayment(Payment payment) {
-        LOGGER.info("Add a new credit card");
-        LOGGER.debug(payment.toString());
-        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
-        {
-            String sql = "insert into customer_payment values (" +
-                "'" + Integer.toString(payment.getCustId()) + "'" +
-                "'" + payment.getCardName().replace("'", "''") + "', " +
-                "'" + payment.getCardNumber().replace("'", "''") + "', " +
-                "'" + payment.getCardType().replace("'", "''") + "', " +
-                "'" + payment.getCVV().replace("'", "''") + "', " +
-                "'" + payment.getExpirationMonth().replace("'", "''") + "', " +
-                "'" + payment.getExpirationYear().replace("'", "''") + "') " +
-            "where payid = " + Integer.toString(payment.getPayId());
-            Statement s = cn.createStatement();
-            LOGGER.info(sql);
-            s.executeUpdate(sql);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
-        Status status = new Status(true, "Success!");
-        return status;
     }
 }

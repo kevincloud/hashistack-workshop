@@ -19,8 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Produces(MediaType.APPLICATION_JSON)
-@Path("/customers")
-public class CustomerInterface
+@Path("/payments")
+public class PaymentInterface
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDb.class);
 
@@ -33,7 +33,7 @@ public class CustomerInterface
     private String database;
     private final Validator validator;
 
-    public CustomerInterface(Validator validator, String vaultAddress, String vaultToken) throws Exception {
+    public PaymentInterface(Validator validator, String vaultAddress, String vaultToken) throws Exception {
         VaultConfig vaultConfig;
 
         this.validator = validator;
@@ -59,45 +59,32 @@ public class CustomerInterface
     }
 
     @GET
-    public Response getCustomers()
-    {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-
-        return Response.ok(cdb.getCustomers()).build();
-    }
-
-    @GET
     @Path("/{id}")
-    public Response getCustomerById(@PathParam("id") String id) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.getCustomerById(id)).build();
+    public Response getPaymentsByCustomerId(@PathParam("id") String id) {
+        PaymentDb pdb = new PaymentDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(pdb.getPaymentsByCustomerId(id)).build();
+    }
+
+    @POST
+    // @Path("/{id}")
+    public Response addPayment(Payment payment) {
+        LOGGER.info("POST: Adding payment");
+        LOGGER.info(payment.toString());
+        PaymentDb pdb = new PaymentDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(pdb.addPayment(payment)).build();
     }
 
     @PUT
-    @Path("/info/{id}")
-    public Response updatePersonalInfo(Customer customer) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.updatePersonalInfo(customer)).build();
+    // @Path("/{id}")
+    public Response updatePayment(Payment payment) {
+        PaymentDb pdb = new PaymentDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(pdb.updatePayment(payment)).build();
     }
 
-    @PUT
-    @Path("/email/{id}")
-    public Response updateEmailAddress(Customer customer) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.updateEmailAddress(customer)).build();
-    }
-
-    @GET
-    @Path("/address/{id}")
-    public Response updateAddress(@PathParam("id") int id) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.getAddressById(id)).build();
-    }
-
-    @PUT
-    @Path("/address/{id}")
-    public Response updateAddress(Address address) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.updateAddress(address)).build();
+    @DELETE
+    @Path("/{id}")
+    public Response deletePayment(@PathParam("id") int id) {
+        PaymentDb pdb = new PaymentDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(pdb.deletePayment(id)).build();
     }
 }
