@@ -54,7 +54,7 @@ public class CustomerDb
         for (Customer c : customers) {
             try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
             {
-                String sql = "select * from customer_addresses";
+                String sql = "select * from customer_addresses where custid = " + Integer.toString(c.getCustId());
                 Statement s = cn.createStatement();
                 ResultSet rs = s.executeQuery(sql);
                 List<Address> list = new ArrayList<Address>();
@@ -85,6 +85,36 @@ public class CustomerDb
         return customers;
     }
 
+    public Address getAddressById(int addrid) {
+        Address address = null;
+
+        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
+        {
+            String sql = "select * from customer_addresses where addrid = " + Integer.toString(addrid);
+            Statement s = cn.createStatement();
+            ResultSet rs = s.executeQuery(sql);
+
+            while(rs.next()) {
+                address = new Address(
+                    rs.getInt("addrid"),
+                    rs.getInt("custid"),
+                    rs.getString("contact"),
+                    rs.getString("address1"),
+                    rs.getString("address2"),
+                    rs.getString("city"),
+                    rs.getString("state"),
+                    rs.getString("zip"),
+                    rs.getString("phone"),
+                    rs.getString("addrtype")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return address;
+    }
+
     public Status updatePersonalInfo(Customer customer) {
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
         {
@@ -110,6 +140,21 @@ public class CustomerDb
             String sql = "update customer_main set " +
                 "email = '" + customer.getEmail().replace("'", "''") + "' " +
             "where custid = " + Integer.toString(customer.getCustId());
+            Statement s = cn.createStatement();
+            s.executeUpdate(sql);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        Status status = new Status(true, "Success!");
+        return status;
+    }
+
+    public Status deletePayment(int payid) {
+        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
+        {
+            String sql = "delete from customer_payment " +
+            "where payid = " + Integer.toString(payid);
             Statement s = cn.createStatement();
             s.executeUpdate(sql);
         } catch (SQLException ex) {

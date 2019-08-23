@@ -474,7 +474,7 @@ class Account
 		$out .= "			<div style=\"font-weight:bold;\">Personal Information</div>\n";
 		$out .= "			<div style=\"padding-left:20px;\">\n";
 		$out .= "				<div style=\"\">".$this->FullName()."</div>\n";
-		$out .= "				<div style=\"\">Birthday: ".(isBlank($this->Birthday) ? "<span style=\"font-style:italic;\">(not provided)</span>" : date("F d, Y", strtotime($this->Birthday)))."</div>\n";
+		$out .= "				<div style=\"\">Birthday: ".(isBlank($this->Birthday) ? "<span style=\"font-style:italic;\">(not provided)</span>" : date("F d, Y", strtotime(Utilities::DecryptValue("account", $this->Birthday))))."</div>\n";
 		$out .= "				<div style=\"\">&nbsp;</div>\n";
 		$out .= "				<div style=\"\">E-mail: ".Utilities::DecryptValue("account", $this->Email)."</div>\n";
 		$out .= "				<div style=\"\">Password: ********</div>\n";
@@ -612,7 +612,7 @@ class Account
 		$out .= "		</p>\n";
 		$r = new RestRunner();
 
-		$result = $r->Get($this->CustomerApi."/payments/".$_SESSION["__account__"]->RowID);
+		$result = $r->Get($this->CustomerApi."/customer/payments/".$_SESSION["__account__"]->RowID);
 		if (count($result) > 0)
 		{
 			foreach ($result as $item)
@@ -620,7 +620,7 @@ class Account
 				$cc = new CreditCard();
 				$cc->CardID = $item->payId;
 				$cc->RowID = $item->payId;
-				// $cc->RowID = strtoupper(str_replace(array("{", "}", "-"), "", mssql_guid_string($row->rguid)));
+				$cc->CustID = $this->CustomerID;
 				$cc->CardType = $item->cardType;
 				$cc->CardName = $item->cardName;
 				$cc->CardNumber = Utilities::DecryptValue("payment", $item->cardNumber);
@@ -707,7 +707,6 @@ class Account
 		$out .= "			<select name=\"info_state\" id=\"info_state\" /></div>\n";
 
 		$states = Utilities::GetStates();
-		$out = "";
 		foreach ($states as $x)
 		{
 			$state = (object) $x;
@@ -840,7 +839,7 @@ class Account
 			if ($msg == "saved")
 			{
 				$out .= "		<p class=\"confirm\">\n";
-				$out .= "			Your password has been updated.\n";
+				$out .= "			Your e-mail address has been updated.\n";
 				$out .= "		</p>\n";
 			}
 			else
@@ -929,7 +928,7 @@ class Account
 		$retval = $rr->Post($request, "{\"data\": { \"username\": \"".$newemail."\", \"password\": \"".$password."\", \"customerno\": \"".$this->CustomerID."\" } }");
 
 		// destroy the previous one
-		$request = $this->VaultUrl."/v1/secret/metadata/".$oldemail;
+		$request = $this->VaultUrl."/v1/usercreds/metadata/".$oldemail;
 		$rr = new RestRunner();
 		$rr->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
 		$retval = $rr->Delete($request);
@@ -939,9 +938,12 @@ class Account
 	
 	public function SavePassword($pass)
 	{
-		// ***INLINESQL***
-		// $sql = "update pw_user set password = ".smartQuote($pass)." where custid = ".smartQuote($this->CustomerID);
-		// $this->_db->query($sql);
+		$email = Utilities::DecryptValue("account", $this->Email);
+
+		$request = $this->VaultUrl."/v1/usercreds/data/".$email;
+		$rr = new RestRunner();
+		$rr->SetHeader("X-Vault-Token", getenv("VAULT_TOKEN"));
+		$retval = $rr->Post($request, "{\"data\": { \"username\": \"".$email."\", \"password\": \"".$pass."\", \"customerno\": \"".$this->CustomerID."\" } }");
 	}
 	
 	public function PageWrapper($title, $body)
@@ -962,9 +964,9 @@ class Account
 	
 	public function DeleteCreditCard($cardid)
 	{
-		// ***INLINESQL***
-		// $sql = "update cc_moulah set active = 0 where rguid = ".smartQuote($cardid);
-		// $this->_db->query($sql);
+		$request = $this->CustomerApi."/customers/payments/".$cardid;
+		$rr = new RestRunner();
+		$retval = $rr->Delete($request);
 	}
 	
 	public function SaveCreditCard($name, $type, $number, $cvv, $month, $year)
@@ -1393,44 +1395,28 @@ class Address
 		if ($addrid <= 0)
 			throw new Exception("The address record could not be located.");
 		
-		// ***INLINESQL***
-		// $sql = "select a.id, a.custid, a.addrtype, a.contact, a.label, a.address1, a.address2, a.city, a.state, a.zip, isnull(x.code, y.code) as country, isnull(x.country, y.country) as countryname, isnull(x.numcode, y.numcode) as country_numcode, a.phone, a.active from pw_address as a left join cc_countries as x on (x.numcode = a.country_numcode) left join cc_countries as y on (y.code = a.country) where a.id = ".smartQuote($addrid);
-		// $row = $this->_db->get_row($sql, ARRAY_A);
-		// if ($row)
-		// {
-		// 	$this->AddressID = $row["id"];
-		// 	$this->CustomerID = $row["custid"];
-		// 	$this->AddressType = $row["addrtype"];
-		// 	$this->Contact = $row["contact"];
-		// 	$this->Label = $row["label"];
-		// 	$this->Address1 = $row["address1"];
-		// 	$this->Address2 = $row["address2"];
-		// 	$this->City = $row["city"];
-		// 	$this->State = $row["state"];
-		// 	$this->Zip = $row["zip"];
-		// 	$this->Country = $row["country"];
-		// 	$this->CountryName = $row["countryname"];
-		// 	$this->CountryCode = $row["country_numcode"];
-		// 	$this->Phone = $row["phone"];
-		// 	$this->Active = $row["active"];
-		// }
-		// else
-		// 	throw new Exception("The address record could not be located.");
+		$request = $this->CustomerApi."/customers/address/".$addrid;
+		$rr = new RestRunner();
+		$row = $rr->Get($request);
+		if ($row)
+		{
+			$this->AddressID = $row->addrId;
+			$this->CustomerID = $row->custId;
+			$this->AddressType = $row->addrType;
+			$this->Contact = $row->contact;
+			$this->Address1 = $row->address1;
+			$this->Address2 = $row->address2;
+			$this->City = $row->city;
+			$this->State = $row->state;
+			$this->Zip = $row->zip;
+			$this->Phone = $row->phone;
+		}
+		else
+			throw new Exception("The address record could not be located.");
 	}
 	
 	public function SaveAddress()
 	{
-		if ($this->AddressID === 0)
-		{
-			// ***INLINESQL***
-			// $sql = "select id from pw_address where addrtype = '".$this->AddressType."' and custid = '".$this->CustomerID."'";
-			// $row = $this->_db->get_row($sql);
-			// if (count($row) > 0)
-			// {
-			// 	$this->AddressID = $row->id;
-			// }
-		}
-		
 		switch ($this->AddressType)
 		{
 			case "B":
@@ -1441,51 +1427,9 @@ class Address
 				break;
 		}
 		
-		if ($this->AddressID === 0)
-		{
-			if (isBlank($this->CustomerID))
-				throw new Exception("No customer was specified for this address.");
-			
-			// ***INLINESQL***
-			// $sql = "set nocount on; insert into pw_address(custid, addrtype, contact, label, address1, address2, city, state, zip, country, country_numcode, phone, active) values(".
-			// 	smartQuote($this->CustomerID).", ".
-			// 	smartQuote($this->AddressType).", ".
-			// 	smartQuote($this->Contact).", ".
-			// 	smartQuote($this->Label).", ".
-			// 	smartQuote($this->Address1).", ".
-			// 	smartQuote($this->Address2).", ".
-			// 	smartQuote($this->City).", ".
-			// 	smartQuote($this->State).", ".
-			// 	smartQuote($this->Zip).", ".
-			// 	smartQuote($this->Country).", ".
-			// 	smartQuote($this->CountryCode).", ".
-			// 	smartQuote($this->Phone).", ".
-			// 	($this->Active ? "1" : "0")."); select @@identity as id";
-			// 	//echo $sql;
-			// 	//exit();
-			// $this->AddressID = $this->_db->get_var($sql);
-		}
-		else
-		{
-			// ***INLINESQL***
-			// $sql = "update pw_address set ".
-			// 	"addrtype = ".smartQuote($this->AddressType).", ".
-			// 	"contact = ".smartQuote($this->Contact).", ".
-			// 	"label = ".smartQuote($this->Label).", ".
-			// 	"address1 = ".smartQuote($this->Address1).", ".
-			// 	"address2 = ".smartQuote($this->Address2).", ".
-			// 	"city = ".smartQuote($this->City).", ".
-			// 	"state = ".smartQuote($this->State).", ".
-			// 	"zip = ".smartQuote($this->Zip).", ".
-			// 	"country = ".smartQuote($this->Country).", ".
-			// 	"country_numcode = ".smartQuote($this->CountryCode).", ".
-			// 	"phone = ".smartQuote($this->Phone).", ".
-			// 	"active = ".($this->Active ? "1" : "0")." ".
-			// 	"where id = ".$this->AddressID;
-			// 	//echo $sql;
-			// 	//exit();
-			// $this->_db->query($sql);
-		}
+		$request = $this->CustomerApi."/customers/address/".$this->CustomerID;
+		$rr = new RestRunner();
+		$retval = $rr->Put($request, $this->OutputJson());
 	}
 
 	public function OutputJson()
@@ -1513,6 +1457,7 @@ class CreditCard
 {
 	public $ID = 0;
 	public $RowID = "";
+	public $CustID = "";
 	public $CardName = "";
 	public $CardNumber = "";
 	public $CardType = "";
@@ -1553,7 +1498,7 @@ class CreditCard
 		}
 		$out .= "				<li>".$this->CardName."</li>\n";
 		$out .= "				<li>".$this->Expiration()."</li>\n";
-		$out .= "				<li><a href=\"javascript:acctDeleteCard('".base64url_encode($this->RowID)."');\" class=\"delete\">Delete</a></li>\n";
+		$out .= "				<li><a href=\"javascript:acctDeleteCard('".$this->RowID."');\" class=\"delete\">Delete</a></li>\n";
 		$out .= "			</ul>\n";
 		$out .= "		</section>\n";
 		
@@ -1676,6 +1621,24 @@ class CreditCard
 		}
 		
 		return strtoupper($retval);
+	}
+
+	public function OutputJson()
+	{
+		$out = "";
+
+		$out .="{";
+		$out .="	\"payId\": ".$this->ID.",";
+		$out .="	\"custId\": ".$this->CustID.",";
+		$out .="	\"cardName\": \"".$this->CardName."\",";
+		$out .="	\"cardNumber\": \"".$this->CardNumber."\",";
+		$out .="	\"cardType\": \"".$this->CardType."\",";
+		$out .="	\"cvv\": \"".$this->CVV."\",";
+		$out .="	\"expirationMonth\": \"".$this->ExpirationMonth."\",";
+		$out .="	\"expirationYear\": \"".$this->ExpirationYear."\"";
+		$out .="}";
+		
+		return $out;
 	}
 }
 

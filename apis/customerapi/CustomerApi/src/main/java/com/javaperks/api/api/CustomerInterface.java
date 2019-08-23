@@ -4,6 +4,8 @@ package com.javaperks.api.api;
 import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -73,6 +75,13 @@ public class CustomerInterface
         return Response.ok(cdb.getPaymentsByCustomerId(id)).build();
     }
 
+    @DELETE
+    @Path("/payments/{id}")
+    public Response deletePayment(@PathParam("id") int id) {
+        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(cdb.deletePayment(id)).build();
+    }
+
     @PUT
     @Path("/info/{id}")
     public Response updatePersonalInfo(Customer customer) {
@@ -85,6 +94,13 @@ public class CustomerInterface
     public Response updateEmailAddress(Customer customer) {
         CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
         return Response.ok(cdb.updateEmailAddress(customer)).build();
+    }
+
+    @GET
+    @Path("/address/{id}")
+    public Response updateAddress(@PathParam("id") int id) {
+        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(cdb.getAddressById(id)).build();
     }
 
     @PUT

@@ -57,7 +57,7 @@ class Utilities
 
 	public static function GetStates()
 	{
-		$states = array(
+		return array(
 			array("Name" => "Alabama", "Abbr" => "AL"), 
 			array("Name" => "Alaska", "Abbr" => "AK"), 
 			array("Name" => "Arizona", "Abbr" => "AZ"), 
@@ -109,8 +109,6 @@ class Utilities
 			array("Name" => "Wisconsin", "Abbr" => "WI"), 
 			array("Name" => "Wyoming", "Abbr" => "WY")
 		);
-
-		return $states;
 	}
 }
 
