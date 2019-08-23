@@ -238,7 +238,7 @@ public class CustomerDb
     }
 
     public List<Payment> getPaymentsByCustomerId(String custId) {
-        LOGGER.info("Get all customers");
+        LOGGER.info("Get all credit cards for a customer");
         List<Payment> payments = new ArrayList<Payment>();
 
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
@@ -300,6 +300,7 @@ public class CustomerDb
                 "'" + payment.getExpirationYear().replace("'", "''") + "') " +
             "where payid = " + Integer.toString(payment.getPayId());
             Statement s = cn.createStatement();
+            LOGGER.info(sql);
             s.executeUpdate(sql);
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -982,10 +982,10 @@ class Account
 			$xc->ExpirationMonth = $month;
 			$xc->ExpirationYear = $year;
 			
-			$request = $this->CustomerApi."/customers/payments/".$custid;
+			$request = $this->CustomerApi."/customers/payments/".$this->CustomerID;
 			$rr = new RestRunner();
-			$retval = $rr->Put($request, $this->OutputJson());
-			}
+			$retval = $rr->Post($request, $xc->OutputJson());
+		}
 	}
 	
 	public function AddNewCard()
