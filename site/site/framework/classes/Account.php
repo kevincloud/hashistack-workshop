@@ -620,7 +620,7 @@ class Account
 				$cc = new CreditCard();
 				$cc->CardID = $item->payId;
 				$cc->RowID = $item->payId;
-				$cc->CustID = $this->CustomerID;
+				$cc->CustID = $this->RowID;
 				$cc->CardType = $item->cardType;
 				$cc->CardName = $item->cardName;
 				$cc->CardNumber = Utilities::DecryptValue("payment", $item->cardNumber);
@@ -974,7 +974,7 @@ class Account
 		if ($this->CustomerID != "")
 		{
 			$xc = new CreditCard();
-			$xc->CustID = $this->CustomerID;
+			$xc->CustID = $this->RowID;
 			$xc->CardName = $name;
 			$xc->CardNumber = $number;
 			$xc->CardType = $type;
@@ -982,7 +982,6 @@ class Account
 			$xc->ExpirationMonth = $month;
 			$xc->ExpirationYear = $year;
 			
-			throw new Exception($xc->OutputJson());
 			$request = $this->CustomerApi."/payments";
 			$rr = new RestRunner();
 			$retval = $rr->Post($request, $xc->OutputJson());
