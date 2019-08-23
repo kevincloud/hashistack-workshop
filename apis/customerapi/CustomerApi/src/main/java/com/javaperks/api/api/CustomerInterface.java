@@ -15,10 +15,15 @@ import javax.ws.rs.core.Response;
 import com.javaperks.api.db.*;
 import com.bettercloud.vault.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/customers")
 public class CustomerInterface
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDb.class);
+
     private Vault vault;
     private String vaultaddr;
     private String vaulttoken;
@@ -78,6 +83,8 @@ public class CustomerInterface
     @POST
     @Path("/payments/{id}")
     public Response addPayment(Payment payment) {
+        LOGGER.info("POST: Adding payment");
+        LOGGER.info(payment.toString());
         CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
         return Response.ok(cdb.addPayment(payment)).build();
     }
