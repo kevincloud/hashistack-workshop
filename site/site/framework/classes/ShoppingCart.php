@@ -23,7 +23,7 @@ class ShoppingCart
 		global $customerapi;
 
 		$this->CartApi = $cartapi."/cart";
-		$this->CustomerApi = $customerapi."/customers";
+		$this->CustomerApi = $customerapi;
 	}
 		
 	public function Count()
@@ -631,7 +631,6 @@ class ShoppingCart
 			$cc = new CreditCard();
 			$cc->CardID = $item->payId;
 			$cc->RowID = $item->payId;
-			// $cc->RowID = strtoupper(str_replace(array("{", "}", "-"), "", mssql_guid_string($row->rguid)));
 			$cc->CardType = $item->cardType;
 			$cc->CardName = $item->cardName;
 			$cc->CardNumber = Utilities::DecryptValue("payment", $item->cardNumber);

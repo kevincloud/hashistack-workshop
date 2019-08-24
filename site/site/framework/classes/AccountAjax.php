@@ -62,7 +62,7 @@ class AccountAjax extends AjaxHandler
 	
 	private function DeleteCard()
 	{
-		$cardid = base64url_decode($this->AjaxVariables["id"]);
+		$cardid = $this->AjaxVariables["id"];
 		$this->Account->DeleteCreditCard($cardid);
 	}
 	

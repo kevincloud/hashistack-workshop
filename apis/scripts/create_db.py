@@ -79,7 +79,7 @@ sql = """create table if not exists customer_payment(
     cardname varchar(255) not null,
     cardnumber varchar(255) not null,
     cardtype varchar(2),
-    cvv varchar(50) not null,
+    cvv varchar(255) not null,
     expmonth varchar(2) not null,
     expyear varchar(4) not null,
     primary key(payid),
