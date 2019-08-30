@@ -14,6 +14,7 @@ class ShoppingCart
 	public $Comments = "";
 	public $PayType = "NEW";
 	public $CreditCard = null;
+	public $TmpOrderID = "";
 	
 	private $CartApi = "";
 	private $CustomerApi = "";
@@ -249,23 +250,20 @@ class ShoppingCart
 					
 					$r = new RestRunner();
 					$result = $r->Get($this->CustomerApi."/payments/".$payid);
-					if (count($result) > 0)
+					if (!isBlank($result))
 					{
 						$this->PayMethod = "CREDIT";
-						foreach ($result as $item)
-						{
-							$this->CreditCard = new CreditCard();
-							$this->CreditCard->CardID = $item->payId;
-							$this->CreditCard->RowID = $item->payId;
-							$this->CreditCard->CustID = $this->RowID;
-							$this->CreditCard->CardType = $item->cardType;
-							$this->CreditCard->CardName = $item->cardName;
-							$this->CreditCard->CardNumber = Utilities::DecryptValue("payment", $item->cardNumber);
-							$this->CreditCard->ExpirationMonth = intval($item->expirationMonth);
-							$this->CreditCard->ExpirationYear = intval($item->expirationYear);
-							$this->CreditCard->CVV = Utilities::DecryptValue("payment", $item->cvv);
-							$invduedate = time()+(60*60*24*30);
-						}
+						$this->CreditCard = new CreditCard();
+						$this->CreditCard->CardID = $result->payId;
+						$this->CreditCard->RowID = $result->payId;
+						$this->CreditCard->CustID = $this->RowID;
+						$this->CreditCard->CardType = $result->cardType;
+						$this->CreditCard->CardName = $result->cardName;
+						$this->CreditCard->CardNumber = Utilities::DecryptValue("payment", $result->cardNumber);
+						$this->CreditCard->ExpirationMonth = intval($result->expirationMonth);
+						$this->CreditCard->ExpirationYear = intval($result->expirationYear);
+						$this->CreditCard->CVV = Utilities::DecryptValue("payment", $result->cvv);
+						$invduedate = time()+(60*60*24*30);
 					}
 					else
 					{
