@@ -431,10 +431,10 @@ curl \
     --data @/root/jobs/cart-api-job.nomad \
     http://nomad-server.service.${REGION}.consul:4646/v1/jobs
 
-curl \
-    --request POST \
-    --data @/root/jobs/account-broker-job.nomad \
-    http://nomad-server.service.${REGION}.consul:4646/v1/jobs
+# curl \
+#     --request POST \
+#     --data @/root/jobs/account-broker-job.nomad \
+#     http://nomad-server.service.${REGION}.consul:4646/v1/jobs
 
 curl \
     --request POST \
