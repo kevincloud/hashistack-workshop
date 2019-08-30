@@ -2,6 +2,10 @@ resource "aws_ecr_repository" "ecr-product-app" {
     name = "product-app"
 }
 
+resource "aws_ecr_repository" "ecr-order-app" {
+    name = "order-app"
+}
+
 resource "aws_ecr_repository" "ecr-cart-app" {
     name = "cart-app"
 }

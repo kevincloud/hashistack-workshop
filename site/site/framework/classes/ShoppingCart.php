@@ -256,7 +256,7 @@ class ShoppingCart
 						$this->CreditCard = new CreditCard();
 						$this->CreditCard->CardID = $result->payId;
 						$this->CreditCard->RowID = $result->payId;
-						$this->CreditCard->CustID = $this->RowID;
+						$this->CreditCard->CustID = $_SESSION["__account__"]->CustomerID;
 						$this->CreditCard->CardType = $result->cardType;
 						$this->CreditCard->CardName = $result->cardName;
 						$this->CreditCard->CardNumber = Utilities::DecryptValue("payment", $result->cardNumber);
@@ -348,11 +348,16 @@ class ShoppingCart
 		$invoice->BillingAddress = clone $this->BillingAddress;
 		
 		$lno = 0;
-		foreach ($this->Items as $item)
+		$r = new RestRunner();
+		$sessionid = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($sessionid);
+
+		$result = $r->Get($this->CartApi, $a);
+		foreach ($result->items as $item)
 		{
 			$lno++;
 			$p = new Product();
-			$p->GetProduct($item->PID);
+			$p->GetProduct($item->ProductId);
 			
 			$d = new OrderItem();
 			$d->PID = $p->PID;
@@ -373,9 +378,6 @@ class ShoppingCart
 			$invoice->Items[] = $i;
 		}
 
-		echo "<pre>So far so good!!!</pre>";
-		exit();
-		
 		$order->Save();
 		$invoice->OrderID = $order->OrderID;
 		$invoice->Save();

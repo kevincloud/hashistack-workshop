@@ -118,6 +118,7 @@ export REPO_URL_PROD="${REPO_URL_PROD}"
 export REPO_URL_CART="${REPO_URL_CART}"
 export REPO_URL_ACCT="${REPO_URL_ACCT}"
 export REPO_URL_SITE="${REPO_URL_SITE}"
+export REPO_URL_ORDR="${REPO_URL_ORDR}"
 export CONSUL_IP="${CONSUL_IP}"
 export VAULT_TOKEN=$(consul kv get service/vault/root-token)
 export MYSQL_HOST="${MYSQL_HOST}"

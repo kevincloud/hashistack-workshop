@@ -77,14 +77,14 @@ chmod a+x login.sh
 docker tag cart-app:cart-app ${REPO_URL_CART}:cart-app
 docker push ${REPO_URL_CART}:cart-app
 
-# create account-broker image
-cd /root/hashistack-workshop/apis/account-broker
-docker build -t account-broker:account-broker .
+# create order-app image
+cd /root/hashistack-workshop/apis/order-app
+docker build -t order-app:order-app .
 aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
 ./login.sh
-docker tag account-broker:account-broker ${REPO_URL_ACCT}:account-broker
-docker push ${REPO_URL_ACCT}:account-broker
+docker tag order-app:order-app ${REPO_URL_ORDR}:order-app
+docker push ${REPO_URL_ORDR}:order-app
 
 # create customer-api jar
 cd /root/hashistack-workshop/apis/customerapi/CustomerApi
@@ -320,30 +320,30 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
 }
 EOF
 
-sudo bash -c "cat >/root/jobs/account-broker-job.nomad" <<EOF
+sudo bash -c "cat >/root/jobs/order-api-job.nomad" <<EOF
 {
     "Job": {
-        "ID": "account-broker-job",
-        "Name": "account-broker",
+        "ID": "order-api-job",
+        "Name": "order-api",
         "Type": "service",
         "Datacenters": ["${REGION}"],
         "TaskGroups": [{
-            "Name": "account-broker-group",
+            "Name": "order-api-group",
             "Count": 1,
             "Tasks": [{
-                "Name": "account-broker",
+                "Name": "order-api",
                 "Driver": "docker",
                 "Vault": {
                     "Policies": ["access-creds"]
                 },
                 "Config": {
-                    "image": "https://${REPO_URL_ACCT}:account-broker",
+                    "image": "https://${REPO_URL_ORDR}:order-app",
                     "port_map": [{
-                        "http": 5824
+                        "http": 5826
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "PORT = 5824\nVAULT_ADDR = \"http://vault-main.service.${REGION}.consul:8200\"\nVAULT_TOKEN = \"$VAULT_TOKEN\"",
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}\nAWS_REGION = \"${REGION}\"\n                ",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],
@@ -353,13 +353,13 @@ sudo bash -c "cat >/root/jobs/account-broker-job.nomad" <<EOF
                         "ReservedPorts": [
                             {
                                 "Label": "http",
-                                "Value": 5824
+                                "Value": 5826
                             }
                         ]
                     }]
                 },
                 "Services": [{
-                    "Name": "account-broker",
+                    "Name": "order-api",
                     "PortLabel": "http"
                 }]
             }]
@@ -431,10 +431,10 @@ curl \
     --data @/root/jobs/cart-api-job.nomad \
     http://nomad-server.service.${REGION}.consul:4646/v1/jobs
 
-# curl \
-#     --request POST \
-#     --data @/root/jobs/account-broker-job.nomad \
-#     http://nomad-server.service.${REGION}.consul:4646/v1/jobs
+curl \
+    --request POST \
+    --data @/root/jobs/order-api-job.nomad \
+    http://nomad-server.service.${REGION}.consul:4646/v1/jobs
 
 curl \
     --request POST \

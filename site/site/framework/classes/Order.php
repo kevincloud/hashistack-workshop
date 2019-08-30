@@ -96,7 +96,7 @@ class Order
 	public function GenerateOrderID()
 	{
 		$onum = sprintf("%02d", rand(2500, 98943));
-		return "INV".date("Ydm").$onum;
+		return "ORD".date("Ydm").$onum;
 	}
 	
 	public function Save()
