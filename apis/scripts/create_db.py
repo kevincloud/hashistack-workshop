@@ -120,7 +120,7 @@ sql = """create table if not exists customer_invoice_item(
     description text,
     amount decimal,
     quantity int,
-    lineno int
+    lineno int,
     primary key(itemid),
     index idx_invoice (invid)
 ) engine=innodb
