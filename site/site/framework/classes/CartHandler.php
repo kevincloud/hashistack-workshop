@@ -92,88 +92,83 @@ class CartHandler extends BasePage
 		}
 	}
 	
-	// private function PlaceOrder()
-	// {
-	// 	$ordid = "";
+	private function PlaceOrder()
+	{
+		$ordid = "";
 		
-	// 	if (isset($this->Cart))
-	// 	{
-	// 		$this->Cart->Source = trim($this->PageVariables["pay_source"]);
-	// 		$this->Cart->SpecialNotes = trim($this->PageVariables["pay_instructions"]);
-	// 		$this->Cart->CardName = trim($this->PageVariables["pay_new_cardname"]);
-	// 		$this->Cart->CardType = trim($this->PageVariables["pay_new_cardtype"]);
-	// 		$this->Cart->CardNumber = str_replace(array("-", " ", "."), "", $this->PageVariables["pay_new_cardnum"]);
-	// 		$this->Cart->CardCVV = trim($this->PageVariables["pay_new_cvvnum"]);
-	// 		$this->Cart->CardExpMonth = intval(trim($this->PageVariables["pay_new_expmonth"]));
-	// 		$this->Cart->CardExpYear = intval(trim($this->PageVariables["pay_new_expyear"]));
-	// 		$this->Cart->SaveCard = isset($this->PageVariables["pay_new_save"]) ? true : false;
-	// 		$this->Cart->PayType = trim($this->PageVariables["pay_type"]);
-	// 		$this->Cart->LastError = "";
+		if (isset($this->Cart))
+		{
+			$cc = new CreditCard();
+
+			$cc->CardName = trim($this->PageVariables["pay_new_cardname"]);
+			$cc->CardType = trim($this->PageVariables["pay_new_cardtype"]);
+			$cc->CardNumber = str_replace(array("-", " ", "."), "", $this->PageVariables["pay_new_cardnum"]);
+			$cc->CVV = trim($this->PageVariables["pay_new_cvvnum"]);
+			$cc->ExpirationMonth = intval(trim($this->PageVariables["pay_new_expmonth"]));
+			$cc->ExpirationYear = intval(trim($this->PageVariables["pay_new_expyear"]));
+			// $this->Cart->SaveCard = isset($this->PageVariables["pay_new_save"]) ? true : false;
+			$this->Cart->PayType = trim($this->PageVariables["pay_type"]);
+			$this->Cart->LastError = "";
+			$this->Cart->CreditCard = $cc;
 			
-	// 		if (isBlank($this->Cart->PayType))
-	// 		{
-	// 			$this->Cart->LastError = "Please select a method of payment";
-	// 			$this->Redirect("/".$this->_urltag."/cart/confirm");
-	// 		}
+			if (isBlank($this->Cart->PayType))
+			{
+				$this->Cart->LastError = "Please select a method of payment";
+				$this->Redirect("/shop/cart/confirm");
+			}
 			
-	// 		if (strtoupper($this->Cart->PayType) == "NEW")
-	// 		{
-	// 			if (isBlank($this->Cart->CardName))
-	// 			{
-	// 				$this->Cart->LastError = "Please enter the name as it appears on your credit card.";
-	// 				$this->Redirect("/".$this->_urltag."/cart/confirm");
-	// 			}
+			if (strtoupper($this->Cart->PayType) == "NEW")
+			{
+				if (isBlank($this->Cart->CreditCard->CardName))
+				{
+					$this->Cart->LastError = "Please enter the name as it appears on your credit card.";
+					$this->Redirect("/shop/cart/confirm");
+				}
 				
-	// 			if (isBlank($this->Cart->CardNumber))
-	// 			{
-	// 				$this->Cart->LastError = "Please enter the credit card number";
-	// 				$this->Redirect("/".$this->_urltag."/cart/confirm");
-	// 			}
+				if (isBlank($this->Cart->CreditCard->CardNumber))
+				{
+					$this->Cart->LastError = "Please enter the credit card number";
+					$this->Redirect("/shop/cart/confirm");
+				}
 				
-	// 			if (isBlank($this->Cart->CardCVV))
-	// 			{
-	// 				$this->Cart->LastError = "Please enter the CVV code, typically located on the back of the card.";
-	// 				$this->Redirect("/".$this->_urltag."/cart/confirm");
-	// 			}
+				if (isBlank($this->Cart->CreditCard->CVV))
+				{
+					$this->Cart->LastError = "Please enter the CVV code, typically located on the back of the card.";
+					$this->Redirect("/shop/cart/confirm");
+				}
 				
-	// 			$cc = new CreditCard();
-	// 			$cc->CardType = $this->Cart->CardType;
-	// 			$cc->CardName = $this->Cart->CardName;
-	// 			$cc->CardNumber = $this->Cart->CardNumber;
-	// 			$cc->ExpirationMonth = intval($this->Cart->CardExpMonth);
-	// 			$cc->ExpirationYear = intval($this->Cart->CardExpYear);
+				if (!$this->Cart->CreditCard->IsValidCard())
+				{
+					$this->Cart->LastError = "The credit card is not valid. Enter numbers only&mdash;no spaces or dashes.";
+					$this->Redirect("/shop/cart/confirm");
+				}
 				
-	// 			if (!$cc->IsValidCard())
-	// 			{
-	// 				$this->Cart->LastError = "The credit card is not valid. Enter numbers only&mdash;no spaces or dashes.";
-	// 				$this->Redirect("/".$this->_urltag."/cart/confirm");
-	// 			}
+				if ($this->Cart->CreditCard->IsExpired())
+				{
+					$this->Cart->LastError = "The credit card is expired. Please use a current credit card.";
+					$this->Redirect("/shop/cart/confirm");
+				}
 				
-	// 			if ($cc->IsExpired())
-	// 			{
-	// 				$this->Cart->LastError = "The credit card is expired. Please use a current credit card.";
-	// 				$this->Redirect("/".$this->_urltag."/cart/confirm");
-	// 			}
-				
-	// 		}
+			}
 			
-	// 		if (!isset($this->PageVariables["cart_agree"]))
-	// 		{
-	// 			$this->Cart->LastError = "You must agree to the terms and conditions to continue with your order.";
-	// 			$this->Redirect("/".$this->_urltag."/cart/confirm");
-	// 		}
-	// 		$this->Cart->AgreeTerms = true;
+			if (!isset($this->PageVariables["cart_agree"]))
+			{
+				$this->Cart->LastError = "You must agree to the terms and conditions to continue with your order.";
+				$this->Redirect("/shop/cart/confirm");
+			}
+			$this->Cart->AgreeTerms = true;
 			
-	// 		$this->Cart->PlaceOrder($this->_landing);
-	// 		$ordid = $this->Cart->Order->OrderID;
-	// 		$this->Cart->StartOver();
-	// 		$this->Redirect("/profile/order/".$ordid);
-	// 	}
-	// 	else
-	// 	{
-	// 		$this->Redirect("/".$this->_urltag."/cart/view");
-	// 	}
-	// }
+			$this->Cart->PlaceOrder();
+			$ordid = $this->Cart->Order->OrderID;
+			echo "Done!";
+			// $this->Cart->StartOver();
+			// $this->Redirect("/profile/order/".$ordid);
+		}
+		else
+		{
+			$this->Redirect("/shop/cart/view");
+		}
+	}
 	
 	private function SaveShipping()
 	{
