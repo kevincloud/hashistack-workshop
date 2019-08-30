@@ -328,23 +328,15 @@ class ShoppingCart
 		
 		if ($ispaid == true) $status = "Paid";
 
-		$onum = sprintf("%02d", rand(2500, 98943));
-		echo "<pre>Number: ".$onum."</pre>";
-		exit();
-
 		
 		$order->TmpOrderID = $this->TmpOrderID;
 		$order->CustomerID = $_SESSION["__account__"]->CustomerID;
-		$order->OrderType = "S";
 		$order->SubtotalAmount = $this->SubtotalAmount;
 		$order->ShippingAmount = $this->ShippingAmount;
 		$order->TaxAmount = $this->TaxAmount;
 		$order->TotalAmount = $this->TotalAmount;
 		$order->Status = $status;
-		$order->PromoCode = $this->PromoCode;
-		$order->CustomerSource = $this->Source;
 		$order->Comments = $this->Comments;
-		$order->ShipMethod = $this->ShippingService;
 		$order->ShippingAddress = clone $this->ShippingAddress;
 		
 		$invoice->CustomerID = $_SESSION["__account__"]->CustomerID;
@@ -357,40 +349,44 @@ class ShoppingCart
 		$invoice->Paid = $ispaid;
 		$invoice->BillingAddress = clone $this->BillingAddress;
 		
+		$lno = 0;
 		foreach ($this->Items as $item)
 		{
-			$pickable = false;
+			$lno++;
 			$p = new Product();
 			$p->GetProduct($item->PID);
-			$p->CalculateValues();
-			
 			
 			$d = new OrderItem();
 			$d->PID = $p->PID;
-			$d->Description = $p->ProductName;
-			$d->ISBN = $p->ISBN;
+			$d->Product = $p->ProductName;
+			$d->Description = $p->Description;
 			$d->Quantity = $item->Quantity;
 			$d->Price = $p->Price;
-			$d->Discount = $p->CalculatedDiscount;
-			$d->Pickable = $item->Fulfillment;
+			$d->LineNumber = $lno;
 			$order->Items[] = $d;
 			
 			$i = new InvoiceItem();
-			$i->Title = $p->ProductName;
-			$i->Amount = $p->CalculatedPrice;
+			$i->Product = $p->ProductName;
+			$i->Description = $p->Description;
 			$i->Quantity = $item->Quantity;
+			$i->Amount = $p->Price;
+			$i->LineNumber = $lno;
+
 			$invoice->Items[] = $i;
 		}
+
+		echo "<pre>So far so good!!!</pre>";
+		exit();
 		
-	// 	$order->Save();
-	// 	$invoice->OrderID = $order->OrderID;
-	// 	$invoice->Save();
-	// 	if ($ispaid)
-	// 	{
-	// 		$invoice->SavePayment($payguid);
-	// 	}
+		$order->Save();
+		$invoice->OrderID = $order->OrderID;
+		$invoice->Save();
+		// if ($ispaid)
+		// {
+		// 	$invoice->SavePayment($payguid);
+		// }
 		
-	// 	$this->Order = $order;
+		$this->Order = $order;
 		
 	// 	/******************************************************
 	// 	 * EMAIL CONFIRMATION

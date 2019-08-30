@@ -16,6 +16,7 @@ class Order
 	public $Status = "";
 	public $Items = array();
 	public $Invoice = NULL;
+	public $TmpOrderID = "";
 	
 	
 	private $_settings;
@@ -94,8 +95,8 @@ class Order
 	
 	public function GenerateOrderID()
 	{
-		return;
-		//return $this->_db->get_var("exec s_newcustorderid");
+		$onum = sprintf("%02d", rand(2500, 98943));
+		return "INV".date("Ydm").$onum;
 	}
 	
 	public function Save()
@@ -530,21 +531,10 @@ class OrderItem
 	public $OrderID = "";
 	public $LineNumber = 0;
 	public $PID = 0;
+	public $Product = "";
 	public $Description = "";
-	public $ISBN = "";
 	public $Quantity = 0;
 	public $Price = 0;
-	public $Discount = 0;
-	public $Pickable = false;
-	public $RegistrationCode = "";
-	public $TrackingNumber = "";
-	public $Courier = "";
-	public $ExtraText = "";
-	public $IsEBook = false;
-	public $IsAudioBook = false;
-	
-	// ***INLINESQL***
-	// public $_db = NULL;
 	
 	public function __construct()
 	{
