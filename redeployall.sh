@@ -108,7 +108,7 @@ go get
 go build -v
 
 # push binary to S3
-aws s3 cp /root/hashistack-workshop/apis/authapi/authapi s3://${S3_BUCKET}/bin/authapi
+aws s3 cp /root/hashistack-workshop/apis/authapi/authapi s3://hc-workshop-2.0-assets/bin/authapi
 
 
 ####################################
