@@ -3,33 +3,19 @@
 class Order
 {
 	public $ID = 0;
-	public $RowGuid = "";
 	public $OrderID = "";
 	public $CustomerID = "";
-	public $OrderType = "S";
 	public $OrderDate = NULL;
-	public $CustomerPO = "";
 	public $ShipDate = NULL;
-	public $Discount = 0.0;
 	public $TaxAmount = 0.0;
 	public $ShippingAmount = 0.0;
 	public $SubtotalAmount = 0.0;
 	public $TotalAmount = 0.0;
-	public $CustomerSource = "";
-	public $OrderSource = "";
 	public $Comments = "";
-	public $AddressID = 0;
-	public $ShipMethod = "";
 	public $ShippingAddress = NULL;
-	public $ShippingEmail = "";
 	public $Status = "";
-	public $Email = "";
-	public $PromoCode = "";
-	public $HasEBook = false;
-	public $HasAudioBook = false;
 	public $Items = array();
 	public $Invoice = NULL;
-	public $TmpOrderID = "";
 	
 	
 	private $_settings;

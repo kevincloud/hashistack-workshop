@@ -612,7 +612,7 @@ class Account
 		$out .= "		</p>\n";
 		$r = new RestRunner();
 
-		$result = $r->Get($this->CustomerApi."/payments/".$_SESSION["__account__"]->RowID);
+		$result = $r->Get($this->CustomerApi."/payments/all/".$_SESSION["__account__"]->RowID);
 		if (count($result) > 0)
 		{
 			foreach ($result as $item)
@@ -964,7 +964,7 @@ class Account
 	
 	public function DeleteCreditCard($cardid)
 	{
-		$request = $this->CustomerApi."/payments/".$cardid;
+		$request = $this->CustomerApi."/payments/all/".$cardid;
 		$rr = new RestRunner();
 		$retval = $rr->Delete($request);
 	}

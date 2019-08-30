@@ -1,14 +1,18 @@
 package com.javaperks.api.db;
 
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 // import java.text.SimpleDateFormat;
 
 public class Invoice
 {
     private int invId;
+    private String invNo;
     private int custId;
     private Date invDate;
     private String orderId;
+    private String title;
     private double amount;
     private double tax;
     private double shipping;
@@ -21,15 +25,18 @@ public class Invoice
     private String state;
     private String zip;
     private String phone;
+    private List<InvoiceItem> items;
 
     public Invoice() {
     }
 
-    public Invoice(int invId, int custId, Date invDate, String orderId, double amount, double tax, double shipping, double total, Date datePaid, String contact, String address1, String address2, String city, String state, String zip, String phone) {
+    public Invoice(int invId, String invNo, int custId, Date invDate, String orderId, String title, double amount, double tax, double shipping, double total, Date datePaid, String contact, String address1, String address2, String city, String state, String zip, String phone, List<InvoiceItem> items) {
         this.invId = invId;
+        this.invNo = invNo;
         this.custId = custId;
         this.invDate = invDate;
         this.orderId = orderId;
+        this.title = title;
         this.amount = amount;
         this.tax = tax;
         this.total = total;
@@ -40,6 +47,7 @@ public class Invoice
         this.state = state;
         this.zip = zip;
         this.phone = phone;
+        this.items = items;
     }
 
     public int getInvoiceId() {
@@ -48,6 +56,14 @@ public class Invoice
 
     public void setInvoiceId(int invId) {
         this.invId = invId;
+    }
+
+    public String getInvoiceNumber() {
+        return this.invNo;
+    }
+
+    public void setInvoiceNumber(String invNo) {
+        this.invNo = invNo;
     }
 
     public int getCustId() {
@@ -72,6 +88,14 @@ public class Invoice
 
     public void setOrderId(String orderId) {
         this.orderId = orderId;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public double getAmount() {
@@ -168,6 +192,14 @@ public class Invoice
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public List<InvoiceItem> getItems() {
+        return this.items;
+    }
+
+    public void setItems(List<InvoiceItem> items) {
+        this.items = items;
     }
 
     @Override

@@ -90,9 +90,11 @@ x = cursor.execute(sql)
 
 sql = """create table if not exists customer_invoice(
     invid int auto_increment,
+    invno varchar(30) not null,
     custid int not null,
     invdate datetime not null,
-    orderid varchar(20),
+    orderid varchar(30),
+    title varchar(255) not null,
     amount decimal,
     tax decimal,
     shipping decimal,
@@ -109,6 +111,21 @@ sql = """create table if not exists customer_invoice(
     index idx_inv_custid (custid)
 ) engine=innodb
 """
+x = cursor.execute(sql)
+
+sql = """create table if not exists customer_invoice_item(
+    itemid int auto_increment,
+    invid int not null,
+    product varchar(255) not null,
+    description text,
+    amount decimal,
+    quantity int,
+    lineno int
+    primary key(itemid),
+    index idx_invoice (invid)
+) engine=innodb
+"""
+x = cursor.execute(sql)
 
 ##################################
 # Add Customer 1 - Janice Thompson

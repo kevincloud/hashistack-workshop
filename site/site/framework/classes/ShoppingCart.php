@@ -13,6 +13,7 @@ class ShoppingCart
 	public $Order = NULL;
 	public $Comments = "";
 	public $PayType = "NEW";
+	public $CreditCard = null;
 	
 	private $CartApi = "";
 	private $CustomerApi = "";
@@ -212,278 +213,174 @@ class ShoppingCart
 		return $out;
 	}
 	
-	// public function PlaceOrder($landing=false)
-	// {
-	// 	$urltag = $landing ? "special" : "shop";
-	// 	if (isBlank($this->ShippingAddress->AddressID)) $this->ShippingAddress->AddressID = 0;
-	// 	if (isBlank($this->BillingAddress->AddressID)) $this->BillingAddress->AddressID = 0;
+	public function PlaceOrder()
+	{
+		if (isBlank($this->ShippingAddress->AddressID)) $this->ShippingAddress->AddressID = 0;
+		if (isBlank($this->BillingAddress->AddressID)) $this->BillingAddress->AddressID = 0;
 		
-	// 	$ispaid = false;
-	// 	$stopbook = false;
-	// 	$haspod = false;
-	// 	$initstatus = "HD";
-	// 	$status = "Pending Payment";
-	// 	$invduedate = time();
-	// 	$payid = "";
-	// 	$payguid = "";
-	// 	$order = new Order();
-	// 	$invoice = new Invoice();
-	// 	$xc = new CreditCard();
+		$ispaid = false;
+		$status = "Pending Payment";
+		$invduedate = time();
+		$payid = "";
+		$order = new Order();
+		$invoice = new Invoice();
 		
-	// 	if ($this->TmpOrderID == "")
-	// 		$this->TmpOrderID = $order->GenerateOrderID();
+		if ($this->TmpOrderID == "")
+			$this->TmpOrderID = $order->GenerateOrderID();
 		
-	// 	$this->PayMethod = $this->PayType;
+		$this->PayMethod = $this->PayType;
 		
-	// 	switch ($this->PayType)
-	// 	{
-	// 		case "CHECK":
-	// 		case "NET30":
-	// 			$invduedate = time()+(60*60*24*30);
-	// 			$payid = "";
-	// 			$initstatus = "HD";
-	// 			break;
-	// 		case "NET45":
-	// 			$invduedate = time()+(60*60*24*45);
-	// 			$payid = "";
-	// 			$initstatus = "HD";
-	// 			break;
-	// 		case "NET60":
-	// 			$invduedate = time()+(60*60*24*60);
-	// 			$payid = "";
-	// 			$initstatus = "HD";
-	// 			break;
-	// 		case "NET90":
-	// 			$invduedate = time()+(60*60*24*90);
-	// 			$payid = "";
-	// 			$initstatus = "HD";
-	// 			break;
-	// 		case "CASH":
-	// 			$invduedate = time();
-	// 			$payid = "";
-	// 			$initstatus = "HD";
-	// 			break;
-	// 		case "NONE":
-	// 			$invduedate = time();
-	// 			$payid = "";
-	// 			$initstatus = "HD";
-	// 			$ispaid = true;
-	// 			break;
-	// 		case "NEW";
-	// 			$invduedate = time()+(60*60*24*30);
-	// 			$payid = "";
-	// 			$initstatus = "HD";
-	// 			$this->PayMethod = "CREDIT";
-	// 			break;
-	// 		default:
-	// 			if (strlen($this->PayType) == 32)
-	// 			{
-	// 				$payguid = $this->PayType;
-	// 				$formatted = Utilities::FormatGuid($payguid);
+		switch ($this->PayType)
+		{
+			case "CHECK":
+			case "NET30":
+				$invduedate = time()+(60*60*24*30);
+				$payid = "";
+				break;
+			case "NEW";
+				$invduedate = time()+(60*60*24*30);
+				$payid = "";
+				$this->PayMethod = "CREDIT";
+				break;
+			default:
+				if (is_numeric(str_replace("pay_type_", "", $this->PayType)))
+				{
+					$payid = $this->PayType;
 					
-	// 				// ***INLINESQL***
-	// 				// $sql = "select id, cardname, cardtype, cardnum, cvv, expmo, expyr from cc_moulah where rguid = ".smartQuote($formatted);
-	// 				// $row = $this->_db->get_row($sql);
-	// 				// if (count($row) > 0)
-	// 				// {
-	// 				// 	$this->PayMethod = "CREDIT";
-	// 				// 	$this->CardName = $row->cardname;
-	// 				// 	$this->CardType = $row->cardtype;
-	// 				// 	$this->CardNumber = $xc->DecodeNumber($row->cardnum);
-	// 				// 	$this->CardCVV = $row->cvv;
-	// 				// 	$this->CardExpMonth = intval($row->expmo);
-	// 				// 	$this->CardExpYear = intval($row->expyr);
-	// 				// 	$payid = $row->id;
-	// 				// 	$invduedate = time()+(60*60*24*30);
-	// 				// 	$initstatus = "HD";
-	// 				// }
-	// 				// else
-	// 				// {
-	// 				// 	$this->LastError = "There was a problem with the credit card you selected. Please try again.";
-	// 				// 	header("Location: /".$urltag."/cart/confirm");
-	// 				// 	exit();
-	// 				// }
-	// 			}
-	// 			else
-	// 			{
-	// 				$this->LastError = "Please select a method of payment";
-	// 				header("Location: /".$urltag."/cart/confirm");
-	// 				exit();
-	// 			}
-	// 			break;
-	// 	}
+					$r = new RestRunner();
+					$result = $r->Get($this->CustomerApi."/payments/".$payid);
+					if (count($result) > 0)
+					{
+						$this->PayMethod = "CREDIT";
+						foreach ($result as $item)
+						{
+							$this->CreditCard = new CreditCard();
+							$this->CreditCard->CardID = $item->payId;
+							$this->CreditCard->RowID = $item->payId;
+							$this->CreditCard->CustID = $this->RowID;
+							$this->CreditCard->CardType = $item->cardType;
+							$this->CreditCard->CardName = $item->cardName;
+							$this->CreditCard->CardNumber = Utilities::DecryptValue("payment", $item->cardNumber);
+							$this->CreditCard->ExpirationMonth = intval($item->expirationMonth);
+							$this->CreditCard->ExpirationYear = intval($item->expirationYear);
+							$this->CreditCard->CVV = Utilities::DecryptValue("payment", $item->cvv);
+							$invduedate = time()+(60*60*24*30);
+						}
+					}
+					else
+					{
+						$this->LastError = "There was a problem with the credit card you selected. Please try again.";
+						header("Location: /shop/cart/confirm");
+						exit();
+					}
+				}
+				else
+				{
+					$this->LastError = "Please select a method of payment";
+					header("Location: /shop/cart/confirm");
+					exit();
+				}
+				break;
+		}
 		
-	// 	/******************************************************
-	// 	 * PROCESS CREDIT CARD
-	// 	 ******************************************************/
+		/******************************************************
+		 * PROCESS CREDIT CARD
+		 ******************************************************/
 		
-	// 	if ($this->PayMethod == "CREDIT")
-	// 	{
-	// 		// FOR TESTING:
-	// 		//$r = $this->RunTransaction(true, "APPROVED");
-	// 		$r = $this->RunTransaction();
+		if ($this->PayMethod == "CREDIT")
+		{
+			$ispaid = true;
+
+			if ($this->PayType == "NEW")
+			{
+				// Save new card?
+			}
+		}
+		
+		/******************************************************
+		 * SAVE ORDER AND INVOICE
+		 ******************************************************/
+		
+		// if ($this->SaveAddresses)
+		// {
+		// 	try
+		// 	{
+		// 		$this->BillingAddress->CustomerID = $_SESSION["__account__"]->CustomerID;
+		// 		$this->BillingAddress->SaveAddress();
+		// 	}
+		// 	catch (Exception $ex)
+		// 	{
+		// 		//echo "Billing Address - ".$ex->getMessage();
+		// 		//exit();
+		// 	}
 			
-	// 		if ($r == "APPROVED")
-	// 		{
-	// 			$ispaid = true;
-	// 			//$status = "Paid";
-	// 			if ($this->PayType == "NEW")
-	// 			{
-	// 				// ***INLINESQL***
-	// 				// $sql = "set nocount on; insert into cc_moulah(custid, cardname, cardnum, cardtype, cvv, expmo, expyr, active) values(".
-	// 				// 	smartQuote($_SESSION["__account__"]->CustomerID).", ".
-	// 				// 	smartQuote($this->CardName).", ".
-	// 				// 	smartQuote($xc->EncodeNumber($this->CardNumber)).", ".
-	// 				// 	smartQuote($this->CardType).", ".
-	// 				// 	smartQuote($this->CardCVV).", ".
-	// 				// 	smartQuote($this->CardExpMonth).", ".
-	// 				// 	smartQuote($this->CardExpYear).", ".
-	// 				// 	($this->SaveCard ? "1" : "0")."); select @@identity as id";
-	// 				// $payid = $this->_db->get_var($sql);
-					
-	// 				// $sql = "select rguid from cc_moulah where id = ".smartQuote($payid);
-	// 				// $payguid = mssql_guid_string($this->_db->get_var($sql));
-	// 			}
-	// 		}
-	// 		else
-	// 		{
-	// 			$this->LastError = "Your card was declined for this transaction. Please select a different payment.";
-	// 			header("Location: /".$urltag."/cart/confirm");
-	// 			exit();
-	// 		}
-	// 	}
+		// 	try
+		// 	{
+		// 		$this->ShippingAddress->CustomerID = $_SESSION["__account__"]->CustomerID;
+		// 		$this->ShippingAddress->SaveAddress();
+		// 	}
+		// 	catch (Exception $ex)
+		// 	{
+		// 		//echo "Billing Address - ".$ex->getMessage();
+		// 		//exit();
+		// 	}
+		// }
 		
-	// 	/******************************************************
-	// 	 * SAVE ORDER AND INVOICE
-	// 	 ******************************************************/
+		if ($ispaid == true) $status = "Paid";
+
+		$onum = sprintf("%02d", rand(2500, 98943));
+		echo "<pre>Number: ".$onum."</pre>";
+		exit();
+
 		
-	// 	if ($this->SaveAddresses)
-	// 	{
-	// 		try
-	// 		{
-	// 			$this->BillingAddress->CustomerID = $_SESSION["__account__"]->CustomerID;
-	// 			$this->BillingAddress->SaveAddress();
-	// 		}
-	// 		catch (Exception $ex)
-	// 		{
-	// 			//echo "Billing Address - ".$ex->getMessage();
-	// 			//exit();
-	// 		}
+		$order->TmpOrderID = $this->TmpOrderID;
+		$order->CustomerID = $_SESSION["__account__"]->CustomerID;
+		$order->OrderType = "S";
+		$order->SubtotalAmount = $this->SubtotalAmount;
+		$order->ShippingAmount = $this->ShippingAmount;
+		$order->TaxAmount = $this->TaxAmount;
+		$order->TotalAmount = $this->TotalAmount;
+		$order->Status = $status;
+		$order->PromoCode = $this->PromoCode;
+		$order->CustomerSource = $this->Source;
+		$order->Comments = $this->Comments;
+		$order->ShipMethod = $this->ShippingService;
+		$order->ShippingAddress = clone $this->ShippingAddress;
+		
+		$invoice->CustomerID = $_SESSION["__account__"]->CustomerID;
+		$invoice->SubtotalAmount = $this->SubtotalAmount;
+		$invoice->ShippingAmount = $this->ShippingAmount;
+		$invoice->TaxAmount = $this->TaxAmount;
+		$invoice->TotalAmount = $this->TotalAmount;
+		$invoice->PayType = $this->PayMethod;
+		$invoice->PayID = $payid;
+		$invoice->Paid = $ispaid;
+		$invoice->BillingAddress = clone $this->BillingAddress;
+		
+		foreach ($this->Items as $item)
+		{
+			$pickable = false;
+			$p = new Product();
+			$p->GetProduct($item->PID);
+			$p->CalculateValues();
 			
-	// 		try
-	// 		{
-	// 			$this->ShippingAddress->CustomerID = $_SESSION["__account__"]->CustomerID;
-	// 			$this->ShippingAddress->SaveAddress();
-	// 		}
-	// 		catch (Exception $ex)
-	// 		{
-	// 			//echo "Billing Address - ".$ex->getMessage();
-	// 			//exit();
-	// 		}
-	// 	}
-		
-	// 	if ($ispaid == true) $status = "Paid";
-		
-	// 	$order->TmpOrderID = $this->TmpOrderID;
-	// 	$order->CustomerID = $_SESSION["__account__"]->CustomerID;
-	// 	$order->OrderType = "S";
-	// 	$order->SubtotalAmount = $this->SubtotalAmount;
-	// 	$order->ShippingAmount = $this->ShippingAmount;
-	// 	$order->TaxAmount = $this->TaxAmount;
-	// 	$order->TotalAmount = $this->TotalAmount;
-	// 	$order->Status = $status;
-	// 	$order->PromoCode = $this->PromoCode;
-	// 	$order->CustomerSource = $this->Source;
-	// 	$order->Comments = $this->Comments;
-	// 	$order->ShipMethod = $this->ShippingService;
-	// 	$order->ShippingAddress = clone $this->ShippingAddress;
-		
-	// 	$invoice->CustomerID = $_SESSION["__account__"]->CustomerID;
-	// 	$invoice->SubtotalAmount = $this->SubtotalAmount;
-	// 	$invoice->ShippingAmount = $this->ShippingAmount;
-	// 	$invoice->TaxAmount = $this->TaxAmount;
-	// 	$invoice->TotalAmount = $this->TotalAmount;
-	// 	$invoice->PayType = $this->PayMethod;
-	// 	$invoice->PayID = $payid;
-	// 	$invoice->Paid = $ispaid;
-	// 	$invoice->BillingAddress = clone $this->BillingAddress;
-		
-	// 	if ($landing)
-	// 	{
-	// 		foreach ($this->LandingItems as $item)
-	// 		{
-	// 			$pickable = false;
-	// 			$p = new Product();
-	// 			$p->GetProduct($item->PID);
-	// 			$p->CalculateValues();
-				
-				
-	// 			$d = new OrderItem();
-	// 			$d->PID = $p->PID;
-	// 			$d->Description = $p->ProductName;
-	// 			$d->ISBN = $p->ISBN;
-	// 			$d->Quantity = $item->Quantity;
-	// 			$d->Price = $p->Price;
-	// 			$d->Discount = $p->CalculatedDiscount;
-	// 			$d->Pickable = $item->Fulfillment;
-	// 			$order->Items[] = $d;
-				
-	// 			$i = new InvoiceItem();
-	// 			$i->Title = $p->ProductName;
-	// 			$i->Amount = $p->CalculatedPrice;
-	// 			$i->Quantity = $item->Quantity;
-	// 			$invoice->Items[] = $i;
-	// 		}
-	// 		foreach ($this->LandingFreeItems as $item)
-	// 		{
-	// 			$p = new Product();
-	// 			$p->GetProduct($item->PID);
-				
-	// 			$d = new OrderItem();
-	// 			$d->PID = $p->PID;
-	// 			$d->Description = $p->ProductName;
-	// 			$d->ISBN = $p->ISBN;
-	// 			$d->Quantity = 1;
-	// 			$d->Price = 0;
-	// 			$d->Discount = 0;
-	// 			$d->Pickable = false;
-	// 			$order->Items[] = $d;
-				
-	// 			$i = new InvoiceItem();
-	// 			$i->Title = $p->ProductName;
-	// 			$i->Amount = 0;
-	// 			$i->Quantity = 1;
-	// 			$invoice->Items[] = $i;
-				
-	// 		}
-	// 	}
-	// 	else
-	// 	{
-	// 		foreach ($this->Items as $item)
-	// 		{
-	// 			$pickable = false;
-	// 			$p = new Product();
-	// 			$p->GetProduct($item->PID);
-	// 			$p->CalculateValues();
-				
-				
-	// 			$d = new OrderItem();
-	// 			$d->PID = $p->PID;
-	// 			$d->Description = $p->ProductName;
-	// 			$d->ISBN = $p->ISBN;
-	// 			$d->Quantity = $item->Quantity;
-	// 			$d->Price = $p->Price;
-	// 			$d->Discount = $p->CalculatedDiscount;
-	// 			$d->Pickable = $item->Fulfillment;
-	// 			$order->Items[] = $d;
-				
-	// 			$i = new InvoiceItem();
-	// 			$i->Title = $p->ProductName;
-	// 			$i->Amount = $p->CalculatedPrice;
-	// 			$i->Quantity = $item->Quantity;
-	// 			$invoice->Items[] = $i;
-	// 		}
-	// 	}
+			
+			$d = new OrderItem();
+			$d->PID = $p->PID;
+			$d->Description = $p->ProductName;
+			$d->ISBN = $p->ISBN;
+			$d->Quantity = $item->Quantity;
+			$d->Price = $p->Price;
+			$d->Discount = $p->CalculatedDiscount;
+			$d->Pickable = $item->Fulfillment;
+			$order->Items[] = $d;
+			
+			$i = new InvoiceItem();
+			$i->Title = $p->ProductName;
+			$i->Amount = $p->CalculatedPrice;
+			$i->Quantity = $item->Quantity;
+			$invoice->Items[] = $i;
+		}
 		
 	// 	$order->Save();
 	// 	$invoice->OrderID = $order->OrderID;
@@ -513,7 +410,7 @@ class ShoppingCart
 		
 	// 	$mailer = Swift_Mailer::newInstance($transport);
 	// 	$result = $mailer->send($message);
-	// }
+	}
 	
 	public function RunTransaction($test=false, $result="")
 	{
@@ -522,7 +419,7 @@ class ShoppingCart
 		return $retval;
 	}
 	
-	public function ConfirmPayment($urltag="shop")
+	public function ConfirmPayment()
 	{
 		$out = "";
 		$num = 1;
@@ -535,7 +432,7 @@ class ShoppingCart
 		$out .= $this->HideSidebar();
 		$out .= "<div class=\"content\">\n";
 		$out .= $this->Breadcrumbs("pay");
-		$out .= "<form action=\"/".$urltag."/cart/continue\" method=\"post\" id=\"form_place_order\">\n";
+		$out .= "<form action=\"/shop/cart/continue\" method=\"post\" id=\"form_place_order\">\n";
 		$out .= "	<div class=\"order-summary\" style=\"float:left;width:250px;margin-right:20px;padding:10px;\">\n";
 		$out .= "		<div style=\"border-bottom:1px solid #999999;font-weight:bold;margin:10px 0px 10px 0px;\">Billing Address</div>\n";
 		$out .= "		<div style=\"padding-left:10px;\">".$this->BillingAddress->DisplayFormatted()."</div>\n";
@@ -625,7 +522,7 @@ class ShoppingCart
 
 		$r = new RestRunner();
 
-		$result = $r->Get($this->CustomerApi."/payments/".$_SESSION["__account__"]->RowID);
+		$result = $r->Get($this->CustomerApi."/payments/all/".$_SESSION["__account__"]->RowID);
 		foreach ($result as $item)
 		{
 			$cc = new CreditCard();
@@ -768,7 +665,7 @@ class ShoppingCart
 		return 0.065;
 	}
 	
-	public function ShippingMethod($urltag="shop")
+	public function ShippingMethod()
 	{
 		$out = "";
 		$num = 0;
@@ -778,7 +675,7 @@ class ShoppingCart
 		$out .= $this->HideSidebar();
 		$out .= "<div class=\"content\">\n";
 		$out .= $this->Breadcrumbs("ship");
-		$out .= "<form action=\"/".$urltag."/cart/continue\" method=\"post\">\n";
+		$out .= "<form action=\"/shop/cart/continue\" method=\"post\">\n";
 		$out .= "	<div class=\"order-summary\">\n";
 		$out .= "		<div class=\"order-summary-heading\">SHIPPING METHOD</div>\n";
 		$out .= "		<div>&nbsp;</div>\n";
@@ -809,7 +706,7 @@ class ShoppingCart
 		return $out;
 	}
 	
-	public function BillingInfo($urltag="shop")
+	public function BillingInfo()
 	{
 		$out = "";
 		$strsel = "";
@@ -826,7 +723,7 @@ class ShoppingCart
 		$out .= $this->HideSidebar();
 		$out .= "<div class=\"content\">\n";
 		$out .= $this->Breadcrumbs("bill");
-		$out .= "<form action=\"/".$urltag."/cart/continue\" method=\"post\">\n";
+		$out .= "<form action=\"/shop/cart/continue\" method=\"post\">\n";
 		$out .= "	<div class=\"order-address\">\n";
 		$out .= "		<div class=\"order-address-heading\">BILLING ADDRESS</div>\n";
 		$out .= "		<div class=\"address-line\">\n";
@@ -935,14 +832,14 @@ class ShoppingCart
 		return $out;
 	}
 	
-	public function CartLoginView($urltag="shop")
+	public function CartLoginView()
 	{		
 		$out = "";
 		
 		$out .= "	<div class=\"order-signin\" style=\"position: relative;\">\n";
 		$out .= "		<img src=\"/framework/img/close.png\" style=\"height:32px; width:32px; position:absolute; right:-12px; top:-12px; cursor:pointer;\" onclick=\"unpopWindow();\" />\n";
 		$out .= "		<div class=\"order-summary-heading\">YOUR ACCOUNT</div>\n";
-		$out .= "		<form action=\"/".$urltag."/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
+		$out .= "		<form action=\"/shop/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
 		$out .= "			<div class=\"customer-signin\">\n";
 		$out .= "				<div class=\"heading\">New Customers</div>\n";
 		$out .= "				<div class=\"address-line\">\n";
@@ -976,7 +873,7 @@ class ShoppingCart
 		$out .= "				</div>\n";
 		$out .= "			</div>\n";
 		$out .= "		</form>\n";
-		$out .= "		<form action=\"/".$urltag."/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
+		$out .= "		<form action=\"/shop/cart/continue\" method=\"post\" id=\"checkout_form\">\n";
 		$out .= "			<div class=\"customer-signin\">\n";
 		$out .= "				<div class=\"heading\">Returning Customers</div>\n";
 		$out .= "				<div class=\"address-line\">\n";

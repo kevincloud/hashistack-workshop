@@ -3,7 +3,6 @@
 class Invoice
 {
 	public $InvoiceID = 0;
-	public $RowGuid = "";
 	public $InvoiceNumber = "";
 	public $OrderID = "";
 	public $CustomerID = "";
@@ -19,9 +18,7 @@ class Invoice
 	public $DatePaid = NULL;
 	public $AddressID = 0;
 	public $BillingAddress = NULL;
-	public $InvoiceTitle = "java-perks.com Order";
-	public $Division = 1;
-	public $DepositAccount = 0;
+	public $InvoiceTitle = "Java-Perks.com Order";
 	public $Order = NULL;
 	public $Items = array();
 	
@@ -166,11 +163,6 @@ class InvoiceItem
 	public $Amount = 0.0;
 	public $Quantity = 0;
 	public $LineNumber = 0;
-	public $ItemClass = "Retail";
-	public $IncomeAccount = 15;
-	
-	// ***INLINESQL***
-	// private $_db = NULL;
 	
 	public function __construct()
 	{

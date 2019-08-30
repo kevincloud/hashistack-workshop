@@ -60,10 +60,17 @@ public class PaymentInterface
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/all/{id}")
     public Response getPaymentsByCustomerId(@PathParam("id") String id) {
         PaymentDb pdb = new PaymentDb(this.dbserver, this.database, this.username, this.password);
         return Response.ok(pdb.getPaymentsByCustomerId(id)).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response getPaymentById(@PathParam("id") String id) {
+        PaymentDb pdb = new PaymentDb(this.dbserver, this.database, this.username, this.password);
+        return Response.ok(pdb.getPaymentById(id)).build();
     }
 
     @POST

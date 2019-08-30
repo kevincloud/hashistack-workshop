@@ -78,6 +78,34 @@ public class PaymentDb
         return payments;
     }
 
+    public Payment getPaymentById(String payid) {
+        LOGGER.info("Get a specific credit card for a customer");
+        Payment payment = null;
+
+        try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
+        {
+            String sql = "select * from customer_payment where payid = " + payid;
+            Statement s = cn.createStatement();
+            ResultSet rs = s.executeQuery(sql);
+
+            while(rs.next()) {
+                payment = new Payment(
+                    rs.getInt("payid"), 
+                    rs.getInt("custid"), 
+                    rs.getString("cardname"), 
+                    rs.getString("cardnumber"), 
+                    rs.getString("cardtype"), 
+                    rs.getString("cvv"), 
+                    rs.getString("expmonth"), 
+                    rs.getString("expyear"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return payment;
+    }
+
     public Status updatePayment(Payment payment) {
         LOGGER.info("Update a credit card");
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
