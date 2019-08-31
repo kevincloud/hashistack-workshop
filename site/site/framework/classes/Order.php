@@ -117,6 +117,9 @@ class Order
 				// $this->OrderID = $this->_db->get_var($sql);
 			}
 
+			$this->Invoice = new Invoice();
+			$this->Invoice->InvoiceID = "INVXXX";
+
 			$request = $this->OrderApi."/order";
 			$rr = new RestRunner();
 			$retval = $rr->Post($request, $this->OutputJson());
