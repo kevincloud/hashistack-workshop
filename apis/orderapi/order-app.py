@@ -33,6 +33,7 @@ def save_order():
     table = ddb.Table(tablename)
     x = datetime.now()
 
+    print(data)
     items = []
     for i in data['Items']:
         items.append({

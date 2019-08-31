@@ -533,7 +533,7 @@ class Order
 		$out .="		\"Phone\": \"".$this->ShippingAddress->Phone."\" ";
 		$out .="    },";
 		$out .="	\"Status\": \"Paid\", ";
-		$out .="	\"items\": ".$items." ";
+		$out .="	\"Items\": ".$items." ";
 		$out .="}";
 		
 		return $out;
