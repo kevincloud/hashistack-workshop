@@ -36,14 +36,14 @@ def save_order():
 
     print(data, file=sys.stderr)
     items = []
-    for i in data['Items']:
-        items.append({
-            'ID': i['ID'],
-            'LineNumber': i['LineNumber'],
-            'Product': i['Product'],
-            'Price': Decimal(i['Price']),
-            'Quantity': i['Quantity']
-        })
+    # for i in data['Items']:
+    #     items.append({
+    #         'ID': i['ID'],
+    #         'LineNumber': i['LineNumber'],
+    #         'Product': i['Product'],
+    #         'Price': Decimal(i['Price']),
+    #         'Quantity': i['Quantity']
+    #     })
     
     response = table.put_item(
         Item={
@@ -66,7 +66,7 @@ def save_order():
                 'Phone': data['ShippingAddress']['Phone']
             },
             'Status': 'Paid',
-            'Items': items
+            'Items': data['Items']
         }
     )
 
