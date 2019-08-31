@@ -665,3 +665,33 @@ class OrderItem
 
 
 ?>
+
+{
+	"orderid": "test",
+	"customerid": "test",
+	"invoiceid": "test",
+	"subtotal": "test",
+	"shipping": "test",
+	"tax": "test",
+	"total": "test",
+	"comments": "test",
+	"address": { 
+		"contact": "test",
+		"address1": "test",
+		"address2": "test",
+		"city": "test",
+		"state": "test", 
+		"zip": "test",
+		"phone": "test"
+    },
+	"items": [
+		{
+			"ID" : 0,
+			"LineNumber" : 1,
+			"Product" : "test",
+			"Description" : "test",
+			"Price" : 9.99,
+			"Quantity" : 0
+		}
+	]
+}

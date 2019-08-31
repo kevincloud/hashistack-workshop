@@ -1,7 +1,7 @@
 import requests
 import os
 import json
-import decimal
+from decimal import Decimal
 from flask import Flask, request
 from flask_cors import CORS
 import boto3
@@ -19,7 +19,7 @@ ddb = boto3.resource('dynamodb', aws_access_key_id=access_key, aws_secret_access
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o): # pylint: disable=E0202
-        if isinstance(o, decimal.Decimal):
+        if isinstance(o, Decimal):
             if o % 1 > 0:
                 return float(o)
             else:
@@ -39,11 +39,10 @@ def save_order():
             'CustomerId': data['customerid'],
             'InvoiceId': data['invoiceid'],
             'OrderDate': x.strftime("%Y-%m-%dT%H:%M:%S-05:00"),
-            'ShipDate': None,
-            'SubtotalAmmount': data['subtotal'],
-            'ShippingAmount': data['shipping'],
-            'TaxAmount': data['tax'],
-            'TotalAmount': data['total'],
+            'SubtotalAmount': Decimal(data['subtotal']),
+            'ShippingAmount': Decimal(data['shipping']),
+            'TaxAmount': Decimal(data['tax']),
+            'TotalAmount': Decimal(data['total']),
             'Comments': data['comments'],
             'ShippingAddress': {
                 'Contact': data['address']['contact'],

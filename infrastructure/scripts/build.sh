@@ -78,7 +78,7 @@ docker tag cart-app:cart-app ${REPO_URL_CART}:cart-app
 docker push ${REPO_URL_CART}:cart-app
 
 # create order-app image
-cd /root/hashistack-workshop/apis/order-app
+cd /root/hashistack-workshop/apis/orderapi
 docker build -t order-app:order-app .
 aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
