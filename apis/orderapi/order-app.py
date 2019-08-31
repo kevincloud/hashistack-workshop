@@ -51,8 +51,8 @@ def save_order():
             'OrderDate': x.strftime("%Y-%m-%dT%H:%M:%S-05:00"),
             'SubtotalAmount': Decimal(data['SubtotalAmount']),
             'ShippingAmount': Decimal(data['ShippingAmount']),
-            'TaxAmount': Decimal(data['tax']),
-            'TotalAmount': Decimal(data['TaxAmount']),
+            'TaxAmount': Decimal(data['TaxAmount']),
+            'TotalAmount': Decimal(data['TotalAmount']),
             'Comments': data['Comments'],
             'ShippingAddress': {
                 'Contact': data['ShippingAddress']['Contact'],
