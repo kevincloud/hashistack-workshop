@@ -32,6 +32,17 @@ def save_order():
     data = request.get_json()
     table = ddb.Table(tablename)
     x = datetime.now()
+
+    items = []
+    for i in data['items']:
+        items.append({
+            'ID': i['ID'],
+            'LineNumber': i['LineNumber'],
+            'Product': i['Product'],
+            'Description': i['Description'],
+            'Price': i['Price'],
+            'Quantity': i['Quantity']
+        })
     
     response = table.put_item(
         Item={
@@ -54,7 +65,7 @@ def save_order():
                 'Phone': data['address']['phone']
             },
             'Status': 'Paid',
-            'Items': data['items']
+            'Items': items
         }
     )
 

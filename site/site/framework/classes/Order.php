@@ -503,11 +503,11 @@ class Order
 
 		foreach ($this->Items as $item)
 		{
-			$items .= $item->OutputJson . ",";
+			$items .= $item->OutputJson() . ",";
 		}
 
 		if ($items != "")
-			$items = "[ " . str_replace("\"", "\\\"", substr($items, 0, -1)) . " ]";
+			$items = "[ " . substr($items, 0, -1) . " ]";
 
 		$out .="{";
 		$out .="	\"orderid\": \"".$this->OrderID."\", ";
@@ -519,12 +519,12 @@ class Order
 		$out .="	\"total\": \"".$this->TotalAmount."\", ";
 		$out .="	\"comments\": \"".$this->Comments."\", ";
 		$out .="	\"address\": { ";
-		$out .="		\"contact\": \"".$this->ShippingAddress->Contact."\" ";
-		$out .="		\"address1\": \"".$this->ShippingAddress->Address1."\" ";
-		$out .="		\"address2\": \"".$this->ShippingAddress->Address2."\" ";
-		$out .="		\"city\": \"".$this->ShippingAddress->City."\" ";
-		$out .="		\"state\": \"".$this->ShippingAddress->State."\" ";
-		$out .="		\"zip\": \"".$this->ShippingAddress->Zip."\" ";
+		$out .="		\"contact\": \"".$this->ShippingAddress->Contact."\", ";
+		$out .="		\"address1\": \"".$this->ShippingAddress->Address1."\", ";
+		$out .="		\"address2\": \"".$this->ShippingAddress->Address2."\", ";
+		$out .="		\"city\": \"".$this->ShippingAddress->City."\", ";
+		$out .="		\"state\": \"".$this->ShippingAddress->State."\", ";
+		$out .="		\"zip\": \"".$this->ShippingAddress->Zip."\", ";
 		$out .="		\"phone\": \"".$this->ShippingAddress->Phone."\" ";
 		$out .="    },";
 		$out .="	\"items\": \"".$items."\" ";
