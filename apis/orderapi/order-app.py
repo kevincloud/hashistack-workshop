@@ -39,7 +39,6 @@ def save_order():
             'ID': i['ID'],
             'LineNumber': i['LineNumber'],
             'Product': i['Product'],
-            'Description': i['Description'],
             'Price': i['Price'],
             'Quantity': i['Quantity']
         })

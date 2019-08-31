@@ -124,7 +124,8 @@ class Order
 			$rr = new RestRunner();
 			$retval = $rr->Post($request, $this->OutputJson());
 			echo "<pre>";
-			print_r($retval);
+			echo $this->OutputJson();
+			//print_r($retval);
 			echo "</pre>";
 			exit();
 		}
@@ -530,7 +531,7 @@ class Order
 		$out .="		\"zip\": \"".$this->ShippingAddress->Zip."\", ";
 		$out .="		\"phone\": \"".$this->ShippingAddress->Phone."\" ";
 		$out .="    },";
-		$out .="	\"items\": \"".$items."\" ";
+		$out .="	\"items\": ".$items." ";
 		$out .="}";
 		
 		return $out;
@@ -653,7 +654,6 @@ class OrderItem
 		$out .= "	\"ID\" : \"".$this->ID."\", ";
 		$out .= "	\"LineNumber\" : \"".$this->LineNumber."\", ";
 		$out .= "	\"Product\" : \"".$this->Product."\", ";
-		$out .= "	\"Description\" : \"".$this->Description."\", ";
 		$out .= "	\"Price\" : \"".$this->Price."\", ";
 		$out .= "	\"Quantity\" : \"".$this->Quantity."\" ";
 		$out .= "}";
