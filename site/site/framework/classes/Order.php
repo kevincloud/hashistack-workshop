@@ -507,7 +507,7 @@ class Order
 		}
 
 		if ($items != "")
-			$items = "[ " . substr($items, 0, -1) . " ]";
+			$items = "[ " . str_replace("\"", "\\\"", substr($items, 0, -1)) . " ]";
 
 		$out .="{";
 		$out .="	\"orderid\": \"".$this->OrderID."\", ";
