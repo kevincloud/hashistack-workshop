@@ -58,8 +58,6 @@ def save_order():
         }
     )
 
-    return
-
             # 'Items': [{
             #     'OrderId': data['items']['orderid'],
             #     'LineNumber': data['items']['lineno'],
