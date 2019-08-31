@@ -45,23 +45,23 @@ def save_order():
     
     response = table.put_item(
         Item={
-            'OrderId': data['orderid'],
-            'CustomerId': data['customerid'],
-            'InvoiceId': data['invoiceid'],
+            'OrderId': data['OrderId'],
+            'CustomerId': data['CustomerId'],
+            'InvoiceId': data['InvoiceId'],
             'OrderDate': x.strftime("%Y-%m-%dT%H:%M:%S-05:00"),
-            'SubtotalAmount': Decimal(data['subtotal']),
-            'ShippingAmount': Decimal(data['shipping']),
+            'SubtotalAmount': Decimal(data['SubtotalAmount']),
+            'ShippingAmount': Decimal(data['ShippingAmount']),
             'TaxAmount': Decimal(data['tax']),
-            'TotalAmount': Decimal(data['total']),
-            'Comments': data['comments'],
+            'TotalAmount': Decimal(data['TaxAmount']),
+            'Comments': data['Comments'],
             'ShippingAddress': {
-                'Contact': data['address']['contact'],
-                'Address1': data['address']['address1'],
-                'Address2': data['address']['address2'],
-                'City': data['address']['city'],
-                'State': data['address']['state'],
-                'Zip': data['address']['zip'],
-                'Phone': data['address']['phone']
+                'Contact': data['ShippingAddress']['Contact'],
+                'Address1': data['ShippingAddress']['Address1'],
+                'Address2': data['ShippingAddress']['Address2'],
+                'City': data['ShippingAddress']['City'],
+                'State': data['ShippingAddress']['State'],
+                'Zip': data['ShippingAddress']['Zip'],
+                'Phone': data['ShippingAddress']['Phone']
             },
             'Status': 'Paid',
             'Items': items
