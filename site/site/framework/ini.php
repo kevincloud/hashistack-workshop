@@ -70,6 +70,7 @@ $productapi = "http://product-api.service.".$region.".consul:5821";
 $customerapi = "http://customer-api.service.".$region.".consul:5822";
 $cartapi = "http://cart-api.service.".$region.".consul:5823";
 $vaulturl = "http://vault-main.service.".$region.".consul:8200";
+$orderapi = "http://order-api.service.".$region.".consul:5826";
 
 //////////////////////////////////////////////////////////////////////////////////
 // UNIVERSAL FUNCTIONS INITIALIZATION

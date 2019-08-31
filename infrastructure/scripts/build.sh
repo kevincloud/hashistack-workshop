@@ -95,10 +95,6 @@ aws s3 cp /root/hashistack-workshop/apis/customerapi/CustomerApi/target/Customer
 cd /root/hashistack-workshop/site
 sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
 <?php
-\$authapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/auth-api";
-\$productapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/product-api";
-\$customerapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/customer-api";
-\$cartapiurl = "http://${CONSUL_IP}:8500/v1/catalog/service/cart-api";
 \$assetbucket = "https://s3.amazonaws.com/${S3_BUCKET}/";
 \$region = "${REGION}";
 ?>

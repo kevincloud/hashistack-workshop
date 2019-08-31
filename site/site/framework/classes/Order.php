@@ -17,14 +17,17 @@ class Order
 	public $Items = array();
 	public $Invoice = NULL;
 	public $TmpOrderID = "";
+	public $OrderApi = "";
 	
 	
 	private $_settings;
-	// ***INLINESQL***
-	// private $_db;
 	
 	public function __construct()
 	{
+		global $orderapi;
+
+		$this->OrderApi = $orderapi;
+
 		$this->ShippingAddress = new Address();
 		
 		$this->_settings = new ApplicationSettings();
@@ -113,45 +116,14 @@ class Order
 				// $sql = "exec s_newcustorderid";
 				// $this->OrderID = $this->_db->get_var($sql);
 			}
-			
-			// ***INLINESQL***
-			// $sql = "insert into cc_orders(ordid, custid, orderdate, ordertype, subtotal, ".
-			// 	"	freight, tax, totalamt, status, promocode, cust_source, source, ".
-			// 	"	comments, shiptype, sname, saddr1, saddr2, scity, sstate, szip, ".
-			// 	"	scountry, scountry_numcode, sphone, addrid) values (".
-			// 	smartQuote($this->OrderID).", ".
-			// 	smartQuote($this->CustomerID).", ".
-			// 	"getdate(), ".
-			// 	smartQuote($this->OrderType).", ".
-			// 	smartQuote($this->SubtotalAmount).", ".
-			// 	smartQuote($this->ShippingAmount).", ".
-			// 	smartQuote($this->TaxAmount).", ".
-			// 	smartQuote($this->TotalAmount).", ".
-			// 	smartQuote($this->Status).", ".
-			// 	smartQuote($this->PromoCode, true).", ".
-			// 	smartQuote($this->CustomerSource).", ".
-			// 	"'WEB', ".
-			// 	smartQuote($this->Comments).", ".
-			// 	smartQuote($this->ShipMethod).", ".
-			// 	smartQuote($this->ShippingAddress->Contact).", ".
-			// 	smartQuote($this->ShippingAddress->Address1).", ".
-			// 	smartQuote($this->ShippingAddress->Address2).", ".
-			// 	smartQuote($this->ShippingAddress->City).", ".
-			// 	smartQuote($this->ShippingAddress->State).", ".
-			// 	smartQuote($this->ShippingAddress->Zip, true).", ".
-			// 	smartQuote($this->ShippingAddress->Country).", ".
-			// 	smartQuote($this->ShippingAddress->CountryCode).", ".
-			// 	smartQuote($this->ShippingAddress->Phone, true).", ".
-			// 	smartQuote($this->ShippingAddress->AddressID).")";
-			// $this->_db->query($sql);
-			$num = 0;
-			foreach ($this->Items as &$item)
-			{
-				$num++;
-				$item->OrderID = $this->OrderID;
-				$item->LineNumber = $num;
-				$item->SaveItem();
-			}
+
+			$request = $this->OrderApi."/order";
+			$rr = new RestRunner();
+			$retval = $rr->Post($request, $this->OutputJson());
+			echo "<pre>";
+			print_r($retval);
+			echo "</pre>";
+			exit();
 		}
 	}
 	
@@ -523,6 +495,43 @@ class Order
 		
 		return $out;
 	}
+
+	public function OutputJson()
+	{
+		$out = "";
+		$items = "";
+
+		foreach ($this->Items as $item)
+		{
+			$items .= $item->OutputJson . ",";
+		}
+
+		if ($items != "")
+			$items = substr($items, 0, -1);
+
+		$out .="{";
+		$out .="	\"orderid\": \"".$this->OrderID."\", ";
+		$out .="	\"customerid\": \"".$this->CustomerID."\", ";
+		$out .="	\"invoiceid\": \"".$this->Invoice->InvoiceID."\", ";
+		$out .="	\"subtotal\": \"".$this->SubtotalAmount."\", ";
+		$out .="	\"shipping\": \"".$this->ShippingAmount."\", ";
+		$out .="	\"tax\": \"".$this->TaxAmount."\", ";
+		$out .="	\"total\": \"".$this->TotalAmount."\", ";
+		$out .="	\"comments\": \"".$this->Comments."\", ";
+		$out .="	\"address\": { ";
+		$out .="		\"contact\": \"".$this->ShippingAddress->Contact."\" ";
+		$out .="		\"address1\": \"".$this->ShippingAddress->Address1."\" ";
+		$out .="		\"address2\": \"".$this->ShippingAddress->Address2."\" ";
+		$out .="		\"city\": \"".$this->ShippingAddress->City."\" ";
+		$out .="		\"state\": \"".$this->ShippingAddress->State."\" ";
+		$out .="		\"zip\": \"".$this->ShippingAddress->Zip."\" ";
+		$out .="		\"phone\": \"".$this->ShippingAddress->Phone."\" ";
+		$out .="    },";
+		$out .="	\"items\": \"".$items."\" ";
+		$out .="}";
+		
+		return $out;
+	}
 }
 
 class OrderItem
@@ -630,6 +639,22 @@ class OrderItem
 		else
 			$out = $relpath;
 		
+		return $out;
+	}
+
+	public function OutputJson()
+	{
+		$out = "";
+
+		$out .= "{";
+		$out .= "	\"ID\" : \"".$this->ID."\", ";
+		$out .= "	\"LineNumber\" : \"".$this->LineNumber."\", ";
+		$out .= "	\"Product\" : \"".$this->Product."\", ";
+		$out .= "	\"Description\" : \"".$this->Description."\", ";
+		$out .= "	\"Price\" : \"".$this->Price."\", ";
+		$out .= "	\"Quantity\" : \"".$this->Quantity."\" ";
+		$out .= "}";
+
 		return $out;
 	}
 }

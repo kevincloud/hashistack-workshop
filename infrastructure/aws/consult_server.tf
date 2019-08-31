@@ -147,7 +147,12 @@ data "aws_iam_policy_document" "consul-tag-access" {
     resources = ["*"]
 
     actions = [
-      "ec2:DescribeInstances"
+      "ec2:DescribeInstances",
+      "ec2:DescribeTags",
+      "ec2messages:GetMessages",
+      "ssm:UpdateInstanceInformation",
+      "ssm:ListInstanceAssociations",
+      "ssm:ListAssociations"
     ]
   }
 }
