@@ -39,7 +39,7 @@ def save_order():
             'ID': i['ID'],
             'LineNumber': i['LineNumber'],
             'Product': i['Product'],
-            'Price': i['Price'],
+            'Price': Decimal(i['Price']),
             'Quantity': i['Quantity']
         })
     
