@@ -11,7 +11,7 @@ from datetime import datetime
 access_key = os.environ["AWS_ACCESS_KEY"]
 secret_key = os.environ["AWS_SECRET_KEY"]
 aws_region = os.environ["AWS_REGION"]
-tablename = "product-main"
+tablename = "customer-orders"
 
 app = Flask(__name__)
 CORS(app)
