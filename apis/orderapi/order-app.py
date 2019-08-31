@@ -34,7 +34,7 @@ def save_order():
     x = datetime.now()
 
     items = []
-    for i in data['items']:
+    for i in data['Items']:
         items.append({
             'ID': i['ID'],
             'LineNumber': i['LineNumber'],

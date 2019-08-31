@@ -124,8 +124,8 @@ class Order
 			$rr = new RestRunner();
 			$retval = $rr->Post($request, $this->OutputJson());
 			echo "<pre>";
-			echo $this->OutputJson();
-			//print_r($retval);
+			//echo $this->OutputJson();
+			print_r($retval);
 			echo "</pre>";
 			exit();
 		}
