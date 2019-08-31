@@ -1,6 +1,7 @@
 import requests
 import os
 import json
+import sys
 from decimal import Decimal
 from flask import Flask, request
 from flask_cors import CORS
@@ -33,7 +34,7 @@ def save_order():
     table = ddb.Table(tablename)
     x = datetime.now()
 
-    print(data)
+    print(data, file=sys.stderr)
     items = []
     for i in data['Items']:
         items.append({
@@ -49,7 +50,7 @@ def save_order():
             'OrderId': data['OrderId'],
             'CustomerId': data['CustomerId'],
             'InvoiceId': data['InvoiceId'],
-            'OrderDate': x.strftime("%Y-%m-%dT%H:%M:%S-05:00"),
+            'OrderDate': data['OrderDate'],
             'SubtotalAmount': Decimal(data['SubtotalAmount']),
             'ShippingAmount': Decimal(data['ShippingAmount']),
             'TaxAmount': Decimal(data['TaxAmount']),
