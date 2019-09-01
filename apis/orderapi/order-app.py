@@ -36,41 +36,39 @@ def save_order():
 
     print(data, file=sys.stderr)
     items = []
-    # for i in data['Items']:
-    #     items.append({
-    #         'ID': i['ID'],
-    #         'LineNumber': i['LineNumber'],
-    #         'Product': i['Product'],
-    #         'Price': Decimal(i['Price']),
-    #         'Quantity': i['Quantity']
-    #     })
+    for i in data['Items']:
+        items.append({
+            'ID': i['ID'],
+            'LineNumber': i['LineNumber'],
+            'Product': i['Product'],
+            'Price': Decimal(i['Price']),
+            'Quantity': i['Quantity']
+        })
     
-    response = table.put_item(Item=data)
-
-    # response = table.put_item(
-    #     Item={
-    #         'OrderId': data['OrderId'],
-    #         'CustomerId': data['CustomerId'],
-    #         'InvoiceId': data['InvoiceId'],
-    #         'OrderDate': data['OrderDate'],
-    #         'SubtotalAmount': Decimal(data['SubtotalAmount']),
-    #         'ShippingAmount': Decimal(data['ShippingAmount']),
-    #         'TaxAmount': Decimal(data['TaxAmount']),
-    #         'TotalAmount': Decimal(data['TotalAmount']),
-    #         'Comments': data['Comments'],
-    #         'ShippingAddress': {
-    #             'Contact': data['ShippingAddress']['Contact'],
-    #             'Address1': data['ShippingAddress']['Address1'],
-    #             'Address2': data['ShippingAddress']['Address2'],
-    #             'City': data['ShippingAddress']['City'],
-    #             'State': data['ShippingAddress']['State'],
-    #             'Zip': data['ShippingAddress']['Zip'],
-    #             'Phone': data['ShippingAddress']['Phone']
-    #         },
-    #         'Status': 'Paid',
-    #         'Items': data['Items']
-    #     }
-    # )
+    response = table.put_item(
+        Item={
+            'OrderId': data['OrderId'],
+            'CustomerId': data['CustomerId'],
+            'InvoiceId': data['InvoiceId'],
+            'OrderDate': data['OrderDate'],
+            'SubtotalAmount': Decimal(data['SubtotalAmount']),
+            'ShippingAmount': Decimal(data['ShippingAmount']),
+            'TaxAmount': Decimal(data['TaxAmount']),
+            'TotalAmount': Decimal(data['TotalAmount']),
+            'Comments': data['Comments'],
+            'ShippingAddress': {
+                'Contact': data['ShippingAddress']['Contact'],
+                'Address1': data['ShippingAddress']['Address1'],
+                'Address2': data['ShippingAddress']['Address2'],
+                'City': data['ShippingAddress']['City'],
+                'State': data['ShippingAddress']['State'],
+                'Zip': data['ShippingAddress']['Zip'],
+                'Phone': data['ShippingAddress']['Phone']
+            },
+            'Status': 'Paid',
+            'Items': data['Items']
+        }
+    )
 
     return "success"
     

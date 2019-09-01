@@ -517,7 +517,7 @@ class Order
 		$out .="	\"OrderId\": \"".$this->OrderID."\", ";
 		$out .="	\"CustomerId\": \"".$this->CustomerID."\", ";
 		$out .="	\"InvoiceId\": \"".$this->Invoice->InvoiceID."\", ";
-		$out .="	\"OrderDate\": \"".date("Y-m-dTh:M:S-05:00")."\", ";
+		$out .="	\"OrderDate\": \"".date("Y-m-d\TH:i:s-05:00")."\", ";
 		$out .="	\"SubtotalAmount\": \"".$this->SubtotalAmount."\", ";
 		$out .="	\"ShippingAmount\": \"".$this->ShippingAmount."\", ";
 		$out .="	\"TaxAmount\": \"".$this->TaxAmount."\", ";
