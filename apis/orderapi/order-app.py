@@ -66,7 +66,7 @@ def save_order():
                 'Phone': data['ShippingAddress']['Phone']
             },
             'Status': 'Paid',
-            'Items': data['Items']
+            'Items': items
         }
     )
 
