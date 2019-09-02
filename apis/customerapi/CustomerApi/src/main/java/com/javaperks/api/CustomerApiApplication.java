@@ -1,6 +1,7 @@
 package com.javaperks.api;
 
 import io.dropwizard.Application;
+import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 // import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -39,6 +40,7 @@ public class CustomerApiApplication extends Application<CustomerApiConfiguration
         final PaymentInterface pi = new PaymentInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
         final InvoiceInterface ii = new InvoiceInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
 
+        e.jersey().register(new JsonProcessingExceptionMapper(true));
         e.jersey().register(ci);
         e.jersey().register(pi);
         e.jersey().register(ii);
