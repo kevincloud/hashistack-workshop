@@ -72,16 +72,6 @@ def save_order():
 
     return "success"
     
-            # 'Items': [{
-            #     'OrderId': data['items']['orderid'],
-            #     'LineNumber': data['items']['lineno'],
-            #     'Product': data['items']['product'],
-            #     'Description': data['items']['description'],
-            #     'Price': data['items']['price'],
-            #     'Quantity': data['items']['quantity']
-            # }]
-
-
 
 # @app.route('/all', strict_slashes=False, methods=['GET'])
 # def get_all():

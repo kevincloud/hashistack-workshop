@@ -337,7 +337,9 @@ class ShoppingCart
 		$order->Comments = $this->Comments;
 		$order->ShippingAddress = clone $this->ShippingAddress;
 		
+		$invoice->InvoiceID = $invoice->GenerateInvoiceID();
 		$invoice->CustomerID = $_SESSION["__account__"]->CustomerID;
+		$invoice->OrderID = $order->TmpOrderID;
 		$invoice->SubtotalAmount = $this->SubtotalAmount;
 		$invoice->ShippingAmount = $this->ShippingAmount;
 		$invoice->TaxAmount = $this->TaxAmount;
@@ -346,6 +348,8 @@ class ShoppingCart
 		$invoice->PayID = $payid;
 		$invoice->Paid = $ispaid;
 		$invoice->BillingAddress = clone $this->BillingAddress;
+
+		$order->Invoice = $invoice;
 		
 		$lno = 0;
 		$r = new RestRunner();

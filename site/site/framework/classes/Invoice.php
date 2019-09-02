@@ -30,7 +30,13 @@ class Invoice
 		// $this->_db = $db;
 		$this->BillingAddress = new Address();
 	}
-	
+
+	public function GenerateInvoiceID()
+	{
+		$onum = sprintf("%02d", rand(2500, 98943));
+		return "INV".date("Ydm").$onum;
+	}
+
 	public function GetInvoice($invnum)
 	{
 		if (!isBlank($invnum))
@@ -150,6 +156,16 @@ class Invoice
 		// 	smartQuote($this->TotalAmount).", ".
 		// 	"getdate())";
 		// $this->_db->query($sql);
+	}
+
+	public function OutputJson()
+	{
+		$out = "";
+
+		$out .="{";
+		$out .="}";
+
+		return $out;
 	}
 }
 
