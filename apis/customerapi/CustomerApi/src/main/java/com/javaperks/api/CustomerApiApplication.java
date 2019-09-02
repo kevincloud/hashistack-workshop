@@ -8,6 +8,7 @@ import io.dropwizard.setup.Environment;
 
 import com.javaperks.api.api.CustomerInterface;
 import com.javaperks.api.api.PaymentInterface;
+import com.javaperks.api.api.InvoiceInterface;
 
 // import javax.ws.rs.client.Client;
 
@@ -36,9 +37,11 @@ public class CustomerApiApplication extends Application<CustomerApiConfiguration
 
         final CustomerInterface ci = new CustomerInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
         final PaymentInterface pi = new PaymentInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
+        final InvoiceInterface ii = new InvoiceInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
 
         e.jersey().register(ci);
         e.jersey().register(pi);
+        e.jersey().register(ii);
     }
 
 }
