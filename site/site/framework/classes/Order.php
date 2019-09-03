@@ -19,7 +19,7 @@ class Order
 	public $TmpOrderID = "";
 	public $OrderApi = "";
 	
-	
+	private $invoiceid = "";
 	private $_settings;
 	
 	public function __construct()
@@ -37,12 +37,16 @@ class Order
 	{
 		if (!isBlank($ordid))
 		{
+
 		// 	***INLINESQL***
 		// 	$sql = "select id, rguid, ordid, custid, ordertype, orderdate, custpo, shipdate, discount, addrid, ".
 		// 		"	tax, freight, subtotal, totalamt, cust_source, source, comments, shiptype, sname, saddr1, ".
 		// 		"	saddr2, scity, sstate, szip, scountry, scountry_numcode, sphone, semail, status, promocode ".
 		// 		"from cc_orders ".
 		// 		"where ordid = ".smartQuote($ordid);
+		
+		$rr = new RestRunner();
+		$retval = $rr->Get($this->OrderApi."/);
 		// 	$row = $this->_db->get_row($sql);
 		// 	if (count($row) >= 1)
 		// 	{
@@ -120,11 +124,6 @@ class Order
 			$request = $this->OrderApi."/order";
 			$rr = new RestRunner();
 			$retval = $rr->Post($request, $this->OutputJson());
-			echo "<pre>";
-			//echo $this->OutputJson();
-			print_r($retval);
-			echo "</pre>";
-			exit();
 		}
 	}
 	
@@ -508,7 +507,7 @@ class Order
 		}
 
 		if ($items != "")
-			$items = "[ " . substr($items, 0, -1) . " ]";
+			$items = substr($items, 0, -1);
 
 		$out .="{";
 		$out .="	\"OrderId\": \"".$this->OrderID."\", ";
@@ -530,7 +529,9 @@ class Order
 		$out .="		\"Phone\": \"".$this->ShippingAddress->Phone."\" ";
 		$out .="    },";
 		$out .="	\"Status\": \"Paid\", ";
-		$out .="	\"Items\": ".$items." ";
+		$out .="	\"Items\": [";
+		$out .= $items;
+		$out .="	] ";
 		$out .="}";
 		
 		return $out;

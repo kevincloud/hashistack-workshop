@@ -22,12 +22,14 @@ class Invoice
 	public $Order = NULL;
 	public $Items = array();
 	
-	// ***INLINESQL***
-	// private $_db;
-	
+	private $CustomerApi = "";
+		
 	public function __construct()
 	{
-		// $this->_db = $db;
+		global $customerapi;
+
+		$this->CustomerApi = $customerapi;
+
 		$this->BillingAddress = new Address();
 	}
 
@@ -41,14 +43,7 @@ class Invoice
 	{
 		if (!isBlank($invnum))
 		{
-			// ***INLINESQL***
-			// $sql = "select i.id, i.ordref, i.invnum, i.custid, i.amount, i.freight, i.tax, i.total, i.paytype, i.addrid, i.payid, i.invdate, ".
-			// 	"	i.duedate, i.paid, i.datepaid, i.bname, i.baddr1, i.baddr2, i.bcity, i.bstate, i.bzip, i.bcountry_numcode, c.code, ".
-			// 	"	i.bphone, i.invoice_title, i.wp_division, i.depositacct, i.rguid ".
-			// 	"from cc_invoice as i ".
-			// 	"	inner join cc_countries as c on (c.numcode = i.bcountry_numcode) ".
-			// 	"where i.invnum = ".smartQuote($invnum);
-			// $row = $this->_db->get_row($sql);
+			
 			// if (count($row) > 0)
 			// {
 			// 	$this->InvoiceID = $row->id;
@@ -96,73 +91,58 @@ class Invoice
 	public function Save()
 	{
 		if ($this->InvoiceNumber == "")
+			$this->InvoiceNumber = $this->GenerateInvoiceID();
+		
+		$num = 0;
+		foreach ($this->Items as &$item)
 		{
-			// ***INLINESQL***
-			// $sql = "exec pw_newSalesOrderID";
-			// $this->InvoiceNumber = $this->_db->get_var($sql);
-			
-			// $sql = "set nocount on;".
-			// 	"insert into cc_invoice(ordref, invnum, custid, amount, freight, tax, total, paytype, ".
-			// 	"	payid, invdate, duedate, paid, datepaid, addrid, bname, baddr1, baddr2, bcity, bstate, ".
-			// 	"	bzip, bcountry_numcode, bphone, invoice_title, wp_division, depositacct) values (".
-			// 	smartQuote($this->OrderID).", ".
-			// 	smartQuote($this->InvoiceNumber).", ".
-			// 	smartQuote($this->CustomerID).", ".
-			// 	smartQuote($this->SubtotalAmount).", ".
-			// 	smartQuote($this->ShippingAmount).", ".
-			// 	smartQuote($this->TaxAmount).", ".
-			// 	smartQuote($this->TotalAmount).", ".
-			// 	smartQuote($this->PayType).", ".
-			// 	smartQuote($this->PayID).", ".
-			// 	"getdate(), ".
-			// 	"DateAdd(d, 30, getdate()), ".
-			// 	smartQuote($this->Paid ? 1 : 0).", ".
-			// 	($this->Paid ? "getdate()" : "NULL").", ".
-			// 	smartQuote($this->BillingAddress->AddressID).", ".
-			// 	smartQuote($this->BillingAddress->Contact).", ".
-			// 	smartQuote($this->BillingAddress->Address1).", ".
-			// 	smartQuote($this->BillingAddress->Address2).", ".
-			// 	smartQuote($this->BillingAddress->City).", ".
-			// 	smartQuote($this->BillingAddress->State).", ".
-			// 	smartQuote($this->BillingAddress->Zip).", ".
-			// 	smartQuote($this->BillingAddress->CountryCode).", ".
-			// 	smartQuote($this->BillingAddress->Phone).", ".
-			// 	smartQuote($this->InvoiceTitle).", ".
-			// 	smartQuote($this->Division).", ".
-			// 	smartQuote($this->DepositAccount)."); ".
-			// 	"select @@identity as id";
-			// $this->InvoiceID = $this->_db->get_var($sql);
-			
-			$num = 0;
-			foreach ($this->Items as &$item)
-			{
-				$num++;
-				$item->InvoiceID = $this->InvoiceID;
-				$item->InvoiceNumber = $this->InvoiceNumber;
-				$item->LineNumber = $num;
-				$item->SaveItem();
-			}
+			$num++;
+			$item->InvoiceID = $this->InvoiceID;
+			$item->InvoiceNumber = $this->InvoiceNumber;
+			$item->LineNumber = $num;
 		}
+
+		$request = $this->CustomerApi."/invoice";
+		$rr = new RestRunner();
+		$rr->SetHeader("Content-Type", "application/json");
+		$retval = $rr->Post($request, $this->OutputJson());
 	}
 	
-	public function SavePayment($id)
-	{
-		// ***INLINESQL***
-		// $sql = "insert into cc_invoice_payments(custid, invnum, paytype, payid, amount, paydate) values(".
-		// 	smartQuote($this->CustomerID).", ".
-		// 	smartQuote($this->InvoiceNumber).", ".
-		// 	"'CREDIT', ".
-		// 	smartQuote($id == "" ? "{00000000-0000-0000-0000-000000000000}" : $id).", ".
-		// 	smartQuote($this->TotalAmount).", ".
-		// 	"getdate())";
-		// $this->_db->query($sql);
-	}
-
 	public function OutputJson()
 	{
 		$out = "";
+		$items = "";
+
+		foreach ($this->Items as $item)
+		{
+			$items .= $item->OutputJson() . ",";
+		}
+
+		if ($items != "")
+			$items = substr($items, 0, -1);
 
 		$out .="{";
+		$out .="	\"invoiceId\": ".$this->InvoiceID.",";
+		$out .="	\"invoiceNumber\": \"".$this->InvoiceNumber."\",";
+		$out .="	\"custId\": ".$this->CustomerID.",";
+		$out .="	\"invoiceDate\": \"".date("Y-d-m H:i:s")."\",";
+		$out .="	\"orderId\": \"".$this->OrderID."\",";
+		$out .="	\"title\": \"".$this->InvoiceTitle."\",";
+		$out .="	\"amount\": ".$this->SubtotalAmount.",";
+		$out .="	\"tax\": ".$this->TaxAmount.",";
+		$out .="	\"shipping\": ".$this->ShippingAmount.",";
+		$out .="	\"total\": ".$this->TotalAmount.",";
+		$out .="	\"datePaid\": \"".date("Y-d-m H:i:s")."\",";
+		$out .="	\"contact\": \"".$this->BillingAddress->Contact."\",";
+		$out .="	\"address1\": \"".$this->BillingAddress->Address1."\",";
+		$out .="	\"address2\": \"".$this->BillingAddress->Address2."\",";
+		$out .="	\"city\": \"".$this->BillingAddress->City."\",";
+		$out .="	\"state\": \"".$this->BillingAddress->State."\",";
+		$out .="	\"zip\": \"".$this->BillingAddress->Zip."\",";
+		$out .="	\"phone\": \"".$this->BillingAddress->Phone."\",";
+		$out .="	\"items\": [";
+		$out .= $items;
+		$out .="	]";
 		$out .="}";
 
 		return $out;
@@ -231,6 +211,22 @@ class InvoiceItem
 			// 	"select @@identity as id;";
 			// $this->ID = $this->_db->get_var($sql);
 		}
+	}
+
+	public function OutputJson() {
+		$out = "";
+
+		$out .="		{";
+		$out .="			\"itemId\": ".$this->ID.",";
+		$out .="			\"invoiceId\": ".$this->InvoiceID.",";
+		$out .="			\"product\": \"".$this->Product."\",";
+		$out .="			\"description\": \"".$this->Description."\",";
+		$out .="			\"amount\": ".$this->Amount.",";
+		$out .="			\"quantity\": ".$this->Quantity.",";
+		$out .="			\"lineNumber\": ".$this->LineNumber;
+		$out .="		},";
+	
+		return $out;
 	}
 }
 

@@ -12,16 +12,15 @@ resource "aws_dynamodb_table" "customer-order-table" {
     
     attribute {
         name = "CustomerId"
-        type = "N"
+        type = "S"
     }
 
     global_secondary_index {
-        name = "StatusIndex"
+        name = "CustomerIndex"
         hash_key = "CustomerId"
         write_capacity = 10
         read_capacity = 10
-        projection_type = "INCLUDE"
-        non_key_attributes = ["OrderId"]
+        projection_type = "ALL"
     }
 
     tags = {
