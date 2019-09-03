@@ -41,7 +41,7 @@ class Order
 		if (!isBlank($ordid))
 		{
 			$rr = new RestRunner();
-			$retval = $rr->Get($this->OrderApi."/order/".$ordid);
+			$row = $rr->Get($this->OrderApi."/order/".$ordid);
 			if (count($row) >= 1)
 			{
 				unset($this->Items);
@@ -79,7 +79,7 @@ class Order
 			}
 
 			$this->Invoice = new Invoice();
-			$this->Invoice->GetInvoice($this->invoiceid);
+			$this->Invoice->GetInvoice($this->InvoiceID);
 		}
 	}
 	
@@ -172,8 +172,6 @@ class Order
 		$this->_settings = new ApplicationSettings();
 		
 		$out = "";
-		
-		// $invoice = new Invoice();
 
 		$out .= "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 		$out .= "<html>\n";
@@ -190,7 +188,7 @@ class Order
 		$out .= "								<table align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"702\">\n";
 		$out .= "									<tr>\n";
 		$out .= "										<td style=\"padding-bottom:8px;padding-left:2px\" valign=\"bottom\" align=\"left\">\n";
-		$out .= "											<img src=\"".$this->_settings->SiteURL."/framework/img/wp-mail-header.png\" width=\"279\" height=\"69\" style=\"display:block;margin:0\" border=\"0\" alt=\"Java Perks\">\n";
+		// $out .= "											<img src=\"/framework/img/wp-mail-header.png\" width=\"279\" height=\"69\" style=\"display:block;margin:0\" border=\"0\" alt=\"Java Perks\">\n";
 		$out .= "										</td>\n";
 		$out .= "										<td style=\"padding-bottom:10px;\" valign=\"bottom\" align=\"right\">\n";
 		$out .= "											<div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#444444;font-size:20px;line-height:1em !important\">Order Confirmation</div>\n";
@@ -202,22 +200,6 @@ class Order
 		$out .= "						<tr>\n";
 		$out .= "							<td>\n";
 		$out .= "								<table style=\"-webkit-border-radius:5px;-moz-border-radius:5px;\" bgcolor=\"#ffffff\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"702\">\n";
-		if ($this->PromoCode != "")
-		{
-			// ***INLINESQL***
-			// $sql = "select email_html from cc_store_promotions where promocode = ".smartQuote($this->PromoCode)." and email_html is not null";
-			// $emailtxt = $this->_db->get_var($sql);
-			if ($emailtxt != "")
-			{
-				$out .= "									<tr>\n";
-				$out .= "										<td bgcolor=\"#e3e3e3\" width=\"1\"></td>\n";
-				$out .= "										<td bgcolor=\"#ffffff\" width=\"700\">\n";
-				$out .= "											".$emailtxt;
-				$out .= "										</td>\n";
-				$out .= "										<td bgcolor=\"#e3e3e3\" width=\"1\"></td>\n";
-				$out .= "									</tr>\n";
-			}
-		}
 		$out .= "									<tr>\n";
 		$out .= "										<td bgcolor=\"#e3e3e3\" width=\"1\"></td>\n";
 		$out .= "										<td bgcolor=\"#ffffff\" width=\"700\">\n";
@@ -268,27 +250,14 @@ class Order
 		foreach ($this->Items as &$item)
 		{
 			$p = new Product();
-			try
-			{
-				$p->GetProduct($item->PID, true);
-				$out .= "															<tr>\n";
-				$out .= "																<td width=\"15\" style=\"padding-top:18px\"></td>\n";
-				$out .= "																<td width=\"410\" align=\"left\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family:Helvetica, sans-serif, Arial, Verdana;color:#000000;font-size:12px;line-height:1.25em;font-weight:bold\">".(isBlank($item->Description) ? $p->ProductName : $item->Description)."</div></td>\n";
-				$out .= "																<td width=\"76\" align=\"right\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#797979;font-size:11px;line-height:1.37em;padding-left:5px\">".money_format("%.2n", $item->DiscountedPrice())."</div></td>\n";
-				$out .= "																<td width=\"56\" align=\"right\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#797979;font-size:11px;line-height:1.37em;padding-left:5px\">".$item->Quantity."</div></td>\n";
-				$out .= "																<td width=\"103\" align=\"right\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#000000;font-size:12px;line-height:1.25em;padding-left:5px\">".money_format("%.2n", $item->ExtendedPrice())."</div></td>\n";
-				$out .= "															</tr>\n";
-			}
-			catch (Exception $x)
-			{
-				$out .= "															<tr>\n";
-				$out .= "																<td width=\"15\" style=\"padding-top:18px\"></td>\n";
-				$out .= "																<td width=\"410\" align=\"left\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family:Helvetica, sans-serif, Arial, Verdana;color:#000000;font-size:12px;line-height:1.25em;font-weight:bold\">".(isBlank($item->Description) ? "Product No Longer Available" : $item->Description)."</div></td>\n";
-				$out .= "																<td width=\"76\" align=\"right\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#797979;font-size:11px;line-height:1.37em;padding-left:5px\">".money_format("%.2n", $item->DiscountedPrice())."</div></td>\n";
-				$out .= "																<td width=\"56\" align=\"right\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#797979;font-size:11px;line-height:1.37em;padding-left:5px\">".$item->Quantity."</div></td>\n";
-				$out .= "																<td width=\"103\" align=\"right\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#000000;font-size:12px;line-height:1.25em;padding-left:5px\">".money_format("%.2n", $item->ExtendedPrice())."</div></td>\n";
-				$out .= "															</tr>\n";
-			}
+			$p->GetProduct($item->PID, true);
+			$out .= "															<tr>\n";
+			$out .= "																<td width=\"15\" style=\"padding-top:18px\"></td>\n";
+			$out .= "																<td width=\"410\" align=\"left\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family:Helvetica, sans-serif, Arial, Verdana;color:#000000;font-size:12px;line-height:1.25em;font-weight:bold\">".$item->Product."</div></td>\n";
+			$out .= "																<td width=\"76\" align=\"right\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#797979;font-size:11px;line-height:1.37em;padding-left:5px\">".money_format("%.2n", $item->Price)."</div></td>\n";
+			$out .= "																<td width=\"56\" align=\"right\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#797979;font-size:11px;line-height:1.37em;padding-left:5px\">".$item->Quantity."</div></td>\n";
+			//$out .= "																<td width=\"103\" align=\"right\" valign=\"top\" style=\"padding-top:18px\"><div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;color:#000000;font-size:12px;line-height:1.25em;padding-left:5px\">".money_format("%.2n", $item->ExtendedPrice())."</div></td>\n";
+			$out .= "															</tr>\n";
 		}
 		
 		$out .= "														</table>\n";
@@ -390,7 +359,7 @@ class Order
 		$out .= "																									</td>\n";
 		$out .= "																									<td width=\"170\" align=\"left\">\n";
 		$out .= "																										<div style=\"font-family: Helvetica, sans-serif, Arial, Verdana;font-size:11px;line-height:1.36em;color:#000000;\">\n";
-		$out .= "																											".$invoice->BillingAddress->DisplayFormatted()."\n";
+		$out .= "																											".$this->Invoice->BillingAddress->DisplayFormatted()."\n";
 		$out .= "																										</div>\n";
 		$out .= "																									</td>\n";
 		$out .= "																								</tr>\n";

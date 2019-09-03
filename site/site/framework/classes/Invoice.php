@@ -44,7 +44,7 @@ class Invoice
 		if (!isBlank($invnum))
 		{
 			$rr = new RestRunner();
-			$retval = $rr->Get($this->CustomerApi."/invoice/".$invnum);
+			$row = $rr->Get($this->CustomerApi."/invoice/".$invnum);
 			if (count($row) > 0)
 			{
 				$this->InvoiceID = $row->invoiceId;

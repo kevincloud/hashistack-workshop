@@ -246,7 +246,7 @@ class AccountHandler extends BasePage
 	
 	private function DisplayOrder()
 	{
-		$order = new Order($this->_db);
+		$order = new Order();
 		$order->GetOrder($this->PageVariables["ordid"]);
 		echo $this->Account->PageWrapper("Order Details - ".$order->OrderID, $order->DisplayOrder());
 	}
