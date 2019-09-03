@@ -73,20 +73,18 @@ def save_order():
     return "success"
     
 
-# @app.route('/all', strict_slashes=False, methods=['GET'])
-# def get_all():
-#     table = ddb.Table(tablename)
+@app.route('/order/<order_id>', strict_slashes=False, methods=['GET'])
+def get_order(order_id):
+    table = ddb.Table(tablename)
+    response = table.query(
+        KeyConditionExpression=Key('ProductId').eq(order_id)
+    )
 
-#     response = table.scan(
-#         Select='ALL_ATTRIBUTES',
-#         Limit=20
-#     )
+    output = []
+    for i in response['Items']:
+        output.append(i)
 
-#     output = []
-#     for i in response['Items']:
-#         output.append(i)
-
-#     return json.dumps(output, cls=DecimalEncoder)
+    return json.dumps(output, cls=DecimalEncoder)
 
 # @app.route('/detail/<product_id>', strict_slashes=False, methods=['GET'])
 # def product_info(product_id):
