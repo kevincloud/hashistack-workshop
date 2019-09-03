@@ -154,28 +154,28 @@ public class InvoiceDb
             String sql = "insert into customer_invoice " + 
                 "(invno, custid, invdate, orderid, title, amount, tax, shipping, total, datepaid, contact, address1, address2, city, state, zip, phone) values (" +
                 "'" + invoice.getInvoiceNumber() + "', " +
-                "'" + invoice.getCustId() + "', " +
+                invoice.getCustId() + ", " +
                 "'" + invoice.getInvoiceDate() + "', " +
                 "'" + invoice.getOrderId() + "', " +
-                "'" + invoice.getTitle() + "', " +
-                "'" + invoice.getAmount() + "', " +
-                "'" + invoice.getTax() + "', " +
-                "'" + invoice.getShipping() + "', " +
-                "'" + invoice.getTotal() + "', " +
+                "'" + invoice.getTitle().replace("'", "''") + "', " +
+                invoice.getAmount() + ", " +
+                invoice.getTax() + ", " +
+                invoice.getShipping() + ", " +
+                invoice.getTotal() + ", " +
                 "'" + invoice.getDatePaid() + "', " +
-                "'" + invoice.getContact() + "', " +
-                "'" + invoice.getAddress1() + "', " +
-                "'" + invoice.getAddress2() + "', " +
-                "'" + invoice.getCity() + "', " +
-                "'" + invoice.getState() + "', " +
-                "'" + invoice.getZip() + "', " +
+                "'" + invoice.getContact().replace("'", "''") + "', " +
+                "'" + invoice.getAddress1().replace("'", "''") + "', " +
+                "'" + invoice.getAddress2().replace("'", "''") + "', " +
+                "'" + invoice.getCity().replace("'", "''") + "', " +
+                "'" + invoice.getState().replace("'", "''") + "', " +
+                "'" + invoice.getZip().replace("'", "''") + "', " +
                 "'" + invoice.getPhone().replace("'", "''") + "') ";
             System.out.println(sql);
             Statement s = cn.createStatement();
             s.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
             rs = s.getGeneratedKeys();
             while (rs.next()) {
-                invid = rs.getInt(1);
+                invid = rs.getInt(0);
             } 
             for (InvoiceItem item : invoice.getItems()) {
                 String isql = "insert into customer_invoice_item " +
@@ -186,6 +186,7 @@ public class InvoiceDb
                     "'" + item.getAmount() + "', " +
                     "'" + item.getAmount() + "', " +
                     "'" + item.getLineNumber() + "')";
+                System.out.println(isql);
                 s.executeUpdate(isql);
             }
         } catch (SQLException ex) {
