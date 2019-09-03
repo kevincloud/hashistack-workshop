@@ -62,6 +62,7 @@ public class InvoiceInterface
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addInvoice(Invoice invoice) {
+        System.out.println(invoice.toString());
         InvoiceDb idb = new InvoiceDb(this.dbserver, this.database, this.username, this.password);
         return Response.ok(idb.addInvoice(invoice)).build();
     }

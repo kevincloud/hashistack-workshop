@@ -38,10 +38,12 @@ public class Invoice
         this.orderId = orderId;
         this.title = title;
         this.amount = amount;
+        this.shipping = shipping;
         this.tax = tax;
         this.total = total;
         this.datePaid = datePaid;
         this.contact = contact;
+        this.address1 = address1;
         this.address2 = address2;
         this.city = city;
         this.state = state;
@@ -205,6 +207,25 @@ public class Invoice
     @Override
     public String toString() {
         String out = "";
+
+        out += "invId: " + Integer.toString(invId) + "\n";
+        out += "invNo: " + this.invNo + "\n";
+        out += "custId: " + Integer.toString(this.custId) + "\n";
+        out += "invDate: " + this.invDate + "\n";
+        out += "orderId: " + this.orderId + "\n";
+        out += "title: " + this.title + "\n";
+        out += "amount: " + Double.toString(this.amount) + "\n";
+        out += "shipping: " + Double.toString(this.shipping) + "\n";
+        out += "tax: " + Double.toString(this.tax) + "\n";
+        out += "total: " + Double.toString(this.total) + "\n";
+        out += "datePaid: " + this.datePaid + "\n";
+        out += "contact: " + this.contact + "\n";
+        out += "address1: " + this.address1 + "\n";
+        out += "address2: " + this.address2 + "\n";
+        out += "city: " + this.city + "\n";
+        out += "state: " + this.state + "\n";
+        out += "zip: " + this.zip + "\n";
+        out += "phone: " + this.phone + "\n";
 
         return out;
     }
