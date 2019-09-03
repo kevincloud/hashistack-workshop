@@ -179,13 +179,13 @@ public class InvoiceDb
             } 
             for (InvoiceItem item : invoice.getItems()) {
                 String isql = "insert into customer_invoice_item " +
-                    "(invid, product, description, amount, quantity, lineno) " +
-                    "'" + invid + "', " +
-                    "'" + item.getProduct() + "', " +
-                    "'" + item.getDescription() + "', " +
-                    "'" + item.getAmount() + "', " +
-                    "'" + item.getAmount() + "', " +
-                    "'" + item.getLineNumber() + "')";
+                    "(invid, product, description, amount, quantity, lineno) values ( " +
+                    Integer.toString(invid) + ", " +
+                    "'" + item.getProduct().replace("'", "''") + "', " +
+                    "'" + item.getDescription().replace("'", "''") + "', " +
+                    Double.toString(item.getAmount()) + ", " +
+                    Integer.toString(item.getQuantity()) + ", " +
+                    Integer.toString(item.getLineNumber()) + ")";
                 System.out.println(isql);
                 s.executeUpdate(isql);
             }
