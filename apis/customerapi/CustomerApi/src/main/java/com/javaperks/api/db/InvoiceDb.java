@@ -175,7 +175,7 @@ public class InvoiceDb
             s.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
             rs = s.getGeneratedKeys();
             while (rs.next()) {
-                invid = rs.getInt(0);
+                invid = rs.getInt(1);
             } 
             for (InvoiceItem item : invoice.getItems()) {
                 String isql = "insert into customer_invoice_item " +
