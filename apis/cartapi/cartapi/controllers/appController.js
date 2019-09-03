@@ -221,6 +221,7 @@ exports.empty_cart = function(req, res) {
 
     ddb.delete({
         TableName: table,
+        IndexName: 'SessionIndex',
         Key: {
             'SessionId': sessionid
         }

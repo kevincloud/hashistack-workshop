@@ -198,6 +198,11 @@ class ShoppingCart
 		$this->TotalAmount = 0.0;
 		$this->Order = NULL;
 		$this->Comments = "";
+
+		$r = new RestRunner();
+		$sessionid = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($sessionid);
+		$result = $r->Delete($this->CartApi, $a);
 	}
 	
 	public function PleaseWait()
