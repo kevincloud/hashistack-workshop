@@ -34,35 +34,6 @@ public class InvoiceDb
         connstr = "jdbc:mysql://" + this.dbserver + "/" + this.database + "?useSSL=false";
     }
 
-    // public List<Invoice> getInvoicesByCustomerId(String custId) {
-    //     LOGGER.info("Get all credit cards for a customer");
-    //     List<Invoice> invoices = new ArrayList<Invoice>();
-
-    //     try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
-    //     {
-    //         String sql = "select * from customer_payment where custid = " + custId;
-    //         Statement s = cn.createStatement();
-    //         ResultSet rs = s.executeQuery(sql);
-
-    //         while(rs.next()) {
-    //             invoices.add(new Invoice(
-    //                 rs.getInt("payid"), 
-    //                 rs.getInt("custid"), 
-    //                 rs.getString("cardname"), 
-    //                 rs.getString("cardnumber"), 
-    //                 rs.getString("cardtype"), 
-    //                 rs.getString("cvv"), 
-    //                 rs.getString("expmonth"), 
-    //                 rs.getString("expyear"))
-    //             );
-    //         }
-    //     } catch (SQLException ex) {
-    //         ex.printStackTrace();
-    //     }
-
-    //     return invoices;
-    // }
-
     public Invoice getInvoiceById(String invid) {
         LOGGER.info("Get a specific invoice");
         Invoice invoice = null;
@@ -122,28 +93,6 @@ public class InvoiceDb
 
         return invoice;
     }
-
-    // public Status updatePayment(Payment payment) {
-    //     LOGGER.info("Update a credit card");
-    //     try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
-    //     {
-    //         String sql = "update customer_payment set " +
-    //             "cardname = '" + payment.getCardName().replace("'", "''") + "', " +
-    //             "cardnumber = '" + payment.getCardNumber().replace("'", "''") + "', " +
-    //             "cardtype = '" + payment.getCardType().replace("'", "''") + "', " +
-    //             "cvv = '" + payment.getCVV().replace("'", "''") + "', " +
-    //             "expmonth = '" + payment.getExpirationMonth().replace("'", "''") + "', " +
-    //             "expyear = '" + payment.getExpirationYear().replace("'", "''") + "' " +
-    //         "where payid = " + Integer.toString(payment.getPayId()) + " ";
-    //         Statement s = cn.createStatement();
-    //         s.executeUpdate(sql);
-    //     } catch (SQLException ex) {
-    //         ex.printStackTrace();
-    //     }
-
-    //     Status status = new Status(true, "Success!");
-    //     return status;
-    // }
 
     public Status addInvoice(Invoice invoice) {
         LOGGER.info("Add a new invoice");
