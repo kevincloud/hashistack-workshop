@@ -101,11 +101,12 @@ class Order
 			{
 				$this->OrderID = $this->GenerateOrderID();
 			}
-
-			$request = $this->OrderApi."/order";
-			$rr = new RestRunner();
-			$retval = $rr->Post($request, $this->OutputJson());
 		}
+
+		$request = $this->OrderApi."/order";
+		$rr = new RestRunner();
+		$rr->SetHeader("Content-Type", "application/json");
+		$retval = $rr->Post($request, $this->OutputJson());
 	}
 	
 	public function DisplayShipMethod()
@@ -172,13 +173,8 @@ class Order
 		
 		$out = "";
 		
-		$invoice = new Invoice();
+		// $invoice = new Invoice();
 
-		// ***INLINESQL***
-		// $sql = "select invnum from cc_invoice where ordref = ".smartQuote($this->OrderID);
-		// $invnum = $this->_db->get_var($sql);
-		// $invoice->GetInvoice($invnum);
-		
 		$out .= "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 		$out .= "<html>\n";
 		$out .= "	<head>\n";
@@ -493,7 +489,7 @@ class Order
 		$out .="{";
 		$out .="	\"OrderId\": \"".$this->OrderID."\", ";
 		$out .="	\"CustomerId\": \"".$this->CustomerID."\", ";
-		$out .="	\"InvoiceId\": \"".$this->Invoice->InvoiceID."\", ";
+		$out .="	\"InvoiceId\": ".$this->InvoiceID.", ";
 		$out .="	\"OrderDate\": \"".date("Y-m-d\TH:i:s-05:00")."\", ";
 		$out .="	\"SubtotalAmount\": \"".$this->SubtotalAmount."\", ";
 		$out .="	\"ShippingAmount\": \"".$this->ShippingAmount."\", ";
@@ -534,99 +530,6 @@ class OrderItem
 	{
 	}
 	
-	
-	public function GetItem($id)
-	{
-		// ***INLINESQL***
-		// $sql = "select ordid, linenum, pid, custom_descr, isbn, quantity, price, discount, regcode, tracknum, shipper, pickable, feature_text from cc_orders_items where id = ".smartQuote($id);
-		// $row = $this->_db->get_row($sql);
-		// if (count($row) >= 1)
-		// {
-		// 	$this->ID = $id;
-		// 	$this->OrderID = $row->ordid;
-		// 	$this->LineNumber = $row->linenum;
-		// 	$this->PID = $row->pid;
-		// 	$this->Description = $row->custom_descr;
-		// 	$this->ISBN = $row->isbn;
-		// 	$this->Quantity = $row->quantity;
-		// 	$this->Price = $row->price;
-		// 	$this->Discount = $row->discount;
-		// 	$this->RegistrationCode = $row->regcode;
-		// 	$this->TrackingNumber = $row->tracknum;
-		// 	$this->Courier = $row->shipper;
-		// 	$this->Pickable = $row->pickable;
-		// 	$this->ExtraText = $row->feature_text;
-			
-		// 	$sql = "select binding from cc_product where pid = ".$this->PID;
-		// 	$fmt = $this->_db->get_var($sql);
-		// 	switch ($fmt)
-		// 	{
-		// 		case "ebook":
-		// 			$this->IsEBook = true;
-		// 			break;
-		// 		case "audiomp3":
-		// 			$this->IsAudioBook = true;
-		// 			break;
-		// 	}
-		// }
-	}
-	
-	public function SaveItem()
-	{
-		if ($this->OrderID == "" || $this->LineNumber <= 0)
-			return;
-		
-		if ($this->ID == 0)
-		{
-			// ***INLINESQL***
-			// $sql = "set nocount on; ".
-			// 	"insert into cc_orders_items(ordid, linenum, pid, custom_descr, isbn, quantity, price, discount, pickable, feature_text) values(".
-			// 	smartQuote($this->OrderID).", ".
-			// 	smartQuote($this->LineNumber).", ".
-			// 	smartQuote($this->PID).", ".
-			// 	smartQuote($this->Description).", ".
-			// 	smartQuote($this->ISBN).", ".
-			// 	smartQuote($this->Quantity).", ".
-			// 	smartQuote($this->Price).", ".
-			// 	smartQuote($this->Discount).", ".
-			// 	smartQuote($this->Pickable).", ".
-			// 	smartQuote($this->ExtraText).");".
-			// 	"select @@identity as id";
-			// $this->ID = $this->_db->get_var($sql);
-		}
-	}
-	
-	public function DiscountedPrice()
-	{
-		return round((1 - ($this->Discount / 100)) * $this->Price, 2);
-	}
-	
-	public function ExtendedPrice()
-	{
-		return $this->DiscountedPrice() * $this->Quantity;
-	}
-
-	public function ImageURL($ext=false)
-	{
-		$out = "";
-		
-		$relpath = "/products/images/".$this->PID."/large/".Utilities::ToISBN13($this->ISBN).".jpg";
-		
-		if ($ext === true)
-		{
-			if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
-				$out .= "http://";
-			else
-				$out .= "https://";
-			
-			$out .= $_SERVER['HTTP_HOST'].$relpath;
-		}
-		else
-			$out = $relpath;
-		
-		return $out;
-	}
-
 	public function OutputJson()
 	{
 		$out = "";

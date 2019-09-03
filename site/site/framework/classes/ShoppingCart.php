@@ -192,7 +192,6 @@ class ShoppingCart
 		$this->BillingAddress = NULL;
 		$this->Checkout = false;
 		$this->LastError = "";
-		$this->ShippingService = "CUSTOM";
 		$this->ShippingAmount = 0.0;
 		$this->SubtotalAmount = 0.0;
 		$this->TaxAmount = 0.0;
@@ -337,8 +336,8 @@ class ShoppingCart
 		$order->Comments = $this->Comments;
 		$order->ShippingAddress = clone $this->ShippingAddress;
 		
-		$invoice->InvoiceID = $invoice->GenerateInvoiceID();
-		$invoice->CustomerID = $_SESSION["__account__"]->CustomerID;
+		$invoice->InvoiceNumber = $invoice->GenerateInvoiceID();
+		$invoice->CustomerID = $_SESSION["__account__"]->RowID;
 		$invoice->OrderID = $order->TmpOrderID;
 		$invoice->SubtotalAmount = $this->SubtotalAmount;
 		$invoice->ShippingAmount = $this->ShippingAmount;
@@ -382,13 +381,10 @@ class ShoppingCart
 			$invoice->Items[] = $i;
 		}
 
-		echo "<pre>Saving invoice...</pre>";
 		$invoice->OrderID = $order->OrderID;
 		$invid = $invoice->Save();
-		echo "<pre>Saving order...</pre>";
 		$order->InvoiceID = $invid;
 		$order->Save();
-		echo "<pre>Saved!</pre>";
 		
 		$this->Order = $order;
 		

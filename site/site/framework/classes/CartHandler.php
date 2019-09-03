@@ -160,9 +160,8 @@ class CartHandler extends BasePage
 			
 			$this->Cart->PlaceOrder();
 			$ordid = $this->Cart->Order->OrderID;
-			echo "Done!";
 			// $this->Cart->StartOver();
-			// $this->Redirect("/profile/order/".$ordid);
+			$this->Redirect("/profile/order/".$ordid);
 		}
 		else
 		{

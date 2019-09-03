@@ -101,7 +101,8 @@ class Invoice
 		$rr = new RestRunner();
 		$rr->SetHeader("Content-Type", "application/json");
 		$retval = $rr->Post($request, $this->OutputJson());
-		return $retval->invoiceId;
+		$value = json_decode($retval->message);
+		return $value->invoiceId;
 	}
 	
 	public function OutputJson()
@@ -120,7 +121,7 @@ class Invoice
 		$out .="{";
 		$out .="	\"invoiceId\": ".$this->InvoiceID.",";
 		$out .="	\"invoiceNumber\": \"".$this->InvoiceNumber."\",";
-		$out .="	\"custId\": ".$this->CustomerID.",";
+		$out .="	\"custId\": \"".$this->CustomerID."\",";
 		$out .="	\"invoiceDate\": \"".date("Y-d-m H:i:s")."\",";
 		$out .="	\"orderId\": \"".$this->OrderID."\",";
 		$out .="	\"title\": \"".$this->InvoiceTitle."\",";
@@ -171,7 +172,7 @@ class InvoiceItem
 		$out .="			\"amount\": ".$this->Amount.",";
 		$out .="			\"quantity\": ".$this->Quantity.",";
 		$out .="			\"lineNumber\": ".$this->LineNumber;
-		$out .="		},";
+		$out .="		}";
 	
 		return $out;
 	}
