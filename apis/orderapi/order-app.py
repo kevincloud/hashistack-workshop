@@ -77,7 +77,7 @@ def save_order():
 def get_order(order_id):
     table = ddb.Table(tablename)
     response = table.query(
-        KeyConditionExpression=Key('CustomerId').eq(order_id)
+        KeyConditionExpression=Key('OrderId').eq(order_id)
     )
 
     output = []
