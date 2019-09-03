@@ -382,10 +382,13 @@ class ShoppingCart
 			$invoice->Items[] = $i;
 		}
 
+		echo "<pre>Saving invoice...</pre>";
 		$invoice->OrderID = $order->OrderID;
 		$invid = $invoice->Save();
+		echo "<pre>Saving order...</pre>";
 		$order->InvoiceID = $invid;
 		$order->Save();
+		echo "<pre>Saved!</pre>";
 		
 		$this->Order = $order;
 		
