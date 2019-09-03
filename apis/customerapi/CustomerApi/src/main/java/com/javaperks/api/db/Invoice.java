@@ -7,10 +7,10 @@ import java.util.List;
 
 public class Invoice
 {
-    private int nvId;
-    private String nvNo;
+    private int invoiceId;
+    private String invoiceNumber;
     private int custId;
-    private String nvDate;
+    private String invoiceDate;
     private String orderId;
     private String title;
     private double amount;
@@ -30,11 +30,11 @@ public class Invoice
     public Invoice() {
     }
 
-    public Invoice(int nvId, String nvNo, int custId, String nvDate, String orderId, String title, double amount, double tax, double shipping, double total, String datePaid, String contact, String address1, String address2, String city, String state, String zip, String phone, List<InvoiceItem> items) {
-        this.nvId = nvId;
-        this.nvNo = nvNo;
+    public Invoice(int invoiceId, String invoiceNumber, int custId, String invoiceDate, String orderId, String title, double amount, double tax, double shipping, double total, String datePaid, String contact, String address1, String address2, String city, String state, String zip, String phone, List<InvoiceItem> items) {
+        this.invoiceId = invoiceId;
+        this.invoiceNumber = invoiceNumber;
         this.custId = custId;
-        this.nvDate = nvDate;
+        this.invoiceDate = invoiceDate;
         this.orderId = orderId;
         this.title = title;
         this.amount = amount;
@@ -53,19 +53,19 @@ public class Invoice
     }
 
     public int getInvoiceId() {
-        return this.nvId;
+        return this.invoiceId;
     }
 
-    public void setInvoiceId(int nvId) {
-        this.nvId = nvId;
+    public void setInvoiceId(int invoiceId) {
+        this.invoiceId = invoiceId;
     }
 
     public String getInvoiceNumber() {
-        return this.nvNo;
+        return this.invoiceNumber;
     }
 
-    public void setInvoiceNumber(String nvNo) {
-        this.nvNo = nvNo;
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
     }
 
     public int getCustId() {
@@ -77,11 +77,11 @@ public class Invoice
     }
 
     public String getInvoiceDate() {
-        return this.nvDate;
+        return this.invoiceDate;
     }
 
-    public void setInvoiceDate(String nvDate) {
-        this.nvDate = nvDate;
+    public void setInvoiceDate(String invoiceDate) {
+        this.invoiceDate = invoiceDate;
     }
 
     public String getOrderId() {
@@ -208,10 +208,10 @@ public class Invoice
     public String toString() {
         String out = "";
 
-        out += "nvId: " + Integer.toString(nvId) + "\n";
-        out += "nvNo: " + this.nvNo + "\n";
+        out += "invoiceId: " + Integer.toString(invoiceId) + "\n";
+        out += "invoiceNumber: " + this.invoiceNumber + "\n";
         out += "custId: " + Integer.toString(this.custId) + "\n";
-        out += "nvDate: " + this.nvDate + "\n";
+        out += "invoieDate: " + this.invoiceDate + "\n";
         out += "orderId: " + this.orderId + "\n";
         out += "title: " + this.title + "\n";
         out += "amount: " + Double.toString(this.amount) + "\n";
