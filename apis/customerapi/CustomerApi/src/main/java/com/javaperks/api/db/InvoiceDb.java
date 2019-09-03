@@ -170,6 +170,7 @@ public class InvoiceDb
                 "'" + invoice.getState() + "', " +
                 "'" + invoice.getZip() + "', " +
                 "'" + invoice.getPhone().replace("'", "''") + "') ";
+            System.out.println(sql);
             Statement s = cn.createStatement();
             s.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
             rs = s.getGeneratedKeys();
