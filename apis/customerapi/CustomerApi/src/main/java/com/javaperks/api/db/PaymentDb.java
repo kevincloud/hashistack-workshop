@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class PaymentDb
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDb.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentDb.class);
 
     private String connstr;
     private String dbuser;

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class InvoiceDb
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDb.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceDb.class);
 
     private String connstr;
     private String dbuser;
@@ -64,7 +64,7 @@ public class InvoiceDb
     // }
 
     public Invoice getInvoiceById(String invid) {
-        LOGGER.info("Get a specific credit card for a customer");
+        LOGGER.info("Get a specific invoice");
         Invoice invoice = null;
         List<InvoiceItem> items = new ArrayList<InvoiceItem>();
 
@@ -146,7 +146,7 @@ public class InvoiceDb
     // }
 
     public Status addInvoice(Invoice invoice) {
-        LOGGER.info("Add a new credit card");
+        LOGGER.info("Add a new invoice");
         int invid = 0;
         ResultSet rs = null;
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
