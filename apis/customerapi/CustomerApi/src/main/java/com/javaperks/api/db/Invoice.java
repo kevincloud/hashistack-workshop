@@ -10,14 +10,14 @@ public class Invoice
     private int invId;
     private String invNo;
     private int custId;
-    private Date invDate;
+    private String invDate;
     private String orderId;
     private String title;
     private double amount;
     private double tax;
     private double shipping;
     private double total;
-    private Date datePaid;
+    private String datePaid;
     private String contact;
     private String address1;
     private String address2;
@@ -30,7 +30,7 @@ public class Invoice
     public Invoice() {
     }
 
-    public Invoice(int invId, String invNo, int custId, Date invDate, String orderId, String title, double amount, double tax, double shipping, double total, Date datePaid, String contact, String address1, String address2, String city, String state, String zip, String phone, List<InvoiceItem> items) {
+    public Invoice(int invId, String invNo, int custId, String invDate, String orderId, String title, double amount, double tax, double shipping, double total, String datePaid, String contact, String address1, String address2, String city, String state, String zip, String phone, List<InvoiceItem> items) {
         this.invId = invId;
         this.invNo = invNo;
         this.custId = custId;
@@ -74,11 +74,11 @@ public class Invoice
         this.custId = custId;
     }
 
-    public Date getInvoiceDate() {
+    public String getInvoiceDate() {
         return this.invDate;
     }
 
-    public void setInvoiceDate(Date invDate) {
+    public void setInvoiceDate(String invDate) {
         this.invDate = invDate;
     }
 
@@ -130,11 +130,11 @@ public class Invoice
         this.total = total;
     }
 
-    public Date getDatePaid() {
+    public String getDatePaid() {
         return this.datePaid;
     }
 
-    public void setDatePaid(Date datePaid) {
+    public void setDatePaid(String datePaid) {
         this.datePaid = datePaid;
     }
 
