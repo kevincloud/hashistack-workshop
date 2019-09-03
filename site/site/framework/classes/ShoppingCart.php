@@ -366,7 +366,7 @@ class ShoppingCart
 			$d = new OrderItem();
 			$d->PID = $p->PID;
 			$d->Product = $p->ProductName;
-			$d->Description = $p->Description;
+			$d->Description = "";
 			$d->Quantity = $item->Quantity;
 			$d->Price = $p->Price;
 			$d->LineNumber = $lno;
@@ -374,7 +374,7 @@ class ShoppingCart
 			
 			$i = new InvoiceItem();
 			$i->Product = $p->ProductName;
-			$i->Description = $p->Description;
+			$i->Description = "";
 			$i->Quantity = $item->Quantity;
 			$i->Amount = $p->Price;
 			$i->LineNumber = $lno;
@@ -382,13 +382,10 @@ class ShoppingCart
 			$invoice->Items[] = $i;
 		}
 
-		$order->Save();
 		$invoice->OrderID = $order->OrderID;
-		$invoice->Save();
-		// if ($ispaid)
-		// {
-		// 	$invoice->SavePayment($payguid);
-		// }
+		$invid = $invoice->Save();
+		$order->InvoiceID = $invid;
+		$order->Save();
 		
 		$this->Order = $order;
 		

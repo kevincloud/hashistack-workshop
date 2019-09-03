@@ -17,16 +17,19 @@ class Order
 	public $Items = array();
 	public $Invoice = NULL;
 	public $TmpOrderID = "";
-	public $OrderApi = "";
-	
-	private $invoiceid = "";
+	public $InvoiceID = "";
+
+	private $OrderApi = "";
+	private $CustomerApi = "";
 	private $_settings;
 	
 	public function __construct()
 	{
 		global $orderapi;
+		global $customerapi;
 
 		$this->OrderApi = $orderapi;
+		$this->CustomerApi = $customerapi;
 
 		$this->ShippingAddress = new Address();
 		
@@ -37,66 +40,46 @@ class Order
 	{
 		if (!isBlank($ordid))
 		{
+			$rr = new RestRunner();
+			$retval = $rr->Get($this->OrderApi."/order/".$ordid);
+			if (count($row) >= 1)
+			{
+				unset($this->Items);
+				$this->ShippingAddress = new Address();
 
-		// 	***INLINESQL***
-		// 	$sql = "select id, rguid, ordid, custid, ordertype, orderdate, custpo, shipdate, discount, addrid, ".
-		// 		"	tax, freight, subtotal, totalamt, cust_source, source, comments, shiptype, sname, saddr1, ".
-		// 		"	saddr2, scity, sstate, szip, scountry, scountry_numcode, sphone, semail, status, promocode ".
-		// 		"from cc_orders ".
-		// 		"where ordid = ".smartQuote($ordid);
-		
-		$rr = new RestRunner();
-		$retval = $rr->Get($this->OrderApi."/);
-		// 	$row = $this->_db->get_row($sql);
-		// 	if (count($row) >= 1)
-		// 	{
-		// 		$this->ID = $row->id;
-		// 		$this->RowGuid = $row->rguid;
-		// 		$this->OrderID = $row->ordid;
-		// 		$this->CustomerID = $row->custid;
-		// 		$this->OrderType = $row->ordertype;
-		// 		$this->OrderDate = $row->orderdate;
-		// 		$this->CustomerPO = $row->custpo;
-		// 		$this->ShipDate = $row->shipdate;
-		// 		$this->Discount = $row->discount;
-		// 		$this->TaxAmount = $row->tax;
-		// 		$this->ShippingAmount = $row->freight;
-		// 		$this->SubtotalAmount = $row->subtotal;
-		// 		$this->TotalAmount = $row->totalamt;
-		// 		$this->CustomerSource = $row->cust_source;
-		// 		$this->OrderSource = $row->source;
-		// 		$this->Comments = $row->comments;
-		// 		$this->ShipMethod = $row->shiptype;
-		// 		$this->ShippingEmail = $row->semail;
-		// 		$this->Status = $row->status;
-		// 		$this->PromoCode = $row->promocode;
-		// 		$this->AddressID = $row->addrid;
-		// 		$this->ShippingAddress->AddressID = $row->addrid;
-		// 		$this->ShippingAddress->Contact = $row->sname;
-		// 		$this->ShippingAddress->Address1 = $row->saddr1;
-		// 		$this->ShippingAddress->Address2 = $row->saddr2;
-		// 		$this->ShippingAddress->City = $row->scity;
-		// 		$this->ShippingAddress->State = $row->sstate;
-		// 		$this->ShippingAddress->Zip = $row->szip;
-		// 		$this->ShippingAddress->Country = $row->scountry;
-		// 		$this->ShippingAddress->CountryCode = $row->scountry_numcode;
-		// 		$this->ShippingAddress->Phone = $row->sphone;
-				
-		// 		unset($this->Items);
-		// 		$sql = "select id from cc_orders_items where ordid = ".smartQuote($ordid);
-		// 		$rs = $this->_db->get_results($sql);
-		// 		if (count($rs) > 0)
-		// 		{
-		// 			foreach($rs as $row)
-		// 			{
-		// 				$i = new OrderItem($this->_db);
-		// 				$i->GetItem($row->id);
-		// 				if ($i->IsEBook == true) $this->HasEBook = true;
-		// 				if ($i->IsAudioBook == true) $this->HasAudioBook = true;
-		// 				$this->Items[] = $i;
-		// 			}
-		// 		}
-		// 	}
+				$this->OrderID = $row[0]->OrderId;
+				$this->CustomerID = $row[0]->CustomerId;
+				$this->OrderDate = $row[0]->OrderDate;
+				$this->TaxAmount = $row[0]->TaxAmount;
+				$this->ShippingAmount = $row[0]->ShippingAmount;
+				$this->SubtotalAmount = $row[0]->SubtotalAmount;
+				$this->TotalAmount = $row[0]->TotalAmount;
+				$this->Status = $row[0]->Status;
+				$this->Comments = $row[0]->Comments == "." ? "" : $row[0]->Comments;
+				$this->InvoiceID = $row[0]->InvoiceId;
+				$this->ShippingAddress->Contact = $row[0]->ShippingAddress->Contact;
+				$this->ShippingAddress->Address1 = $row[0]->ShippingAddress->Address1;
+				$this->ShippingAddress->Address2 = $row[0]->ShippingAddress->Address2;
+				$this->ShippingAddress->City = $row[0]->ShippingAddress->City;
+				$this->ShippingAddress->State = $row[0]->ShippingAddress->State;
+				$this->ShippingAddress->Zip = $row[0]->ShippingAddress->Zip;
+				$this->ShippingAddress->Phone = $row[0]->ShippingAddress->Phone;
+
+				foreach ($row[0]->Items as $item)
+				{
+					$i = new OrderItem();
+					$i->ID = $item->ID;
+					$i->LineNumber = $item->LineNumber;
+					$i->Product = $item->Product;
+					$i->Price = $item->Price;
+					$i->Quantity = $item->Quantity;
+
+					$this->Items[] = $i;
+				}
+			}
+
+			$this->Invoice = new Invoice();
+			$this->Invoice->GetInvoice($this->invoiceid);
 		}
 	}
 	
@@ -116,9 +99,7 @@ class Order
 			}
 			else
 			{
-				// ***INLINESQL***
-				// $sql = "exec s_newcustorderid";
-				// $this->OrderID = $this->_db->get_var($sql);
+				$this->OrderID = $this->GenerateOrderID();
 			}
 
 			$request = $this->OrderApi."/order";

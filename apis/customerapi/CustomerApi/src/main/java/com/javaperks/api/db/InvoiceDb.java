@@ -142,7 +142,7 @@ public class InvoiceDb
             ex.printStackTrace();
         }
 
-        Status status = new Status(true, "Success!");
+        Status status = new Status(true, "{ \"invoiceId\": " + invid + " }");
         return status;
     }
 }

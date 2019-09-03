@@ -43,48 +43,43 @@ class Invoice
 	{
 		if (!isBlank($invnum))
 		{
-			
-			// if (count($row) > 0)
-			// {
-			// 	$this->InvoiceID = $row->id;
-			// 	$this->RowGuid = $row->rguid;
-			// 	$this->InvoiceNumber = $row->invnum;
-			// 	$this->OrderID = $row->ordref;
-			// 	$this->CustomerID = $row->custid;
-			// 	$this->SubtotalAmount = $row->amount;
-			// 	$this->ShippingAmount = $row->freight;
-			// 	$this->TaxAmount = $row->tax;
-			// 	$this->TotalAmount = $row->total;
-			// 	$this->PayType = $row->paytype;
-			// 	$this->PayID = $row->payid;
-			// 	$this->InvoiceDate = $row->invdate;
-			// 	$this->DueDate = $row->duedate;
-			// 	$this->Paid = $row->paid;
-			// 	$this->DatePaid = $row->datepaid;
-			// 	$this->InvoiceTitle = $row->invoice_title;
-			// 	$this->Division = $row->wp_division;
-			// 	$this->DepositAccount = $row->depositacct;
-			// 	$this->AddressID = $row->addrid;
-			// 	$this->BillingAddress->AddressID = $row->addrid;
-			// 	$this->BillingAddress->Contact = $row->bname;
-			// 	$this->BillingAddress->Address1 = $row->baddr1;
-			// 	$this->BillingAddress->Address2 = $row->baddr2;
-			// 	$this->BillingAddress->City = $row->bcity;
-			// 	$this->BillingAddress->State = $row->bstate;
-			// 	$this->BillingAddress->Zip = $row->bzip;
-			// 	$this->BillingAddress->Country = $row->code;
-			// 	$this->BillingAddress->CountryCode = $row->bcountry_numcode;
-			// 	$this->BillingAddress->Phone = $row->bphone;
+			$rr = new RestRunner();
+			$retval = $rr->Get($this->CustomerApi."/invoice/".$invnum);
+			if (count($row) > 0)
+			{
+				$this->InvoiceID = $row->invoiceId;
+				$this->InvoiceNumber = $row->invoiceNumber;
+				$this->OrderID = $row->orderId;
+				$this->CustomerID = $row->custId;
+				$this->SubtotalAmount = $row->amount;
+				$this->ShippingAmount = $row->shipping;
+				$this->TaxAmount = $row->tax;
+				$this->TotalAmount = $row->total;
+				$this->InvoiceDate = $row->invoiceDate;
+				$this->DatePaid = $row->datePaid;
+				$this->InvoiceTitle = $row->title;
+				$this->BillingAddress->Contact = $row->contact;
+				$this->BillingAddress->Address1 = $row->address1;
+				$this->BillingAddress->Address2 = $row->address2;
+				$this->BillingAddress->City = $row->city;
+				$this->BillingAddress->State = $row->state;
+				$this->BillingAddress->Zip = $row->zip;
+				$this->BillingAddress->Phone = $row->phone;
 				
-			// 	$sql = "select id from cc_orders_items where ordid = ".smartQuote($this->OrderID);
-			// 	$rs = $this->_db->get_results($sql);
-			// 	if (count($rs) >= 1)
-			// 	{
-			// 		$i = new OrderItem($this->_db);
-			// 		$i->GetItem($row->id);
-			// 		$this->Items[] = $i;
-			// 	}
-			// }
+				foreach ($row->items as $item)
+				{
+					$i = new InvoiceItem();
+					$i->ItemID = $item->itemId;
+					$i->InvoiceID = $item->invoiceId;
+					$i->Product = $item->product;
+					$i->Description = $item->description;
+					$i->Amount = $item->amount;
+					$i->Quantiy = $item->quantity;
+					$i->LineNumber = $item->lineNumber;
+
+					$this->Items[] = $i;
+				}
+			}
 		}
 	}
 	
@@ -106,6 +101,7 @@ class Invoice
 		$rr = new RestRunner();
 		$rr->SetHeader("Content-Type", "application/json");
 		$retval = $rr->Post($request, $this->OutputJson());
+		return $retval->invoiceId;
 	}
 	
 	public function OutputJson()
@@ -164,55 +160,6 @@ class InvoiceItem
 	{
 	}
 	
-	public function GetItem($id)
-	{
-		if (!isBlank($id))
-		{
-			// ***INLINESQL***
-			// $sql = "select id, invid, invnum, descr, longdescr, amount, quantity, linenum, itemclass, incomeaccount ".
-			// 	"from cc_invoice_items ".
-			// 	"where id = ".smartQuote($id);
-			// $row = $this->_db->get_row($sql);
-			// if (count($row) > 0)
-			// {
-			// 	$this->ID = $row->id;
-			// 	$this->InvoiceID = $row->invid;
-			// 	$this->InvoiceNumber = $row->invnum;
-			// 	$this->Product = $row->descr;
-			// 	$this->Description = $row->longdescr;
-			// 	$this->Amount = $row->amount;
-			// 	$this->Quantity = $row->quantity;
-			// 	$this->LineNumber = $row->linenum;
-			// 	$this->ItemClass = $row->itemclass;
-			// 	$this->IncomeAccount = $row->incomeaccount;
-			// }
-		}
-	}
-	
-	public function SaveItem()
-	{
-		if ($this->InvoiceID == "" || $this->LineNumber <= 0)
-			return;
-		
-		if ($this->ID == 0)
-		{
-			// ***INLINESQL***
-			// $sql = "set nocount on; ".
-			// 	"insert into cc_invoice_items(invid, invnum, descr, longdescr, amount, quantity, linenum, itemclass, incomeaccount) values(".
-			// 		smartQuote($this->InvoiceID).", ".
-			// 		smartQuote($this->InvoiceNumber).", ".
-			// 		smartQuote($this->Product).", ".
-			// 		smartQuote($this->Description).", ".
-			// 		smartQuote($this->Amount).", ".
-			// 		smartQuote($this->Quantity).", ".
-			// 		smartQuote($this->LineNumber).", ".
-			// 		smartQuote($this->ItemClass).", ".
-			// 		smartQuote($this->IncomeAccount)."); ".
-			// 	"select @@identity as id;";
-			// $this->ID = $this->_db->get_var($sql);
-		}
-	}
-
 	public function OutputJson() {
 		$out = "";
 
