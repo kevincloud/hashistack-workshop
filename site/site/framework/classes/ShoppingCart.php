@@ -188,6 +188,29 @@ class ShoppingCart
 	
 	public function StartOver()
 	{
+		$itemlist = array();
+		$r = new RestRunner();
+		$sessionid = array('Key' => 'sessionId', 'Value' => session_id());
+		$a = array($sessionid);
+		$cnt = 0;
+
+		$result = $r->Get($this->CartApi, $a);
+		foreach ($result->items as $itm) {
+			$itemlist[] = $itm->ProductId;
+		}
+
+		foreach ($itemlist as $i) {
+			$rr = new RestRunner();
+
+			$itemsid = array('Key' => 'sessionId', 'Value' => session_id());
+			$a = array($itempid, $itemqty, $itemsid);
+	
+			$p = new Product();
+			$p->GetProduct($pid);
+	
+			$result = $rr->Delete($this->CartApi."/".$pid, $a);
+		}
+
 		$this->ShippingAddress = NULL;
 		$this->BillingAddress = NULL;
 		$this->Checkout = false;
@@ -198,11 +221,6 @@ class ShoppingCart
 		$this->TotalAmount = 0.0;
 		$this->Order = NULL;
 		$this->Comments = "";
-
-		$r = new RestRunner();
-		$sessionid = array('Key' => 'sessionId', 'Value' => session_id());
-		$a = array($sessionid);
-		$result = $r->Delete($this->CartApi, $a);
 	}
 	
 	public function PleaseWait()

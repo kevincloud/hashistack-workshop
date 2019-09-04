@@ -224,7 +224,7 @@ exports.empty_cart = function(req, res) {
         IndexName: 'SessionIndex',
         KeyConditionExpression: "#sid = :sidvalue",
         ExpressionAttributeNames: {
-            "sid":"SessionId"
+            "sid": "SessionId"
         },
         ExpressionAttributeValues: {
             ":sidvalue": sessionid
