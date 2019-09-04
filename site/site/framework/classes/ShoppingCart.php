@@ -206,7 +206,7 @@ class ShoppingCart
 			$a = array($itempid, $itemqty, $itemsid);
 	
 			$p = new Product();
-			$p->GetProduct($pid);
+			$p->GetProduct($i);
 	
 			$result = $rr->Delete($this->CartApi."/".$pid, $a);
 		}
