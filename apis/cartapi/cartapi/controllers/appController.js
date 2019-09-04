@@ -222,8 +222,12 @@ exports.empty_cart = function(req, res) {
     ddb.delete({
         TableName: table,
         IndexName: 'SessionIndex',
-        Key: {
-            'SessionId': sessionid
+        KeyConditionExpression: "#sid = :sidvalue",
+        ExpressionAttributeNames: {
+            "sid":"SessionId"
+        },
+        ExpressionAttributeValues: {
+            ":sidvalue": sessionid
         }
     }, function(err, data) {
         if (err) {
