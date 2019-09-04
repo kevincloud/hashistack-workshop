@@ -201,14 +201,9 @@ class ShoppingCart
 
 		foreach ($itemlist as $i) {
 			$rr = new RestRunner();
-
 			$itemsid = array('Key' => 'sessionId', 'Value' => session_id());
-			$a = array($itempid, $itemqty, $itemsid);
-	
-			$p = new Product();
-			$p->GetProduct($i);
-	
-			$result = $rr->Delete($this->CartApi."/".$pid, $a);
+			$a = array($itemsid);
+			$result = $rr->Delete($this->CartApi."/".$i, $a);
 		}
 
 		$this->ShippingAddress = NULL;
