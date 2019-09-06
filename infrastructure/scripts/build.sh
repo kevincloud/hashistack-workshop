@@ -33,6 +33,16 @@ curl \
     --data "{ \"Datacenter\": \"${REGION}\", \"Node\": \"${CONSUL_NODE_ID}\", \"Address\":\"${MYSQL_HOST}\", \"Service\": { \"ID\": \"customer-db\", \"Service\": \"customer-db\", \"Address\": \"${MYSQL_HOST}\", \"Port\": 3306 } }" \
     http://127.0.0.1:8500/v1/catalog/register
 
+    # "Checks": [{
+    #     "ID": "sqlsvc",
+    #     "Name": "Port Accessibility",
+    #     "DeregisterCriticalServiceAfter": "10m",
+    #     "TCP": "customer-db.service.us-east-1.consul:3306",
+    #     "Interval": "10s",
+    #     "TTL": "15s",
+    #     "TLSSkipVerify": true
+    # }]
+
 # Create mysql database
 python3 ./scripts/create_db.py customer-db.service.us-east-1.consul $MYSQL_USER $MYSQL_PASS ${VAULT_TOKEN} ${REGION}
 
@@ -308,7 +318,15 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
                 },
                 "Services": [{
                     "Name": "cart-api",
-                    "PortLabel": "http"
+                    "PortLabel": "http",
+                    "Checks": [{
+                        "Name": "HTTP Check",
+                        "Type": "http",
+                        "PortLabel": "http",
+                        "Path": "/_health_check",
+                        "Interval": 5000000000,
+                        "Timeout": 2000000000
+                    }]
                 }]
             }]
         }]

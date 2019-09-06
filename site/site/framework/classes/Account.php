@@ -1570,12 +1570,27 @@ class CreditCard
 	
 	public function FormatCardNumber()
 	{
-		switch($this->CardType)
+		$hideit = true;
+
+		if ($hideit)
 		{
-			case "AX";
-				return "<span class=\"gray\">xxxx-xxxxxx-</span>".substr($this->CardNumber, -5);
-			default:
-				return "<span class=\"gray\">xxxx-xxxx-xxxx-</span>".substr($this->CardNumber, -4);
+			switch($this->CardType)
+			{
+				case "AX";
+					return "<span class=\"gray\">xxxx-xxxxxx-</span>".substr($this->CardNumber, -5);
+				default:
+					return "<span class=\"gray\">xxxx-xxxx-xxxx-</span>".substr($this->CardNumber, -4);
+			}
+		}
+		else
+		{
+			switch($this->CardType)
+			{
+				case "AX";
+					return "<span class=\"gray\">".substr($this->CardNumber, 0, 4)."-".substr($this->CardNumber, 4, 6)."-</span>".substr($this->CardNumber, -5);
+				default:
+					return "<span class=\"gray\">".substr($this->CardNumber, 0, 4)."-".substr($this->CardNumber, 4, 4)."-".substr($this->CardNumber, 8, 4)."-</span>".substr($this->CardNumber, -4);
+			}
 		}
 	}
 	
