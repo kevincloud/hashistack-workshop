@@ -216,6 +216,13 @@ exports.delete_cart_item = function(req, res) {
     });
 };
 
+exports.is_alive = function(req, res) {
+    res.send({
+        success: true,
+        message: 'Alive!'
+    });
+}
+
 exports.empty_cart = function(req, res) {
     var sessionid = req.params.sessionId;
 

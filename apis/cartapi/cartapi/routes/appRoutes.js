@@ -14,4 +14,6 @@ module.exports = function(app) {
         .put(cartfunc.update_cart_item)
         .delete(cartfunc.delete_cart_item);
     
+    app.route('/_health_check')
+        .get(cartfunc.is_alive);
 };
