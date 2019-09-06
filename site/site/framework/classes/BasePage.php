@@ -356,7 +356,7 @@ abstract class BasePage
 	
 		$out .= "<header>\n";
 		$out .= "	<div id=\"info\">\n";
-		$out .= "		<div id=\"phone\"><em>Order by Phone</em> <span id=\"number\">855.867.5309</span></div>\n";
+		$out .= "		<div id=\"phone\"><em>Order by Phone</em> <span id=\"number\">888.867.5309</span></div>\n";
 		if ($this->_landingpage === false)
 		{
 			$out .= "		<nav id=\"customer-info\">\n";

@@ -282,12 +282,12 @@ class Account
 		$out .= "		<div style=\"margin:10px;\"><input type=\"checkbox\" name=\"login_remember\" id=\"login_remember\" value=\"me\"> <label for=\"login_remember\"><strong>Remember me</strong></label></div>";
 		$out .= "	</form>";
 		$out .= "</div>";
-		$out .= "<div class=\"login-msg\">";
-		$out .= "	<div><a href=\"/profile/new\">Create an account</a></div>";
-		$out .= "</div>";
-		$out .= "<div class=\"login-msg\">";
-		$out .= "	<div><a href=\"/profile/recovery\">Forgot your password?</a></div>";
-		$out .= "</div>";
+		// $out .= "<div class=\"login-msg\">";
+		// $out .= "	<div><a href=\"/profile/new\">Create an account</a></div>";
+		// $out .= "</div>";
+		// $out .= "<div class=\"login-msg\">";
+		// $out .= "	<div><a href=\"/profile/recovery\">Forgot your password?</a></div>";
+		// $out .= "</div>";
 		$out .= "<div style=\"height:100px;\">&nbsp;</div>";
 		
 		return $out;
@@ -439,14 +439,14 @@ class Account
 		$out .= "				<li><a href=\"/profile/payment\">Credit Cards</a></li>\n";
 		$out .= "			<ul>\n";
 		$out .= "		</section>\n";
-		$out .= "		<h4>Account Activity</h4>\n";
-		$out .= "		<section class=\"shop\">\n";
-		$out .= "			<ul>\n";
-		$out .= "				<li><a href=\"/profile/history\">My Order History</a></li>\n";
+		//$out .= "		<h4>Account Activity</h4>\n";
+		//$out .= "		<section class=\"shop\">\n";
+		//$out .= "			<ul>\n";
+		//$out .= "				<li><a href=\"/profile/history\">My Order History</a></li>\n";
 		//$out .= "				<li><a href=\"/profile/library\">My Digital Library</a></li>\n";
 		//$out .= "				<li><a href=\"/profile/reviews\">My Reviews</a></li>\n";
-		$out .= "			<ul>\n";
-		$out .= "		</section>\n";
+		//$out .= "			<ul>\n";
+		//$out .= "		</section>\n";
 		$out .= "	</aside>\n";
 		
 		return $out;
@@ -795,7 +795,7 @@ class Account
 		$out .= "			<label for=\"info_lastname\">Last Name</label>\n";
 		$out .= "			<input type=\"text\" name=\"info_lastname\" id=\"info_lastname\" value=\"".$this->LastName."\" />\n";
 		$out .= "		</p>\n";
-		$out .= "		<p>\n";
+		$out .= "		<p style=\"display:none;\">\n";
 		$out .= "			<label for=\"info_ssn\">Social Security Number</label>\n";
 		$out .= "			<input type=\"text\" name=\"info_ssn\" id=\"info_ssn\" value=\"".(!$this->SSN ? "" : Utilities::DecryptValue("account", $this->SSN))."\" />\n";
 		$out .= "		</p>\n";
@@ -964,7 +964,7 @@ class Account
 	
 	public function DeleteCreditCard($cardid)
 	{
-		$request = $this->CustomerApi."/payments/all/".$cardid;
+		$request = $this->CustomerApi."/payments/".$cardid;
 		$rr = new RestRunner();
 		$retval = $rr->Delete($request);
 	}
