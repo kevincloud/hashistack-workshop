@@ -293,7 +293,7 @@ function scCheckCheckout()
 			{
 				popWindow({
 					content: data.Body,
-					width: 800,
+					width: 400,
 					modal: true,
 					onpop: function() {
 						$("input[id^='cart_login_']").onEnter( function()
