@@ -3,9 +3,9 @@
 ####################
 # Build APIs
 ####################
-cd /root/hashistack-workshop/apis
+cd /root
+mkdir /root/components
 
-# export MYSQL_HOST=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.address)
 export MYSQL_USER=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.username)
 export MYSQL_PASS=$(curl -s --header "X-Vault-Token: ${VAULT_TOKEN}" http://vault-main.service.${REGION}.consul:8200/v1/secret/data/dbhost | jq -r .data.data.password)
 export CONSUL_NODE_ID=$(curl -s http://127.0.0.1:8500/v1/catalog/node/consul-client1 | jq -r .Node.ID)
@@ -44,15 +44,14 @@ curl \
     # }]
 
 # Create mysql database
-python3 ./scripts/create_db.py customer-db.service.us-east-1.consul $MYSQL_USER $MYSQL_PASS ${VAULT_TOKEN} ${REGION}
+python3 /root/hashistack-workshop/apis/scripts/create_db.py customer-db.service.us-east-1.consul $MYSQL_USER $MYSQL_PASS ${VAULT_TOKEN} ${REGION}
 
 # load product data
-python3 ./scripts/product_load.py
+python3 /root/hashistack-workshop/apis/scripts/product_load.py
 
-# Upload images to S3
-aws s3 cp /root/hashistack-workshop/apis/productapi/images/ s3://${S3_BUCKET}/images/ --recursive --acl public-read
-
+#################################
 # build authapi
+#################################
 curl -O https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz
 tar xvf go1.12.7.linux-amd64.tar.gz
 chown -R root:root ./go
@@ -63,23 +62,35 @@ export GOPATH=/root/go
 export GOCACHE=/root/go/.cache
 export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 
-cd /root/hashistack-workshop/apis/authapi
+cd /root/components
+git clone https://github.com/kevincloud/javaperks-auth-api.git
+cd javaperks-auth-api
 go get
 go build -v
-aws s3 cp /root/hashistack-workshop/apis/authapi/authapi s3://${S3_BUCKET}/bin/authapi
+aws s3 cp /root/components/javaperks-auth-api/authapi s3://${S3_BUCKET}/bin/authapi
 
 
+#################################
 # create product-app image
-cd /root/hashistack-workshop/apis/productapi
+#################################
+cd /root/components
+git clone https://github.com/kevincloud/javaperks-product-api.git
+cd javaperks-product-api
 docker build -t product-app:product-app .
 aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
 ./login.sh
 docker tag product-app:product-app ${REPO_URL_PROD}:product-app
 docker push ${REPO_URL_PROD}:product-app
+# Upload images to S3
+aws s3 cp /root/components/javaperks-product-api/images/ s3://${S3_BUCKET}/images/ --recursive --acl public-read
 
+#################################
 # create cart-app image
-cd /root/hashistack-workshop/apis/cartapi
+#################################
+cd /root/components
+git clone https://github.com/kevincloud/javaperks-cart-api.git
+cd javaperks-art-api
 docker build -t cart-app:cart-app .
 aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
@@ -87,8 +98,12 @@ chmod a+x login.sh
 docker tag cart-app:cart-app ${REPO_URL_CART}:cart-app
 docker push ${REPO_URL_CART}:cart-app
 
+#################################
 # create order-app image
-cd /root/hashistack-workshop/apis/orderapi
+#################################
+cd /root/components
+git clone https://github.com/kevincloud/javaperks-order-api.git
+cd javaperks-order-api
 docker build -t order-app:order-app .
 aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
@@ -96,14 +111,22 @@ chmod a+x login.sh
 docker tag order-app:order-app ${REPO_URL_ORDR}:order-app
 docker push ${REPO_URL_ORDR}:order-app
 
+#################################
 # create customer-api jar
-cd /root/hashistack-workshop/apis/customerapi/CustomerApi
+#################################
+cd /root/components
+git clone https://github.com/kevincloud/javaperks-customer-api.git
+cd javaperks-customer-api
 mvn package
 aws s3 cp /root/hashistack-workshop/apis/customerapi/CustomerApi/target/CustomerApi-0.1.0-SNAPSHOT.jar s3://${S3_BUCKET}/jars/CustomerApi-0.1.0-SNAPSHOT.jar
 
+#################################
 # create online-site image
-cd /root/hashistack-workshop/site
-sudo bash -c "cat >/root/hashistack-workshop/site/site/framework/config.php" <<EOF
+#################################
+cd /root/components
+git clone https://github.com/kevincloud/javaperks-online-store.git
+cd javaperks-online-store
+sudo bash -c "cat >./site/framework/config.php" <<EOF
 <?php
 \$assetbucket = "https://s3.amazonaws.com/${S3_BUCKET}/";
 \$region = "${REGION}";
@@ -116,6 +139,10 @@ chmod a+x login.sh
 ./login.sh
 docker tag online-store:online-store ${REPO_URL_SITE}:online-store
 docker push ${REPO_URL_SITE}:online-store
+
+#################################
+# create nomad jobs
+#################################
 
 mkdir /root/jobs
 
