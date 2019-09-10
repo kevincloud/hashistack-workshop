@@ -61,9 +61,9 @@ export CONSUL_JOIN_VALUE="${CONSUL_JOIN_VALUE}"
 export NOMAD_URL="${NOMAD_URL}"
 export GOPATH=/root/go
 export GOCACHE=/root/go/.cache
-export ASDF="asdf"
 
 export CLIENT_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
+echo ip-$CLIENT_IP | sed "s/\./-/g" >> /etc/hosts
 
 cd /root
 git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/kevincloud/hashistack-workshop.git
