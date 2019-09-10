@@ -61,6 +61,7 @@ export CONSUL_JOIN_VALUE="${CONSUL_JOIN_VALUE}"
 export NOMAD_URL="${NOMAD_URL}"
 export GOPATH=/root/go
 export GOCACHE=/root/go/.cache
+export ASDF="asdf"
 
 export CLIENT_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
 
