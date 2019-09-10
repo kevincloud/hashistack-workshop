@@ -52,6 +52,8 @@ export VAULT_ADDR=http://localhost:8200
 
 vault operator init -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1 > /root/init.txt 2>&1
 
+sleep 5
+
 export VAULT_TOKEN=`cat /root/init.txt | sed -n -e '/^Initial Root Token/ s/.*\: *//p'`
 consul kv put service/vault/root-token $VAULT_TOKEN
 export RECOVERY_KEY=`cat /root/init.txt | sed -n -e '/^Recovery Key 1/ s/.*\: *//p'`
