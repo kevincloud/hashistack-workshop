@@ -90,7 +90,7 @@ aws s3 cp /root/components/javaperks-product-api/images/ s3://${S3_BUCKET}/image
 #################################
 cd /root/components
 git clone https://github.com/kevincloud/javaperks-cart-api.git
-cd javaperks-art-api
+cd javaperks-cart-api
 docker build -t cart-app:cart-app .
 aws ecr get-login --region ${REGION} --no-include-email > login.sh
 chmod a+x login.sh
