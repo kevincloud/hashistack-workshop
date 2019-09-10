@@ -8,6 +8,7 @@ data "template_file" "hashi-server-setup" {
         MYSQL_DB = "${var.mysql_database}"
         AWS_ACCESS_KEY = "${var.aws_access_key}"
         AWS_SECRET_KEY = "${var.aws_secret_key}"
+        AWS_KMS_KEY_ID = "${var.aws_kms_key_id}"
         REGION = "${var.aws_region}"
         REPO_URL_PROD = "${aws_ecr_repository.ecr-product-app.repository_url}"
         REPO_URL_CART = "${aws_ecr_repository.ecr-cart-app.repository_url}"
