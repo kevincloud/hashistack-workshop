@@ -6,7 +6,7 @@ curl -sfLo "vault.zip" "${VAULT_URL}"
 sudo unzip vault.zip -d /usr/local/bin/
 
 # Server configuration
-sudo bash -c "cat >/etc/vault.d/vault.hcl" << 'EOF'
+sudo bash -c "cat >/etc/vault.d/vault.hcl" <<EOF
 storage "file" {
   path = "/opt/vault"
 }
@@ -26,7 +26,7 @@ EOF
 
 # Set Vault up as a systemd service
 echo "Installing systemd service for Vault..."
-sudo bash -c "cat >/etc/systemd/system/vault.service" << 'EOF'
+sudo bash -c "cat >/etc/systemd/system/vault.service" <<EOF
 [Unit]
 Description=Hashicorp Vault
 After=network.target

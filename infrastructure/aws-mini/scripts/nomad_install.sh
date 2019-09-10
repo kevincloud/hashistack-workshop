@@ -80,7 +80,7 @@ EOF
 
 # Set Nomad up as a systemd service
 echo "Installing systemd service for Nomad..."
-sudo bash -c "cat >/etc/systemd/system/nomad.service" << 'EOF'
+sudo bash -c "cat >/etc/systemd/system/nomad.service" <<EOF
 [Unit]
 Description=Hashicorp Nomad
 After=network.target

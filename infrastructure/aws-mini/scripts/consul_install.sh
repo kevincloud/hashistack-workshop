@@ -25,7 +25,7 @@ EOF
 
 # Set Consul up as a systemd service
 echo "Installing systemd service for Consul..."
-sudo bash -c "cat >/etc/systemd/system/consul.service" << 'EOF'
+sudo bash -c "cat >/etc/systemd/system/consul.service" <<EOF
 [Unit]
 Description=Hashicorp Consul
 Requires=network-online.target
