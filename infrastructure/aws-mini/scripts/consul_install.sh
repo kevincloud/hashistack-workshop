@@ -63,7 +63,7 @@ sudo bash -c "cat >>/etc/dnsmasq.conf" <<EOF
 server=/consul/${CLIENT_IP}#8600
 server=169.254.169.253#53
 listen-address=${CLIENT_IP}
-listen-address=169.254.1.1
+listen-address=127.0.0.1
 no-resolv
 log-queries
 EOF
