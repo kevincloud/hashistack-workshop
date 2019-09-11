@@ -52,11 +52,15 @@ export VAULT_ADDR=http://localhost:8200
 
 vault operator init -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1 > /root/init.txt 2>&1
 
-sleep 60
+sleep 10
 
-export VAULT_TOKEN=`cat /root/init.txt | sed -n -e '/^Initial Root Token/ s/.*\: *//p'`
+echo "Extracting vault root token..."
+export VAULT_TOKEN=$(cat /root/init.txt | sed -n -e '/^Initial Root Token/ s/.*\: *//p')
+echo "Root token is $VAULT_TOKEN"
 consul kv put service/vault/root-token $VAULT_TOKEN
-export RECOVERY_KEY=`cat /root/init.txt | sed -n -e '/^Recovery Key 1/ s/.*\: *//p'`
+echo "Extracting vault recovery key..."
+export RECOVERY_KEY=(cat /root/init.txt | sed -n -e '/^Recovery Key 1/ s/.*\: *//p')
+echo "Recovery key is $RECOVERY_KEY"
 consul kv put service/vault/recovery-key $RECOVERY_KEY
 
 echo "export VAULT_ADDR=http://localhost:8200" >> /home/ubuntu/.profile
