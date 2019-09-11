@@ -82,6 +82,7 @@ chmod +x /root/hashistack-workshop/infrastructure/aws-mini/scripts/nomad_install
 chmod +x /root/hashistack-workshop/infrastructure/aws-mini/scripts/build.sh
 
 echo "Preparation done."
+
 /root/hashistack-workshop/infrastructure/aws-mini/scripts/consul_install.sh
 /root/hashistack-workshop/infrastructure/aws-mini/scripts/vault_install.sh
 /root/hashistack-workshop/infrastructure/aws-mini/scripts/nomad_install.sh

@@ -59,7 +59,7 @@ export VAULT_TOKEN=$(cat /root/init.txt | sed -n -e '/^Initial Root Token/ s/.*\
 echo "Root token is $VAULT_TOKEN"
 consul kv put service/vault/root-token $VAULT_TOKEN
 echo "Extracting vault recovery key..."
-export RECOVERY_KEY=(cat /root/init.txt | sed -n -e '/^Recovery Key 1/ s/.*\: *//p')
+export RECOVERY_KEY=$(cat /root/init.txt | sed -n -e '/^Recovery Key 1/ s/.*\: *//p')
 echo "Recovery key is $RECOVERY_KEY"
 consul kv put service/vault/recovery-key $RECOVERY_KEY
 
