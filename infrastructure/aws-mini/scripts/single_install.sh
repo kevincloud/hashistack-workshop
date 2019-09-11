@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Preinstallation..."
+echo "Pre-installation..."
 
 echo 'libc6 libraries/restart-without-asking boolean true' | sudo debconf-set-selections
 export DEBIAN_FRONTEND=noninteractive
