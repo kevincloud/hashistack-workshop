@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Pre-installation tasks..."
 
@@ -7,6 +7,7 @@ export DEBIAN_FRONTEND=noninteractive
 echo "...installing Ubuntu updates"
 sudo apt-get -y update > /dev/null 2>&1
 sudo apt-get -y upgrade > /dev/null 2>&1
+
 echo "...installing system packages"
 sudo apt-get install -y unzip git jq python3 python3-pip python3-dev dnsmasq mysql-client default-libmysqlclient-dev npm docker.io golang openjdk-8-jre openjdk-8-jdk maven mysql-client-core-5.7 > /dev/null 2>&1
 

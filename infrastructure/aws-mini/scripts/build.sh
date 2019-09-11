@@ -6,10 +6,10 @@
 cd /root
 mkdir /root/components
 
-export MYSQL_USER=$(curl -s --header "X-Vault-Token: $VAULT_TOKEN" http://vault-main.service.$REGION.consul:8200/v1/secret/data/dbhost | jq -r .data.data.username)
-export MYSQL_PASS=$(curl -s --header "X-Vault-Token: $VAULT_TOKEN" http://vault-main.service.$REGION.consul:8200/v1/secret/data/dbhost | jq -r .data.data.password)
+echo "Get Consul node id..."
 export CONSUL_NODE_ID=$(curl -s http://127.0.0.1:8500/v1/catalog/node/consul-client1 | jq -r .Node.ID)
 
+echo "Enable transit engine..."
 # enable transit
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
@@ -17,17 +17,20 @@ curl \
     --data '{"type":"transit"}' \
     http://vault-main.service.$REGION.consul:8200/v1/sys/mounts/transit
 
+echo "Create account key..."
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
     http://vault-main.service.$REGION.consul:8200/v1/transit/keys/account
 
+echo "Create payment key..."
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
     http://vault-main.service.$REGION.consul:8200/v1/transit/keys/payment
 
 # register the database host with consul
+echo "Registering customer-db with consul..."
 curl \
     --request PUT \
     --data "{ \"Datacenter\": \"$REGION\", \"Node\": \"$CONSUL_NODE_ID\", \"Address\":\"$MYSQL_HOST\", \"Service\": { \"ID\": \"customer-db\", \"Service\": \"customer-db\", \"Address\": \"$MYSQL_HOST\", \"Port\": 3306 } }" \
@@ -44,16 +47,19 @@ curl \
     # }]
 
 # Create mysql database
+echo "Creating database..."
 python3 /root/hashistack-workshop/apis/scripts/create_db.py customer-db.service.us-east-1.consul $MYSQL_USER $MYSQL_PASS $VAULT_TOKEN $REGION
 
 # load product data
+echo "Loading product data..."
 python3 /root/hashistack-workshop/apis/scripts/product_load.py
 
 #################################
 # build authapi
 #################################
+echo "Building authapi..."
 curl -O https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz
-tar xvf go1.12.7.linux-amd64.tar.gz
+tar xvf go1.12.7.linux-amd64.tar.gz > /dev/null 2>&1
 chown -R root:root ./go
 mv go /usr/local
 mkdir /root/go
@@ -73,6 +79,7 @@ aws s3 cp /root/components/javaperks-auth-api/authapi s3://$S3_BUCKET/bin/authap
 #################################
 # create product-app image
 #################################
+echo "Building productapi..."
 cd /root/components
 git clone https://github.com/kevincloud/javaperks-product-api.git
 cd javaperks-product-api
@@ -88,6 +95,7 @@ aws s3 cp /root/components/javaperks-product-api/images/ s3://$S3_BUCKET/images/
 #################################
 # create cart-app image
 #################################
+echo "Building cartapi..."
 cd /root/components
 git clone https://github.com/kevincloud/javaperks-cart-api.git
 cd javaperks-cart-api
@@ -101,6 +109,7 @@ docker push $REPO_URL_CART:cart-app
 #################################
 # create order-app image
 #################################
+echo "Building orderapi..."
 cd /root/components
 git clone https://github.com/kevincloud/javaperks-order-api.git
 cd javaperks-order-api
@@ -114,6 +123,7 @@ docker push $REPO_URL_ORDR:order-app
 #################################
 # create customer-api jar
 #################################
+echo "Building customerapi..."
 cd /root/components
 git clone https://github.com/kevincloud/javaperks-customer-api.git
 cd javaperks-customer-api
@@ -123,6 +133,7 @@ aws s3 cp /root/hashistack-workshop/apis/customerapi/CustomerApi/target/Customer
 #################################
 # create online-site image
 #################################
+echo "Building online-store..."
 cd /root/components
 git clone https://github.com/kevincloud/javaperks-online-store.git
 cd javaperks-online-store
@@ -143,6 +154,7 @@ docker push $REPO_URL_SITE:online-store
 #################################
 # create nomad jobs
 #################################
+echo "Creating Nomad job files..."
 
 mkdir /root/jobs
 
@@ -457,6 +469,7 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
 }
 EOF
 
+echo "Submitting Nomad jobs..."
 curl \
     --request POST \
     --data @/root/jobs/auth-api-job.nomad \
@@ -486,3 +499,5 @@ curl \
     --request POST \
     --data @/root/jobs/customer-api-job.nomad \
     http://nomad-server.service.$REGION.consul:4646/v1/jobs
+
+echo "Hashistack complete."

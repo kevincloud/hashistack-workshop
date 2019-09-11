@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Configures the Nomad server
 
 echo "Installing Nomad..."

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Configures the Vault server for a database secrets demo
 
 echo "Installing Vault..."

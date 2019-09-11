@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Configures the Consul server
 
 echo "Installing Consul..."
