@@ -4,6 +4,7 @@
 echo "Installing Nomad..."
 curl -sfLo "nomad.zip" "${NOMAD_URL}"
 sudo unzip nomad.zip -d /usr/local/bin/
+rm -rf nomad.zip
 
 sudo bash -c "cat >/etc/docker/config.json" <<EOF
 {

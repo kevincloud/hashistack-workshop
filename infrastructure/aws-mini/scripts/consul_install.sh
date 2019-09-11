@@ -4,6 +4,7 @@
 echo "Installing Consul..."
 curl -sfLo "consul.zip" "${CONSUL_URL}"
 sudo unzip consul.zip -d /usr/local/bin/
+rm -rf consul.zip
 
 # Server configuration
 sudo bash -c "cat >/etc/consul.d/consul-server.json" <<EOF

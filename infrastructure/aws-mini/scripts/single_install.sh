@@ -77,14 +77,8 @@ echo "...cloning repo"
 cd /root
 git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/kevincloud/hashistack-workshop.git
 
-chmod +x /root/hashistack-workshop/infrastructure/aws-mini/scripts/consul_install.sh
-chmod +x /root/hashistack-workshop/infrastructure/aws-mini/scripts/vault_install.sh
-chmod +x /root/hashistack-workshop/infrastructure/aws-mini/scripts/nomad_install.sh
 chmod +x /root/hashistack-workshop/infrastructure/aws-mini/scripts/build.sh
 
 echo "Preparation done."
 
-/root/hashistack-workshop/infrastructure/aws-mini/scripts/consul_install.sh
-/root/hashistack-workshop/infrastructure/aws-mini/scripts/vault_install.sh
-/root/hashistack-workshop/infrastructure/aws-mini/scripts/nomad_install.sh
-/root/hashistack-workshop/infrastructure/aws-mini/scripts/build.sh
+. /root/hashistack-workshop/infrastructure/aws-mini/scripts/build.sh

@@ -1,4 +1,446 @@
 #!/bin/bash
+# Configures the Consul server
+
+echo "Installing Consul..."
+curl -sfLo "consul.zip" "${CONSUL_URL}"
+sudo unzip consul.zip -d /usr/local/bin/
+rm -rf consul.zip
+
+# Server configuration
+sudo bash -c "cat >/etc/consul.d/consul-server.json" <<EOF
+{
+    "data_dir": "/opt/consul",
+    "datacenter": "${REGION}",
+    "node_name": "consult-server",
+    "client_addr": "0.0.0.0",
+    "bind_addr": "0.0.0.0",
+    "advertise_addr": "${CLIENT_IP}",
+    "domain": "consul",
+    "acl_enforce_version_8": false,
+    "server": true,
+    "bootstrap_expect": 1,
+    "retry_join": ["provider=aws tag_key=${CONSUL_JOIN_KEY} tag_value=${CONSUL_JOIN_VALUE}"],
+    "ui": true,
+    "recursors": ["169.254.169.253"]
+}
+EOF
+
+# Set Consul up as a systemd service
+echo "Installing systemd service for Consul..."
+sudo bash -c "cat >/etc/systemd/system/consul.service" <<EOF
+[Unit]
+Description=Hashicorp Consul
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+User=root
+Group=root
+PIDFile=/var/run/consul/consul.pid
+PermissionsStartOnly=true
+ExecStartPre=-/bin/mkdir -p /var/run/consul
+ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d -pid-file=/var/run/consul/consul.pid
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+KillSignal=SIGTERM
+Restart=on-failure
+RestartSec=42s
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl start consul
+sudo systemctl enable consul
+
+echo "Configure Consul name resolution..."
+systemctl disable systemd-resolved
+systemctl stop systemd-resolved
+ls -lh /etc/resolv.conf
+rm /etc/resolv.conf
+echo "nameserver 127.0.0.1" > /etc/resolv.conf
+netplan apply
+
+sudo bash -c "cat >>/etc/dnsmasq.conf" <<EOF
+server=/consul/${CLIENT_IP}#8600
+server=169.254.169.253#53
+listen-address=${CLIENT_IP}
+listen-address=127.0.0.1
+no-resolv
+log-queries
+EOF
+
+ip link add dummy0 type dummy
+ip link set dev dummy0 up
+ip addr add 169.254.1.1/32 dev dummy0
+ip link set dev dummy0 up
+
+sudo bash -c "cat >>//etc/systemd/network/dummy0.netdev" <<EOF
+[NetDev]
+Name=dummy0
+Kind=dummy
+EOF
+
+sudo bash -c "cat >>/etc/systemd/network/dummy0.network" <<EOF
+[Match]
+Name=dummy0
+
+[Network]
+Address=169.254.1.1/32
+EOF
+
+systemctl restart systemd-networkd
+systemctl stop dnsmasq
+systemctl start dnsmasq
+service consul stop
+service consul start
+
+sleep 3
+
+
+echo "Consul installation complete."
+
+# Configures the Vault server for a database secrets demo
+
+echo "Installing Vault..."
+curl -sfLo "vault.zip" "${VAULT_URL}"
+sudo unzip vault.zip -d /usr/local/bin/
+rm -rf vault.zip
+
+# Server configuration
+sudo bash -c "cat >/etc/vault.d/vault.hcl" <<EOF
+storage "file" {
+  path = "/opt/vault"
+}
+
+listener "tcp" {
+  address     = "0.0.0.0:8200"
+  tls_disable = 1
+}
+
+seal "awskms" {
+    region = "${REGION}"
+    kms_key_id = "${AWS_KMS_KEY_ID}"
+}
+
+ui = true
+EOF
+
+# Set Vault up as a systemd service
+echo "Installing systemd service for Vault..."
+sudo bash -c "cat >/etc/systemd/system/vault.service" <<EOF
+[Unit]
+Description=Hashicorp Vault
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/usr/local/bin/vault server -config=/etc/vault.d/vault.hcl
+Restart=on-failure # or always, on-abort, etc
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl start vault
+sudo systemctl enable vault
+
+sleep 5
+
+echo "Initializing and setting up environment variables..."
+export VAULT_ADDR=http://localhost:8200
+
+vault operator init -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1 > /root/init.txt 2>&1
+
+sleep 10
+
+echo "Extracting vault root token..."
+export VAULT_TOKEN=$(cat /root/init.txt | sed -n -e '/^Initial Root Token/ s/.*\: *//p')
+echo "Root token is $VAULT_TOKEN"
+consul kv put service/vault/root-token $VAULT_TOKEN
+echo "Extracting vault recovery key..."
+export RECOVERY_KEY=$(cat /root/init.txt | sed -n -e '/^Recovery Key 1/ s/.*\: *//p')
+echo "Recovery key is $RECOVERY_KEY"
+consul kv put service/vault/recovery-key $RECOVERY_KEY
+
+echo "export VAULT_ADDR=http://localhost:8200" >> /home/ubuntu/.profile
+echo "export VAULT_TOKEN=$(consul kv get service/vault/root-token)" >> /home/ubuntu/.profile
+echo "export VAULT_ADDR=http://localhost:8200" >> /root/.profile
+echo "export VAULT_TOKEN=$(consul kv get service/vault/root-token)" >> /root/.profile
+
+sudo bash -c "cat >/etc/vault.d/nomad-policy.json" <<EOF
+{
+    "policy": "# Allow creating tokens under \"nomad-cluster\" token role. The token role name\n# should be updated if \"nomad-cluster\" is not used.\npath \"auth/token/create/nomad-cluster\" {\n  capabilities = [\"update\"]\n}\n\n# Allow looking up \"nomad-cluster\" token role. The token role name should be\n# updated if \"nomad-cluster\" is not used.\npath \"auth/token/roles/nomad-cluster\" {\n  capabilities = [\"read\"]\n}\n\n# Allow looking up the token passed to Nomad to validate # the token has the\n# proper capabilities. This is provided by the \"default\" policy.\npath \"auth/token/lookup-self\" {\n  capabilities = [\"read\"]\n}\n\n# Allow looking up incoming tokens to validate they have permissions to access\n# the tokens they are requesting. This is only required if\n# 'allow_unauthenticated' is set to false.\npath \"auth/token/lookup\" {\n  capabilities = [\"update\"]\n}\n\n# Allow revoking tokens that should no longer exist. This allows revoking\n# tokens for dead tasks.\npath \"auth/token/revoke-accessor\" {\n  capabilities = [\"update\"]\n}\n\n# Allow checking the capabilities of our own token. This is used to validate the\n# token upon startup.\npath \"sys/capabilities-self\" {\n  capabilities = [\"update\"]\n}\n\n# Allow our own token to be renewed.\npath \"auth/token/renew-self\" {\n  capabilities = [\"update\"]\n}\n"
+}
+EOF
+
+sudo bash -c "cat >/etc/vault.d/access-creds.json" <<EOF
+{
+    "policy": "path \"secret/data/aws\" {\n  capabilities = [\"read\", \"list\"]\n}\n\npath \"secret/data/roottoken\" {\n  capabilities = [\"read\", \"list\"]\n}\n"
+}
+EOF
+
+sudo bash -c "cat >/etc/vault.d/nomad-cluster-role.json" <<EOF
+{
+    "disallowed_policies": "nomad-server",
+    "explicit_max_ttl": 0,
+    "name": "nomad-cluster",
+    "orphan": true,
+    "period": 259200,
+    "renewable": true
+}
+EOF
+
+echo "Configuring Vault..."
+
+# vault secrets enable -path=usercreds -version=2 kv
+
+# Enable secrets mount point for kv2
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"type": "kv", "options": { "version": "2" } }' \
+    http://127.0.0.1:8200/v1/sys/mounts/usercreds
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"type": "kv", "options": { "version": "2" } }' \
+    http://127.0.0.1:8200/v1/sys/mounts/secret
+
+# add usernames and passwords
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "jthomp4423@example.com", "password": "SuperSecret1", "customerno": "CS100312" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/jthomp4423@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "wilson@example.com", "password": "SuperSecret1", "customerno": "CS106004" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/wilson@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "tommy6677@example.com", "password": "SuperSecret1", "customerno": "CS101438" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/tommy6677@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "mmccann1212@example.com", "password": "SuperSecret1", "customerno": "CS210895" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/mmccann1212@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "cjpcomp@example.com", "password": "SuperSecret1", "customerno": "CS122955" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/cjpcomp@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "jjhome7823@example.com", "password": "SuperSecret1", "customerno": "CS602934" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/jjhome7823@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "clint.mason312@example.com", "password": "SuperSecret1", "customerno": "CS157843" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/clint.mason312@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "greystone89@example.com", "password": "SuperSecret1", "customerno": "CS523484" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/greystone89@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "runwayyourway@example.com", "password": "SuperSecret1", "customerno": "CS658871" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/runwayyourway@example.com
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "username": "olsendog1979@example.com", "password": "SuperSecret1", "customerno": "CS103393" } }' \
+    http://127.0.0.1:8200/v1/usercreds/data/olsendog1979@example.com
+
+# Additional configs
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "aws_access_key": "${AWS_ACCESS_KEY}", "aws_secret_key": "${AWS_SECRET_KEY}" } }' \
+    http://127.0.0.1:8200/v1/secret/data/aws
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data "{\"data\": { \"token\": \"$VAULT_TOKEN\" } }" \
+    http://127.0.0.1:8200/v1/secret/data/roottoken
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{"data": { "address": "customer-db.service.${REGION}.consul", "database": "${MYSQL_DB}", "username": "${MYSQL_USER}", "password": "${MYSQL_PASS}" } }' \
+    http://127.0.0.1:8200/v1/secret/data/dbhost
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request PUT \
+    --data @/etc/vault.d/nomad-policy.json \
+    http://127.0.0.1:8200/v1/sys/policy/nomad-server
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request PUT \
+    --data @/etc/vault.d/access-creds.json \
+    http://127.0.0.1:8200/v1/sys/policy/access-creds
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data @/etc/vault.d/nomad-cluster-role.json \
+    http://127.0.0.1:8200/v1/auth/token/roles/nomad-cluster
+
+echo "Register with Consul"
+curl \
+    http://127.0.0.1:8500/v1/agent/service/register \
+    --request PUT \
+    --data @- <<PAYLOAD
+{
+    "ID": "vault-main",
+    "Name": "vault-main",
+    "Port": 8200
+}
+PAYLOAD
+
+echo "Vault installation complete."
+
+# Configures the Nomad server
+
+echo "Installing Nomad..."
+curl -sfLo "nomad.zip" "${NOMAD_URL}"
+sudo unzip nomad.zip -d /usr/local/bin/
+rm -rf nomad.zip
+
+sudo bash -c "cat >/etc/docker/config.json" <<EOF
+{
+	"credsStore": "ecr-login"
+}
+EOF
+
+sudo bash -c "cat >/etc/nomad.d/vault-token.json" <<EOF
+{
+    "policies": [
+        "nomad-server"
+    ],
+    "ttl": "72h",
+    "renewable": true,
+    "no_parent": true
+}
+EOF
+
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data @/etc/nomad.d/vault-token.json \
+    http://localhost:8200/v1/auth/token/create | jq . > /etc/nomad.d/token.json
+
+export NOMAD_TOKEN="$(cat /etc/nomad.d/token.json | jq -r .auth.client_token | tr -d '\n')"
+
+sudo bash -c "cat >/etc/nomad.d/nomad.hcl" <<EOF
+data_dir  = "/opt/nomad"
+plugin_dir = "/opt/nomad/plugins"
+bind_addr = "0.0.0.0"
+datacenter = "${REGION}"
+enable_debug = true
+
+ports {
+    http = 4646
+    rpc  = 4647
+    serf = 4648
+}
+
+consul {
+    address             = "127.0.0.1:8500"
+    server_service_name = "nomad-server"
+    client_service_name = "nomad-server"
+    auto_advertise      = true
+    server_auto_join    = true
+    client_auto_join    = true
+}
+
+vault {
+    enabled          = true
+    address          = "http://vault-main.service.${REGION}.consul:8200"
+    task_token_ttl   = "1h"
+    create_from_role = "nomad-cluster"
+    token            = "$NOMAD_TOKEN"
+}
+
+server {
+    enabled          = true
+    bootstrap_expect = 1
+}
+
+client {
+    enabled       = true
+    network_speed = 100
+    options {
+        "driver.raw_exec.enable"    = "1"
+        "docker.auth.config"        = "/etc/docker/config.json"
+        "docker.auth.helper"        = "ecr-login"
+        "docker.privileged.enabled" = "true"
+    }
+    servers = ["nomad-server.service.${REGION}.consul:4647"]
+}
+EOF
+
+# Set Nomad up as a systemd service
+echo "Installing systemd service for Nomad..."
+sudo bash -c "cat >/etc/systemd/system/nomad.service" <<EOF
+[Unit]
+Description=Hashicorp Nomad
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/usr/local/bin/nomad agent -config=/etc/nomad.d/nomad.hcl
+Restart=on-failure # or always, on-abort, etc
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl start nomad
+sudo systemctl enable nomad
+
+cd /root
+go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+mv /root/go/bin/docker-credential-ecr-login /usr/local/bin
+
+curl \
+    http://127.0.0.1:8500/v1/agent/service/register \
+    --request PUT \
+    --data @- <<PAYLOAD
+{
+    "ID": "nomad-server",
+    "Name": "nomad-server",
+    "Port": 4647
+}
+PAYLOAD
+
+echo "Nomad installation complete."
+
 
 ####################
 # Build APIs
@@ -67,6 +509,7 @@ mkdir /root/go/.cache
 export GOPATH=/root/go
 export GOCACHE=/root/go/.cache
 export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+rm -rf go1.12.7.linux-amd64.tar.gz
 
 cd /root/components
 git clone https://github.com/kevincloud/javaperks-auth-api.git
@@ -499,5 +942,6 @@ curl \
     --request POST \
     --data @/root/jobs/customer-api-job.nomad \
     http://nomad-server.service.$REGION.consul:4646/v1/jobs
+
 
 echo "Hashistack complete."

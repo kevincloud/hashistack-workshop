@@ -4,6 +4,7 @@
 echo "Installing Vault..."
 curl -sfLo "vault.zip" "${VAULT_URL}"
 sudo unzip vault.zip -d /usr/local/bin/
+rm -rf vault.zip
 
 # Server configuration
 sudo bash -c "cat >/etc/vault.d/vault.hcl" <<EOF
