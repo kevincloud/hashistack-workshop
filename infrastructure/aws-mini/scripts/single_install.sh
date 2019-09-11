@@ -87,4 +87,3 @@ echo "Preparation done."
 /root/hashistack-workshop/infrastructure/aws-mini/scripts/vault_install.sh
 /root/hashistack-workshop/infrastructure/aws-mini/scripts/nomad_install.sh
 /root/hashistack-workshop/infrastructure/aws-mini/scripts/build.sh
-
