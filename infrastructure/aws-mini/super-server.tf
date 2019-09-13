@@ -37,7 +37,7 @@ resource "aws_instance" "hashi-server" {
     subnet_id = "${aws_subnet.public-subnet.id}"
     iam_instance_profile = "${aws_iam_instance_profile.hashi-main-profile.id}"
 
-    root_block_device = {
+    root_block_device {
         volume_size = 30
     }
     
