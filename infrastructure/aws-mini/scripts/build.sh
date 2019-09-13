@@ -516,7 +516,7 @@ git clone https://github.com/kevincloud/javaperks-auth-api.git
 cd javaperks-auth-api
 go get
 go build -v
-aws s3 cp /root/components/javaperks-auth-api/authapi s3://$S3_BUCKET/bin/authapi
+aws s3 cp /root/components/javaperks-auth-api/javaperks-auth-api s3://$S3_BUCKET/bin/authapi
 
 
 #################################
