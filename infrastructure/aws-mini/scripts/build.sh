@@ -66,6 +66,7 @@ server=/consul/${CLIENT_IP}#8600
 server=169.254.169.253#53
 listen-address=${CLIENT_IP}
 listen-address=127.0.0.1
+listen-address=169.254.1.1
 no-resolv
 log-queries
 EOF
@@ -276,7 +277,7 @@ curl \
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
-    --data '{"data": { "aws_access_key": "${AWS_ACCESS_KEY}", "aws_secret_key": "${AWS_SECRET_KEY}" } }' \
+    --data "{\"data\": { \"aws_access_key\": \"$AWS_ACCESS_KEY\", \"aws_secret_key\": \"$AWS_SECRET_KEY\" } }" \
     http://127.0.0.1:8200/v1/secret/data/aws
 
 curl \
@@ -288,7 +289,7 @@ curl \
 curl \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --request POST \
-    --data '{"data": { "address": "customer-db.service.${REGION}.consul", "database": "${MYSQL_DB}", "username": "${MYSQL_USER}", "password": "${MYSQL_PASS}" } }' \
+    --data "{\"data\": { \"address\": \"customer-db.service.$REGION.consul\", \"database\": \"$MYSQL_DB\", \"username\": \"$MYSQL_USER\", \"password\": \"$MYSQL_PASS\" } }" \
     http://127.0.0.1:8200/v1/secret/data/dbhost
 
 curl \
