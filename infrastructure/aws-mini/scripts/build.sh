@@ -392,7 +392,7 @@ server {
 
 client {
     enabled       = true
-    network_speed = 100
+    network_speed = 1000
     options {
         "driver.raw_exec.enable"    = "1"
         "docker.auth.config"        = "/etc/docker/config.json"
@@ -571,7 +571,7 @@ cd /root/components
 git clone https://github.com/kevincloud/javaperks-customer-api.git
 cd javaperks-customer-api
 mvn package
-aws s3 cp /root/hashistack-workshop/apis/customerapi/CustomerApi/target/CustomerApi-0.1.0-SNAPSHOT.jar s3://$S3_BUCKET/jars/CustomerApi-0.1.0-SNAPSHOT.jar
+aws s3 cp /root/components/javaperks-customer-api/target/CustomerApi-0.1.0-SNAPSHOT.jar s3://$S3_BUCKET/jars/CustomerApi-0.1.0-SNAPSHOT.jar
 
 #################################
 # create online-site image

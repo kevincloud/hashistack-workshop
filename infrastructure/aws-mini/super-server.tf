@@ -36,6 +36,10 @@ resource "aws_instance" "hashi-server" {
     user_data = "${data.template_file.hashi-server-setup.rendered}"
     subnet_id = "${aws_subnet.public-subnet.id}"
     iam_instance_profile = "${aws_iam_instance_profile.hashi-main-profile.id}"
+
+    root_block_device = {
+        volume_size = 30
+    }
     
     tags = {
         Name = "${var.unit_prefix}-hashistack-server"
