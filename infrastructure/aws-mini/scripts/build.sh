@@ -396,9 +396,9 @@ client {
     network_speed = 1000
     options {
         "driver.raw_exec.enable"    = "1"
-        "docker.auth.config"        = "/etc/docker/config.json"
-        "docker.auth.helper"        = "ecr-login"
-        "docker.privileged.enabled" = "true"
+        # "docker.auth.config"        = "/etc/docker/config.json"
+        # "docker.auth.helper"        = "ecr-login"
+        # "docker.privileged.enabled" = "true"
     }
     servers = ["nomad-server.service.${REGION}.consul:4647"]
 }
