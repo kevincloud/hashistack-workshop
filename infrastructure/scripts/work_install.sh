@@ -101,16 +101,7 @@ sleep 3
 
 cd /root
 git clone https://${GIT_USER}:${GIT_TOKEN}@github.com/kevincloud/hashistack-workshop.git
-sudo bash -c "cat >>/root/hashistack-workshop/.git/config" <<EOF
-[submodule "apis/account-broker"]
-        url = https://${GIT_USER}:${GIT_TOKEN}@github.com/joshuaNjordan85/account-broker.git
-        active = true
-[submodule "apis/minion"]
-        url = https://${GIT_USER}:${GIT_TOKEN}@github.com/joshuaNjordan85/minion.git
-        active = true
-EOF
 cd /root/hashistack-workshop
-git submodule update
 
 export REGION="${REGION}"
 export S3_BUCKET="${S3_BUCKET}"

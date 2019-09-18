@@ -523,46 +523,46 @@ aws s3 cp /root/components/javaperks-auth-api/javaperks-auth-api s3://$S3_BUCKET
 #################################
 # create product-app image
 #################################
-echo "Building productapi..."
-cd /root/components
-git clone https://github.com/kevincloud/javaperks-product-api.git
-cd javaperks-product-api
-docker build -t product-app:product-app .
-aws ecr get-login --region $REGION --no-include-email > login.sh
-chmod a+x login.sh
-./login.sh
-docker tag product-app:product-app $REPO_URL_PROD:product-app
-docker push $REPO_URL_PROD:product-app
-# Upload images to S3
-aws s3 cp /root/components/javaperks-product-api/images/ s3://$S3_BUCKET/images/ --recursive --acl public-read
+# echo "Building productapi..."
+# cd /root/components
+# git clone https://github.com/kevincloud/javaperks-product-api.git
+# cd javaperks-product-api
+# docker build -t product-app:product-app .
+# aws ecr get-login --region $REGION --no-include-email > login.sh
+# chmod a+x login.sh
+# ./login.sh
+# docker tag product-app:product-app $REPO_URL_PROD:product-app
+# docker push $REPO_URL_PROD:product-app
+# # Upload images to S3
+# aws s3 cp /root/components/javaperks-product-api/images/ s3://$S3_BUCKET/images/ --recursive --acl public-read
 
 #################################
 # create cart-app image
 #################################
-echo "Building cartapi..."
-cd /root/components
-git clone https://github.com/kevincloud/javaperks-cart-api.git
-cd javaperks-cart-api
-docker build -t cart-app:cart-app .
-aws ecr get-login --region $REGION --no-include-email > login.sh
-chmod a+x login.sh
-./login.sh
-docker tag cart-app:cart-app $REPO_URL_CART:cart-app
-docker push $REPO_URL_CART:cart-app
+# echo "Building cartapi..."
+# cd /root/components
+# git clone https://github.com/kevincloud/javaperks-cart-api.git
+# cd javaperks-cart-api
+# docker build -t cart-app:cart-app .
+# aws ecr get-login --region $REGION --no-include-email > login.sh
+# chmod a+x login.sh
+# ./login.sh
+# docker tag cart-app:cart-app $REPO_URL_CART:cart-app
+# docker push $REPO_URL_CART:cart-app
 
 #################################
 # create order-app image
 #################################
-echo "Building orderapi..."
-cd /root/components
-git clone https://github.com/kevincloud/javaperks-order-api.git
-cd javaperks-order-api
-docker build -t order-app:order-app .
-aws ecr get-login --region $REGION --no-include-email > login.sh
-chmod a+x login.sh
-./login.sh
-docker tag order-app:order-app $REPO_URL_ORDR:order-app
-docker push $REPO_URL_ORDR:order-app
+# echo "Building orderapi..."
+# cd /root/components
+# git clone https://github.com/kevincloud/javaperks-order-api.git
+# cd javaperks-order-api
+# docker build -t order-app:order-app .
+# aws ecr get-login --region $REGION --no-include-email > login.sh
+# chmod a+x login.sh
+# ./login.sh
+# docker tag order-app:order-app $REPO_URL_ORDR:order-app
+# docker push $REPO_URL_ORDR:order-app
 
 #################################
 # create customer-api jar
@@ -577,23 +577,23 @@ aws s3 cp /root/components/javaperks-customer-api/target/CustomerApi-0.1.0-SNAPS
 #################################
 # create online-site image
 #################################
-echo "Building online-store..."
-cd /root/components
-git clone https://github.com/kevincloud/javaperks-online-store.git
-cd javaperks-online-store
-sudo bash -c "cat >./site/framework/config.php" <<EOF
-<?php
-\$assetbucket = "https://s3.amazonaws.com/$S3_BUCKET/";
-\$region = "$REGION";
-?>
-EOF
+# echo "Building online-store..."
+# cd /root/components
+# git clone https://github.com/kevincloud/javaperks-online-store.git
+# cd javaperks-online-store
+# sudo bash -c "cat >./site/framework/config.php" <<EOF
+# <?php
+# \$assetbucket = "https://s3.amazonaws.com/$S3_BUCKET/";
+# \$region = "$REGION";
+# ?>
+# EOF
 
-docker build -t online-store:online-store .
-aws ecr get-login --region $REGION --no-include-email > login.sh
-chmod a+x login.sh
-./login.sh
-docker tag online-store:online-store $REPO_URL_SITE:online-store
-docker push $REPO_URL_SITE:online-store
+# docker build -t online-store:online-store .
+# aws ecr get-login --region $REGION --no-include-email > login.sh
+# chmod a+x login.sh
+# ./login.sh
+# docker tag online-store:online-store $REPO_URL_SITE:online-store
+# docker push $REPO_URL_SITE:online-store
 
 #################################
 # create nomad jobs
@@ -638,6 +638,8 @@ sudo bash -c "cat >/root/jobs/auth-api-job.nomad" <<EOF
                     "Envvars": true
                 }],
                 "Resources": {
+                    "CPU": 100,
+                    "MemoryMB": 128,
                     "Networks": [{
                         "MBits": 1,
                         "ReservedPorts": [
@@ -685,6 +687,8 @@ sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
                     "Envvars": true
                 }],
                 "Resources": {
+                    "CPU": 100,
+                    "MemoryMB": 128,
                     "Networks": [{
                         "MBits": 1,
                         "ReservedPorts": [
@@ -741,6 +745,8 @@ sudo bash -c "cat >/root/jobs/customer-api-job.nomad" <<EOF
                     "DestPath": "local/config.yml"
                 }],
                 "Resources": {
+                    "CPU": 100,
+                    "MemoryMB": 128,
                     "Networks": [{
                         "MBits": 1,
                         "ReservedPorts": [
@@ -789,6 +795,8 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
                     "Envvars": true
                 }],
                 "Resources": {
+                    "CPU": 100,
+                    "MemoryMB": 128,
                     "Networks": [{
                         "MBits": 1,
                         "ReservedPorts": [
@@ -845,6 +853,8 @@ sudo bash -c "cat >/root/jobs/order-api-job.nomad" <<EOF
                     "Envvars": true
                 }],
                 "Resources": {
+                    "CPU": 100,
+                    "MemoryMB": 128,
                     "Networks": [{
                         "MBits": 1,
                         "ReservedPorts": [
@@ -888,11 +898,13 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}{{with secret \"secret/data/roottoken\"}}\nVAULT_TOKEN = \"{{.Data.data.token}}\"\n{{end}}\nREGION = \"$REGION\"\n                ",
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}{{with secret \"secret/data/roottoken\"}}\nVAULT_TOKEN = \"{{.Data.data.token}}\"\n{{end}}\nREGION = \"$REGION\nS3_BUCKET = \"$S3_BUCKET\"\n                ",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],
                 "Resources": {
+                    "CPU": 100,
+                    "MemoryMB": 128,
                     "Networks": [{
                         "MBits": 1,
                         "ReservedPorts": [

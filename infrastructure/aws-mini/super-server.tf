@@ -13,7 +13,6 @@ data "template_file" "hashi-server-setup" {
         REPO_URL_PROD = "${aws_ecr_repository.ecr-product-app.repository_url}"
         REPO_URL_CART = "${aws_ecr_repository.ecr-cart-app.repository_url}"
         REPO_URL_SITE = "${aws_ecr_repository.ecr-online-store.repository_url}"
-        REPO_URL_ACCT = "${aws_ecr_repository.ecr-account-broker.repository_url}"
         REPO_URL_ORDR = "${aws_ecr_repository.ecr-order-app.repository_url}"
         S3_BUCKET = "${aws_s3_bucket.staticimg.id}"
         GIT_USER = "${var.git_user}"
