@@ -676,7 +676,7 @@ sudo bash -c "cat >/root/jobs/product-api-job.nomad" <<EOF
                     "Policies": ["access-creds"]
                 },
                 "Config": {
-                    "image": "https://$REPO_URL_PROD:product-app",
+                    "image": "jubican/javaperks-product-api:latest",
                     "port_map": [{
                         "http": 5821
                     }]
@@ -784,7 +784,7 @@ sudo bash -c "cat >/root/jobs/cart-api-job.nomad" <<EOF
                     "Policies": ["access-creds"]
                 },
                 "Config": {
-                    "image": "https://$REPO_URL_CART:cart-app",
+                    "image": "jubican/javaperks-cart-api:latest",
                     "port_map": [{
                         "http": 5823
                     }]
@@ -842,7 +842,7 @@ sudo bash -c "cat >/root/jobs/order-api-job.nomad" <<EOF
                     "Policies": ["access-creds"]
                 },
                 "Config": {
-                    "image": "https://$REPO_URL_ORDR:order-app",
+                    "image": "jubican/javaperks-order-api:latest",
                     "port_map": [{
                         "http": 5826
                     }]
@@ -891,7 +891,7 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
                     "Policies": ["access-creds"]
                 },
                 "Config": {
-                    "image": "https://$REPO_URL_SITE:online-store",
+                    "image": "jubican/javaperks-online-store:latest",
                     "dns_servers": ["169.254.1.1"],
                     "port_map": [{
                         "http": 80
