@@ -524,17 +524,17 @@ aws s3 cp /root/components/javaperks-auth-api/javaperks-auth-api s3://$S3_BUCKET
 # create product-app image
 #################################
 # echo "Building productapi..."
-# cd /root/components
-# git clone https://github.com/kevincloud/javaperks-product-api.git
-# cd javaperks-product-api
+cd /root/components
+git clone https://github.com/kevincloud/javaperks-product-api.git
+cd javaperks-product-api
 # docker build -t product-app:product-app .
 # aws ecr get-login --region $REGION --no-include-email > login.sh
 # chmod a+x login.sh
 # ./login.sh
 # docker tag product-app:product-app $REPO_URL_PROD:product-app
 # docker push $REPO_URL_PROD:product-app
-# # Upload images to S3
-# aws s3 cp /root/components/javaperks-product-api/images/ s3://$S3_BUCKET/images/ --recursive --acl public-read
+# Upload images to S3
+aws s3 cp /root/components/javaperks-product-api/images/ s3://$S3_BUCKET/images/ --recursive --acl public-read
 
 #################################
 # create cart-app image
@@ -898,7 +898,7 @@ sudo bash -c "cat >/root/jobs/online-store-job.nomad" <<EOF
                     }]
                 },
                 "Templates": [{
-                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}{{with secret \"secret/data/roottoken\"}}\nVAULT_TOKEN = \"{{.Data.data.token}}\"\n{{end}}\nREGION = \"$REGION\nS3_BUCKET = \"$S3_BUCKET\"\n                ",
+                    "EmbeddedTmpl": "{{with secret \"secret/data/aws\"}}\nAWS_ACCESS_KEY = \"{{.Data.data.aws_access_key}}\"\nAWS_SECRET_KEY = \"{{.Data.data.aws_secret_key}}\"\n{{end}}{{with secret \"secret/data/roottoken\"}}\nVAULT_TOKEN = \"{{.Data.data.token}}\"\n{{end}}\nREGION = \"$REGION\"\nS3_BUCKET = \"$S3_BUCKET\"\n                ",
                     "DestPath": "secrets/file.env",
                     "Envvars": true
                 }],
