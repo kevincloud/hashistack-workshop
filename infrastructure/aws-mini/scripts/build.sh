@@ -500,24 +500,24 @@ python3 /root/hashistack-workshop/apis/scripts/product_load.py
 #################################
 # build authapi
 #################################
-echo "Building authapi..."
-curl -O https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz
-tar xvf go1.12.7.linux-amd64.tar.gz > /dev/null 2>&1
-chown -R root:root ./go
-mv go /usr/local
-mkdir /root/go
-mkdir /root/go/.cache
-export GOPATH=/root/go
-export GOCACHE=/root/go/.cache
-export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-rm -rf go1.12.7.linux-amd64.tar.gz
+# echo "Building authapi..."
+# curl -O https://dl.google.com/go/go1.12.7.linux-amd64.tar.gz
+# tar xvf go1.12.7.linux-amd64.tar.gz > /dev/null 2>&1
+# chown -R root:root ./go
+# mv go /usr/local
+# mkdir /root/go
+# mkdir /root/go/.cache
+# export GOPATH=/root/go
+# export GOCACHE=/root/go/.cache
+# export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+# rm -rf go1.12.7.linux-amd64.tar.gz
 
-cd /root/components
-git clone https://github.com/kevincloud/javaperks-auth-api.git
-cd javaperks-auth-api
-go get
-go build -v
-aws s3 cp /root/components/javaperks-auth-api/javaperks-auth-api s3://$S3_BUCKET/bin/authapi
+# cd /root/components
+# git clone https://github.com/kevincloud/javaperks-auth-api.git
+# cd javaperks-auth-api
+# go get
+# go build -v
+# aws s3 cp /root/components/javaperks-auth-api/javaperks-auth-api s3://$S3_BUCKET/bin/authapi
 
 
 #################################
@@ -626,10 +626,10 @@ sudo bash -c "cat >/root/jobs/auth-api-job.nomad" <<EOF
                     "Policies": ["access-creds"]
                 },
                 "Config": {
-                    "command": "local/authapi"
+                    "command": "local/javaperks-auth-api"
                 },
                 "Artifacts": [{
-                    "GetterSource": "https://s3.amazonaws.com/$S3_BUCKET/bin/authapi",
+                    "GetterSource": "https://jubican-public.s3-us-west-2.amazonaws.com/bin/javaperks-auth-api",
                     "RelativeDest": "local/"
                 }],
                 "Templates": [{
