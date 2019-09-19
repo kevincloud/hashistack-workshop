@@ -567,12 +567,12 @@ aws s3 cp /root/components/javaperks-product-api/images/ s3://$S3_BUCKET/images/
 #################################
 # create customer-api jar
 #################################
-echo "Building customerapi..."
-cd /root/components
-git clone https://github.com/kevincloud/javaperks-customer-api.git
-cd javaperks-customer-api
-mvn package
-aws s3 cp /root/components/javaperks-customer-api/target/CustomerApi-0.1.0-SNAPSHOT.jar s3://$S3_BUCKET/jars/CustomerApi-0.1.0-SNAPSHOT.jar
+# echo "Building customerapi..."
+# cd /root/components
+# git clone https://github.com/kevincloud/javaperks-customer-api.git
+# cd javaperks-customer-api
+# mvn package
+# aws s3 cp /root/components/javaperks-customer-api/target/CustomerApi-0.1.0-SNAPSHOT.jar s3://$S3_BUCKET/jars/CustomerApi-0.1.0-SNAPSHOT.jar
 
 #################################
 # create online-site image
@@ -733,11 +733,11 @@ sudo bash -c "cat >/root/jobs/customer-api-job.nomad" <<EOF
                     "Policies": ["access-creds"]
                 },
                 "Config": {
-                    "jar_path": "local/CustomerApi-0.1.0-SNAPSHOT.jar",
+                    "jar_path": "local/javaperks-customer-api-0.1.0-SNAPSHOT.jar",
                     "args": [ "server", "local/config.yml" ]
                 },
                 "Artifacts": [{
-                    "GetterSource": "https://s3.amazonaws.com/$S3_BUCKET/jars/CustomerApi-0.1.0-SNAPSHOT.jar",
+                    "GetterSource": "https://jubican-public.s3-us-west-2.amazonaws.com/jars/javaperks-customer-api-0.1.0-SNAPSHOT.jar",
                     "RelativeDest": "local/"
                 }],
                 "Templates": [{
