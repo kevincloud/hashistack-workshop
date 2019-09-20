@@ -2,7 +2,7 @@ data "template_file" "hashi-server-setup" {
     template = "${file("${path.module}/scripts/single_install.sh")}"
 
     vars = {
-        MYSQL_HOST = "${aws_db_instance.vault-mysql.address}"
+        MYSQL_HOST = "${aws_db_instance.javaperks-mysql.address}"
         MYSQL_USER = "${var.mysql_user}"
         MYSQL_PASS = "${var.mysql_pass}"
         MYSQL_DB = "${var.mysql_database}"

@@ -57,10 +57,6 @@ resource "aws_route" "public-routes" {
     route_table_id = "${aws_vpc.primary-vpc.default_route_table_id}"
     destination_cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_internet_gateway.igw.id}"
-
-    tags = {
-        Name = "javaperks-public-routes-${var.unit_prefix}"
-    }
 }
 
 resource "aws_eip" "nat-ip" {
@@ -96,10 +92,6 @@ resource "aws_route_table" "natgw-route" {
 resource "aws_route_table_association" "route-out" {
     subnet_id = "${aws_subnet.private-subnet.id}"
     route_table_id = "${aws_route_table.natgw-route.id}"
-
-    tags = {
-        Name = "javaperks-route-assoc-${var.unit_prefix}"
-    }
 }
 
 
