@@ -37,7 +37,7 @@ resource "aws_instance" "hashi-server" {
     iam_instance_profile = "${aws_iam_instance_profile.hashi-main-profile.id}"
 
     tags = {
-        Name = "${var.unit_prefix}-hashistack-server"
+        Name = "javaperks-server-${var.unit_prefix}"
         TTL = "-1"
         owner = "kcochran@hashicorp.com"
     }
@@ -48,28 +48,28 @@ resource "aws_instance" "hashi-server" {
     ]
 }
 resource "aws_db_subnet_group" "dbsubnets" {
-    name = "main-db-subnet"
+    name = "javaperks-db-subnet-${var.unit_prefix}"
     subnet_ids = ["${aws_subnet.private-subnet.id}", "${aws_subnet.private-subnet-2.id}"]
 }
 
 
-resource "aws_db_instance" "vault-mysql" {
+resource "aws_db_instance" "javaperks-mysql" {
     allocated_storage = 10
     storage_type = "gp2"
     engine = "mysql"
     engine_version = "5.7"
     instance_class = "db.${var.instance_size}"
-    name = "vaultdb"
-    identifier = "kevinvaultdb"
+    name = "javaperks-${var.unit_prefix}"
+    identifier = "javaperks-db-${var.unit_prefix}"
     db_subnet_group_name = "${aws_db_subnet_group.dbsubnets.name}"
-    vpc_security_group_ids = ["${aws_security_group.vault-mysql-sg.id}"]
+    vpc_security_group_ids = ["${aws_security_group.javaperks-mysql-sg.id}"]
     username = "${var.mysql_user}"
     password = "${var.mysql_pass}"
     skip_final_snapshot = true
 }
 
-resource "aws_security_group" "vault-mysql-sg" {
-    name = "vault-mysql-sg"
+resource "aws_security_group" "javaperks-mysql-sg" {
+    name = "javaperks-mysql-sg-${var.unit_prefix}"
     description = "mysql security group"
     vpc_id = "${aws_vpc.primary-vpc.id}"
 
@@ -89,7 +89,7 @@ resource "aws_security_group" "vault-mysql-sg" {
 }
 
 resource "aws_security_group" "hashi-server-sg" {
-    name = "hashi-server-sg"
+    name = "javaperks-server-sg-${var.unit_prefix}"
     description = "webserver security group"
     vpc_id = "${aws_vpc.primary-vpc.id}"
 
@@ -219,17 +219,17 @@ data "aws_iam_policy_document" "hashi-main-access-doc" {
 }
 
 resource "aws_iam_role" "hashi-main-access-role" {
-  name               = "hashi-main-access-role"
+  name               = "javaperks-access-role-${var.unit_prefix}"
   assume_role_policy = "${data.aws_iam_policy_document.hashi-assume-role.json}"
 }
 
 resource "aws_iam_role_policy" "hashi-main-access-policy" {
-  name   = "hashi-main-access-policy"
+  name   = "javaperks-access-policy-${var.unit_prefix}"
   role   = "${aws_iam_role.hashi-main-access-role.id}"
   policy = "${data.aws_iam_policy_document.hashi-main-access-doc.json}"
 }
 
 resource "aws_iam_instance_profile" "hashi-main-profile" {
-  name = "hashi-main-access-profile"
+  name = "javaperks-access-profile-${var.unit_prefix}"
   role = "${aws_iam_role.hashi-main-access-role.name}"
 }

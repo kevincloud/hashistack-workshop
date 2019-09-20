@@ -1,21 +1,5 @@
-resource "aws_ecr_repository" "ecr-product-app" {
-    name = "product-app"
-}
-
-resource "aws_ecr_repository" "ecr-order-app" {
-    name = "order-app"
-}
-
-resource "aws_ecr_repository" "ecr-cart-app" {
-    name = "cart-app"
-}
-
-resource "aws_ecr_repository" "ecr-online-store" {
-    name = "online-store"
-}
-
 resource "aws_s3_bucket" "staticimg" {
-    bucket = "hc-workshop-2.0-assets"
+    bucket = "hc-workshop-2.0-assets-${var.unit_prefix}"
     acl = "public-read"
     force_destroy = true
 }
