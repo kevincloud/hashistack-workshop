@@ -20,6 +20,9 @@ data "template_file" "hashi-server-setup" {
         CONSUL_JOIN_KEY = "${var.consul_join_key}"
         CONSUL_JOIN_VALUE = "${var.consul_join_value}"
         NOMAD_URL = "${var.nomad_dl_url}"
+        TABLE_PRODUCT = "${aws_dynamodb_table.product-data-table.id}"
+        TABLE_CART = "${aws_dynamodb_table.customer-cart.id}"
+        TABLE_ORDER = "${aws_dynamodb_table.customer-order-table.id}"
     }
 }
 
@@ -55,8 +58,8 @@ resource "aws_db_instance" "javaperks-mysql" {
     engine = "mysql"
     engine_version = "5.7"
     instance_class = "db.${var.instance_size}"
-    name = "javaperks-${var.unit_prefix}"
-    identifier = "javaperks-db-${var.unit_prefix}"
+    name = "javaperks${var.unit_prefix}"
+    identifier = "javaperksdb${var.unit_prefix}"
     db_subnet_group_name = "${aws_db_subnet_group.dbsubnets.name}"
     vpc_security_group_ids = ["${aws_security_group.javaperks-mysql-sg.id}"]
     username = "${var.mysql_user}"

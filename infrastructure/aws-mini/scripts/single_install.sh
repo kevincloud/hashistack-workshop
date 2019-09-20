@@ -61,6 +61,9 @@ export CONSUL_LICENSE="${CONSUL_LICENSE}"
 export CONSUL_JOIN_KEY="${CONSUL_JOIN_KEY}"
 export CONSUL_JOIN_VALUE="${CONSUL_JOIN_VALUE}"
 export NOMAD_URL="${NOMAD_URL}"
+export TABLE_PRODUCT="${TABLE_PRODUCT}"
+export TABLE_CART="${TABLE_CART}"
+export TABLE_ORDER="${TABLE_ORDER}"
 export GOPATH=/root/go
 export GOCACHE=/root/go/.cache
 
